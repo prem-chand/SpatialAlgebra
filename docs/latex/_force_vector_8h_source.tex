@@ -1,0 +1,50 @@
+\doxysection{Force\+Vector.\+h}
+\hypertarget{_force_vector_8h_source}{}\label{_force_vector_8h_source}\index{include/ForceVector.h@{include/ForceVector.h}}
+\mbox{\hyperlink{_force_vector_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ FORCE\_VECTOR\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ FORCE\_VECTOR\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}SpatialVector.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ Force\ vector\ class\ inherits\ from\ SpatialVector}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_a8cc646fd643649a7917bb9dacdfeda78}{ForceVector}}();}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_a8cc646fd643649a7917bb9dacdfeda78}{ForceVector}}(\textcolor{keyword}{const}\ Vector3d\ \&angular,\ \textcolor{keyword}{const}\ Vector3d\ \&linear);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_a8cc646fd643649a7917bb9dacdfeda78}{ForceVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Accessors}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ Vector3d\ getAngular()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ Vector3d\ getLinear()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Basic\ operations}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ operator*(\textcolor{keywordtype}{double}\ scalar)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cross-\/product\ operations}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ crossMotion(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \&other)\ \textcolor{keyword}{const};\ \textcolor{comment}{//\ crm\ equivalent}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ crossForce(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \&other)\ \textcolor{keyword}{const};\ \ \textcolor{comment}{//\ crf\ equivalent}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot\ product}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dot(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Printing}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ print()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00059\ \ \ \ \ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{fv}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

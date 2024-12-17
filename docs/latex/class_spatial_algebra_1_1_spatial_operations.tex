@@ -1,0 +1,91 @@
+\doxysection{Spatial\+Algebra\+::Spatial\+Operations Class Reference}
+\hypertarget{class_spatial_algebra_1_1_spatial_operations}{}\label{class_spatial_algebra_1_1_spatial_operations}\index{SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}}
+
+
+Static class providing utility operations for spatial vectors and transforms.  
+
+
+
+
+{\ttfamily \#include $<$Spatial\+Operations.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_aefc007640d3f32acab8b2afcb602d669}{cross\+Product\+Motion}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&v2)
+\begin{DoxyCompactList}\small\item\em Computes the motion cross product between two spatial vectors. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_a4a5f2524f17d8bbf07362c8bd4d380e5}{cross\+Product\+Force}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&v, const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&f)
+\begin{DoxyCompactList}\small\item\em Computes the force cross product between two spatial vectors. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_a37649b59240f62c278454a55a96f679c}{transform\+Inertia}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&inertia, const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&transform)
+\begin{DoxyCompactList}\small\item\em Transforms rigid body inertia using a Plucker transform. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Static class providing utility operations for spatial vectors and transforms. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_spatial_algebra_1_1_spatial_operations_a4a5f2524f17d8bbf07362c8bd4d380e5}\index{SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}!crossProductForce@{crossProductForce}}
+\index{crossProductForce@{crossProductForce}!SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}}
+\doxysubsubsection{\texorpdfstring{crossProductForce()}{crossProductForce()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_spatial_operations_a4a5f2524f17d8bbf07362c8bd4d380e5} 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Spatial\+Algebra\+::\+Spatial\+Operations\+::cross\+Product\+Force (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{v}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{f}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Computes the force cross product between two spatial vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & Force spatial vector \\
+\hline
+{\em f} & Motion spatial vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of force cross product 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_spatial_operations_aefc007640d3f32acab8b2afcb602d669}\index{SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}!crossProductMotion@{crossProductMotion}}
+\index{crossProductMotion@{crossProductMotion}!SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}}
+\doxysubsubsection{\texorpdfstring{crossProductMotion()}{crossProductMotion()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_spatial_operations_aefc007640d3f32acab8b2afcb602d669} 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Spatial\+Algebra\+::\+Spatial\+Operations\+::cross\+Product\+Motion (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Computes the motion cross product between two spatial vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First spatial vector \\
+\hline
+{\em v2} & Second spatial vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of motion cross product 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_spatial_operations_a37649b59240f62c278454a55a96f679c}\index{SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}!transformInertia@{transformInertia}}
+\index{transformInertia@{transformInertia}!SpatialAlgebra::SpatialOperations@{SpatialAlgebra::SpatialOperations}}
+\doxysubsubsection{\texorpdfstring{transformInertia()}{transformInertia()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_spatial_operations_a37649b59240f62c278454a55a96f679c} 
+static \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Spatial\+Operations\+::transform\+Inertia (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{inertia}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&}]{transform}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Transforms rigid body inertia using a Plucker transform. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em inertia} & Input rigid body inertia \\
+\hline
+{\em transform} & Plucker transform to apply \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Transformed rigid body inertia 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_spatial_operations_8h}{Spatial\+Operations.\+h}}\end{DoxyCompactItemize}

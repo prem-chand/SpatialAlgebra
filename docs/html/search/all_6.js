@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['operator_2a_0',['operator*',['../class_spatial_algebra_1_1_rigid_body_inertia.html#a82e6ad422f521ad270ab50ca6dafa611',1,'SpatialAlgebra::RigidBodyInertia::operator*()'],['../class_rotation.html#aff3dd602c4024533fc790a1dbaf5ae65',1,'Rotation::operator*(const Rotation &amp;other) const'],['../class_rotation.html#a6d6ab3065f71e3fc7d1569bb14fe58fd',1,'Rotation::operator*(const Eigen::Vector3d &amp;vector) const']]],
+  ['operator_2b_1',['operator+',['../class_spatial_algebra_1_1_articulated_body_inertia.html#a7c26b2a477f27bb1fbb203464dee92f9',1,'SpatialAlgebra::ArticulatedBodyInertia::operator+(const ArticulatedBodyInertia &amp;other) const'],['../class_spatial_algebra_1_1_articulated_body_inertia.html#a146fd8c08e3741600fae2acfca9ddadb',1,'SpatialAlgebra::ArticulatedBodyInertia::operator+(const RigidBodyInertia &amp;other) const'],['../class_spatial_algebra_1_1_rigid_body_inertia.html#a7f7f7add17a31b97613f5fcbfb69c43a',1,'SpatialAlgebra::RigidBodyInertia::operator+()']]]
+];

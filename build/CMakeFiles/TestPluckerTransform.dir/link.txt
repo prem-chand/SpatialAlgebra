@@ -1,0 +1,1 @@
+g++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/TestPluckerTransform.dir/tests/TestPluckerTransform.cpp.o -o TestPluckerTransform  libSpatialAlgebra.a /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a

@@ -1,0 +1,57 @@
+\doxysection{Spatial\+Utils.\+h}
+\hypertarget{_spatial_utils_8h_source}{}\label{_spatial_utils_8h_source}\index{include/SpatialUtils.h@{include/SpatialUtils.h}}
+\mbox{\hyperlink{_spatial_utils_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SPATIAL\_UTILS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SPATIAL\_UTILS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}SpatialVector.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motion_vector_8h}{MotionVector.h}}"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_force_vector_8h}{ForceVector.h}}"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }SpatialAlgebra\ \{}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{inline}\ Eigen::Matrix3d\ \mbox{\hyperlink{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1}{skew}}(\textcolor{keyword}{const}\ Eigen::Vector3d\&\ v)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ Eigen::Matrix3d\ m;}
+\DoxyCodeLine{00026\ \ \ \ \ m\ <<\ 0,\ -\/v(2),\ v(1),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ v(2),\ 0,\ -\/v(0),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ -\/v(1),\ v(0),\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{return}\ m;}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{dot}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{return}\ v1.getAngular().dot(v2.getAngular())\ +\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ v1.getLinear().dot(v2.getLinear());}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{dot}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{dot}}(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\textcolor{keyword}{>}(v1),\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\textcolor{keyword}{>}(v2));}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{dot}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{dot}}(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\textcolor{keyword}{>}(v1),\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\textcolor{keyword}{>}(v2));}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ dot(\textcolor{keyword}{const}\ MotionVector\&\ v1,\ \textcolor{keyword}{const}\ ForceVector\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ dot(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }SpatialVector\&\textcolor{keyword}{>}(v1),\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }SpatialVector\&\textcolor{keyword}{>}(v2));}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \mbox{\hyperlink{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}{cross}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ w1\ =\ v1.getAngular();}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ v1\_lin\ =\ v1.getLinear();}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ f1\ =\ v2.getAngular();}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ f2\ =\ v2.getLinear();}
+\DoxyCodeLine{00082\ \ \ \ \ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}(}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ w1.cross(f1),\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ w1.cross(f2)\ +\ v1\_lin.cross(f1)}
+\DoxyCodeLine{00086\ \ \ \ \ );}
+\DoxyCodeLine{00087\ \};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SPATIAL\_UTILS\_H}}
+
+\end{DoxyCode}

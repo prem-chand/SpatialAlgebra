@@ -1,0 +1,52 @@
+\doxysection{Motion\+Vector.\+h}
+\hypertarget{_motion_vector_8h_source}{}\label{_motion_vector_8h_source}\index{include/MotionVector.h@{include/MotionVector.h}}
+\mbox{\hyperlink{_motion_vector_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MOTION\_VECTOR\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MOTION\_VECTOR\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}SpatialVector.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ Motion\ vector\ class\ inherits\ from\ SpatialVector}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a96fd5e9a7da193a46c2c1f2a1435b8ca}{MotionVector}}();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a96fd5e9a7da193a46c2c1f2a1435b8ca}{MotionVector}}(\textcolor{keyword}{const}\ Vector3d\ \&angular,\ \textcolor{keyword}{const}\ Vector3d\ \&linear);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a96fd5e9a7da193a46c2c1f2a1435b8ca}{MotionVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Accessors}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ Vector3d\ getAngular()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ Vector3d\ getLinear()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Basic\ operations}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ operator*(\textcolor{keywordtype}{double}\ scalar)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cross-\/product\ operations}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ crossMotion(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \&other)\ \textcolor{keyword}{const};\ \textcolor{comment}{//\ crm\ equivalent}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ crossForce(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \&other)\ \textcolor{keyword}{const};\ \ \textcolor{comment}{//\ crf\ equivalent}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot\ product}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dot(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Printing}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ print()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00061\ \ \ \ \ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

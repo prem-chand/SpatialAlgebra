@@ -1,0 +1,133 @@
+\doxysection{Spatial\+Algebra\+::Force\+Vector Class Reference}
+\hypertarget{class_spatial_algebra_1_1_force_vector}{}\label{class_spatial_algebra_1_1_force_vector}\index{SpatialAlgebra::ForceVector@{SpatialAlgebra::ForceVector}}
+
+
+Class representing spatial force vectors.  
+
+
+
+
+{\ttfamily \#include $<$Force\+Vector.\+h$>$}
+
+Inheritance diagram for Spatial\+Algebra\+::Force\+Vector\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_spatial_algebra_1_1_force_vector}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a8cc646fd643649a7917bb9dacdfeda78}\label{class_spatial_algebra_1_1_force_vector_a8cc646fd643649a7917bb9dacdfeda78} 
+{\bfseries Force\+Vector} ()
+\begin{DoxyCompactList}\small\item\em Default constructor creating zero force. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_abf5a1be50f60aaeae701357e0083abe4}{Force\+Vector}} (const Vector3d \&angular, const Vector3d \&linear)
+\begin{DoxyCompactList}\small\item\em Construct from angular and linear components. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_aff86e03cbd120e9d989987a94389cc2a}{Force\+Vector}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other)
+\begin{DoxyCompactList}\small\item\em Construct from spatial vector. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a0ccff93f57efe2cc1991cc553c0b7f04}\label{class_spatial_algebra_1_1_force_vector_a0ccff93f57efe2cc1991cc553c0b7f04} 
+Vector3d {\bfseries get\+Angular} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_acc344b1a217e4c275b65987e34d88d87}\label{class_spatial_algebra_1_1_force_vector_acc344b1a217e4c275b65987e34d88d87} 
+Vector3d {\bfseries get\+Linear} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a8d638019f52a3d910ee41cb3f68189de}\label{class_spatial_algebra_1_1_force_vector_a8d638019f52a3d910ee41cb3f68189de} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries operator+} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a1cfd2727252d65209a1b72fca1afc34a}\label{class_spatial_algebra_1_1_force_vector_a1cfd2727252d65209a1b72fca1afc34a} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries operator-\/} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a31fe5234840e91463516d8f834e5acf7}\label{class_spatial_algebra_1_1_force_vector_a31fe5234840e91463516d8f834e5acf7} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries operator\texorpdfstring{$\ast$}{*}} (double scalar) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a14254e04e0a05ab4a64f55af702d6cfe}\label{class_spatial_algebra_1_1_force_vector_a14254e04e0a05ab4a64f55af702d6cfe} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries cross\+Motion} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_a395cbb3e5d957e4cae93293eb89764ac}\label{class_spatial_algebra_1_1_force_vector_a395cbb3e5d957e4cae93293eb89764ac} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries cross\+Force} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_aee0c2b5ba510705be551c5322546a543}\label{class_spatial_algebra_1_1_force_vector_aee0c2b5ba510705be551c5322546a543} 
+double {\bfseries dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_force_vector_ae36a0ff5b5989cbdf0cae66ea7553f9b}\label{class_spatial_algebra_1_1_force_vector_ae36a0ff5b5989cbdf0cae66ea7553f9b} 
+void {\bfseries print} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Algebra\+::\+Spatial\+Vector}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Spatial\+Vector} (const Vector3d \&angular, const Vector3d \&linear)
+\item 
+{\bfseries Spatial\+Vector} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other)
+\item 
+Vector3d {\bfseries get\+Angular} () const
+\item 
+Vector3d {\bfseries get\+Linear} () const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator+} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator-\/} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator\texorpdfstring{$\ast$}{*}} (double scalar) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries cross\+Motion} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries cross\+Force} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+double {\bfseries dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+void {\bfseries print} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Algebra\+::\+Spatial\+Vector}}}
+\begin{DoxyCompactItemize}
+\item 
+Vector3d {\bfseries angular}
+\item 
+Vector3d {\bfseries linear}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing spatial force vectors. 
+
+Specialized spatial vector for representing force quantities like torques and linear forces. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_spatial_algebra_1_1_force_vector_abf5a1be50f60aaeae701357e0083abe4}\index{SpatialAlgebra::ForceVector@{SpatialAlgebra::ForceVector}!ForceVector@{ForceVector}}
+\index{ForceVector@{ForceVector}!SpatialAlgebra::ForceVector@{SpatialAlgebra::ForceVector}}
+\doxysubsubsection{\texorpdfstring{ForceVector()}{ForceVector()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_force_vector_abf5a1be50f60aaeae701357e0083abe4} 
+Spatial\+Algebra\+::\+Force\+Vector\+::\+Force\+Vector (\begin{DoxyParamCaption}\item[{const Vector3d \&}]{angular}{, }\item[{const Vector3d \&}]{linear}{}\end{DoxyParamCaption})}
+
+
+
+Construct from angular and linear components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em angular} & Torque component \\
+\hline
+{\em linear} & Force component \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_spatial_algebra_1_1_force_vector_aff86e03cbd120e9d989987a94389cc2a}\index{SpatialAlgebra::ForceVector@{SpatialAlgebra::ForceVector}!ForceVector@{ForceVector}}
+\index{ForceVector@{ForceVector}!SpatialAlgebra::ForceVector@{SpatialAlgebra::ForceVector}}
+\doxysubsubsection{\texorpdfstring{ForceVector()}{ForceVector()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_force_vector_aff86e03cbd120e9d989987a94389cc2a} 
+Spatial\+Algebra\+::\+Force\+Vector\+::\+Force\+Vector (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{other}{}\end{DoxyParamCaption})}
+
+
+
+Construct from spatial vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Spatial vector to convert \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_force_vector_8h}{Force\+Vector.\+h}}\item 
+src/Force\+Vector.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,126 @@
+\doxysection{Spatial\+Algebra\+::Rigid\+Body\+Inertia Class Reference}
+\hypertarget{class_spatial_algebra_1_1_rigid_body_inertia}{}\label{class_spatial_algebra_1_1_rigid_body_inertia}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
+
+
+Class representing the inertial properties of a rigid body.  
+
+
+
+
+{\ttfamily \#include $<$Rigid\+Body\+Inertia.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a8a46734ad299fbe384d03e753e4a8f7a}{Rigid\+Body\+Inertia}} (double mass, const Vector3d \&com, const Vector6d \&inertia\+Matrix\+LT)
+\begin{DoxyCompactList}\small\item\em Construct a rigid body inertia. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d}\label{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d} 
+{\bfseries Rigid\+Body\+Inertia} ()
+\begin{DoxyCompactList}\small\item\em Default constructor creating zero inertia. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f}\label{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f} 
+double {\bfseries get\+Mass} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337}\label{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337} 
+const Vector3d \& {\bfseries get\+Com} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a24c5d73c889ab89c744188c80b838bfb}\label{class_spatial_algebra_1_1_rigid_body_inertia_a24c5d73c889ab89c744188c80b838bfb} 
+const Vector6d \& {\bfseries get\+Inertia\+Matrix\+LT} () const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&other) const
+\begin{DoxyCompactList}\small\item\em Add two rigid body inertias. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
+\begin{DoxyCompactList}\small\item\em Scale rigid body inertia. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516}{apply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}}) const
+\begin{DoxyCompactList}\small\item\em Apply rigid body inertia to motion vector. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c}\label{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c} 
+void {\bfseries print} () const
+\begin{DoxyCompactList}\small\item\em Print inertia properties. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing the inertial properties of a rigid body. 
+
+Stores and manages mass, center of mass, and rotational inertia matrix for rigid body dynamics calculations. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a8a46734ad299fbe384d03e753e4a8f7a}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!RigidBodyInertia@{RigidBodyInertia}}
+\index{RigidBodyInertia@{RigidBodyInertia}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
+\doxysubsubsection{\texorpdfstring{RigidBodyInertia()}{RigidBodyInertia()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a8a46734ad299fbe384d03e753e4a8f7a} 
+Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::\+Rigid\+Body\+Inertia (\begin{DoxyParamCaption}\item[{double}]{mass}{, }\item[{const Vector3d \&}]{com}{, }\item[{const Vector6d \&}]{inertia\+Matrix\+LT}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a rigid body inertia. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mass} & Mass of the body \\
+\hline
+{\em com} & Center of mass position \\
+\hline
+{\em inertia\+Matrix\+LT} & Lower triangular part of inertia matrix \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!apply@{apply}}
+\index{apply@{apply}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
+\doxysubsubsection{\texorpdfstring{apply()}{apply()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::apply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{mv}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Apply rigid body inertia to motion vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mv} & Motion vector to apply \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting force vector
+\end{DoxyReturn}
+Implements\+: \mbox{[}Iω + com × v; m\texorpdfstring{$\ast$}{*}v -\/ com × ω\mbox{]} \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Scale rigid body inertia. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & Scaling factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scaled \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator+@{operator+}}
+\index{operator+@{operator+}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Add two rigid body inertias. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} to add \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Combined \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_rigid_body_inertia_8h}{Rigid\+Body\+Inertia.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,200 @@
+\doxysection{Spatial\+Algebra\+::Plucker\+Transform Class Reference}
+\hypertarget{class_spatial_algebra_1_1_plucker_transform}{}\label{class_spatial_algebra_1_1_plucker_transform}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+
+
+Class representing spatial coordinate transformations.  
+
+
+
+
+{\ttfamily \#include $<$Plucker\+Transform.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} (const \mbox{\hyperlink{class_rotation}{Rotation}} \&rotation, const Vector3d \&translation)
+\begin{DoxyCompactList}\small\item\em Construct a Plucker transform. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a71fe578530c205db375cc7a40a07b22c}{transform\+Motion}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&vec) const
+\begin{DoxyCompactList}\small\item\em Transform a motion vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_ad18fce8c8c552fad4654ec106b56c600}{transform\+Force}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&vec) const
+\begin{DoxyCompactList}\small\item\em Transform a force vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a062872c73b2418d9c0b59da10e44de82}{inverse\+Transform\+Motion}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&vec) const
+\begin{DoxyCompactList}\small\item\em Inverse transform a motion vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_ac519219a6d3081a7454f41235cf2355b}{inverse\+Transform\+Force}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&vec) const
+\begin{DoxyCompactList}\small\item\em Inverse transform a force vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a998fa6fd1e0caf9b6e16afe4c09cfdd3}{tform\+RBI}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&Ihat) const
+\begin{DoxyCompactList}\small\item\em Transform rigid body inertia. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a830222806a96b761f1f69d0431be4370}{invtform\+RBI}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&Ihat) const
+\begin{DoxyCompactList}\small\item\em Inverse transform rigid body inertia. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_af65a2203d900f03f51774c82afaa7a55}\label{class_spatial_algebra_1_1_plucker_transform_af65a2203d900f03f51774c82afaa7a55} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} {\bfseries tform\+ABI} (const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \&Ia) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a7a003fd15a297d8dad7f8e05a25749be}\label{class_spatial_algebra_1_1_plucker_transform_a7a003fd15a297d8dad7f8e05a25749be} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} {\bfseries invtform\+ABI} (const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \&Ia) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe}\label{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} {\bfseries inverse} () const
+\begin{DoxyCompactList}\small\item\em Compute inverse transform. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_aad6f22b9e2623583535fb508179d8a15}\label{class_spatial_algebra_1_1_plucker_transform_aad6f22b9e2623583535fb508179d8a15} 
+auto {\bfseries multiply} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&X) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a36f8dfe11063719c8c60238678fa0681}\label{class_spatial_algebra_1_1_plucker_transform_a36f8dfe11063719c8c60238678fa0681} 
+auto {\bfseries apply} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{fv}} \&v) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a4f74cd29852e1ad205126b93c6bebf3f}\label{class_spatial_algebra_1_1_plucker_transform_a4f74cd29852e1ad205126b93c6bebf3f} 
+auto {\bfseries apply} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}} \&v) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a1a0a3dfe745ce92761435b34d0f3472c}\label{class_spatial_algebra_1_1_plucker_transform_a1a0a3dfe745ce92761435b34d0f3472c} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} {\bfseries apply} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&X) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a5e6a1766a13f9092be88508715b96034}\label{class_spatial_algebra_1_1_plucker_transform_a5e6a1766a13f9092be88508715b96034} 
+void {\bfseries print} () const
+\begin{DoxyCompactList}\small\item\em Print transform components. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a386f8306683e59115085c873ad528584}\label{class_spatial_algebra_1_1_plucker_transform_a386f8306683e59115085c873ad528584} 
+auto {\bfseries get} (int \&a)
+\item 
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_af5c66cc2ae966de342fc6236041d8ce2}\label{class_spatial_algebra_1_1_plucker_transform_af5c66cc2ae966de342fc6236041d8ce2} 
+auto {\bfseries get} (double \&b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing spatial coordinate transformations. 
+
+Implements rigid body transformations in Plucker coordinates, consisting of rotation and translation components. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!PluckerTransform@{PluckerTransform}}
+\index{PluckerTransform@{PluckerTransform}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{PluckerTransform()}{PluckerTransform()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867} 
+Plucker\+Transform\+::\+Plucker\+Transform (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_rotation}{Rotation}} \&}]{rotation}{, }\item[{const Vector3d \&}]{translation}{}\end{DoxyParamCaption})}
+
+
+
+Construct a Plucker transform. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rotation} & \doxylink{class_rotation}{Rotation} component \\
+\hline
+{\em translation} & Translation component \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_ac519219a6d3081a7454f41235cf2355b}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!inverseTransformForce@{inverseTransformForce}}
+\index{inverseTransformForce@{inverseTransformForce}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{inverseTransformForce()}{inverseTransformForce()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_ac519219a6d3081a7454f41235cf2355b} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Spatial\+Algebra\+::\+Plucker\+Transform\+::inverse\+Transform\+Force (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{vec}{}\end{DoxyParamCaption}) const}
+
+
+
+Inverse transform a force vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & Input force vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Inverse transformed force vector 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a062872c73b2418d9c0b59da10e44de82}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!inverseTransformMotion@{inverseTransformMotion}}
+\index{inverseTransformMotion@{inverseTransformMotion}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{inverseTransformMotion()}{inverseTransformMotion()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a062872c73b2418d9c0b59da10e44de82} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Spatial\+Algebra\+::\+Plucker\+Transform\+::inverse\+Transform\+Motion (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{vec}{}\end{DoxyParamCaption}) const}
+
+
+
+Inverse transform a motion vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & Input motion vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Inverse transformed motion vector 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a830222806a96b761f1f69d0431be4370}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!invtformRBI@{invtformRBI}}
+\index{invtformRBI@{invtformRBI}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{invtformRBI()}{invtformRBI()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a830222806a96b761f1f69d0431be4370} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Plucker\+Transform\+::invtform\+RBI (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{Ihat}{}\end{DoxyParamCaption}) const}
+
+
+
+Inverse transform rigid body inertia. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Ihat} & Input rigid body inertia \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Inverse transformed inertia 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a998fa6fd1e0caf9b6e16afe4c09cfdd3}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!tformRBI@{tformRBI}}
+\index{tformRBI@{tformRBI}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{tformRBI()}{tformRBI()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a998fa6fd1e0caf9b6e16afe4c09cfdd3} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Plucker\+Transform\+::tform\+RBI (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{Ihat}{}\end{DoxyParamCaption}) const}
+
+
+
+Transform rigid body inertia. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Ihat} & Input rigid body inertia \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Transformed inertia 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_ad18fce8c8c552fad4654ec106b56c600}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!transformForce@{transformForce}}
+\index{transformForce@{transformForce}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{transformForce()}{transformForce()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_ad18fce8c8c552fad4654ec106b56c600} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Plucker\+Transform\+::transform\+Force (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{vec}{}\end{DoxyParamCaption}) const}
+
+
+
+Transform a force vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & Input force vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Transformed force vector 
+\end{DoxyReturn}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_a71fe578530c205db375cc7a40a07b22c}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!transformMotion@{transformMotion}}
+\index{transformMotion@{transformMotion}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
+\doxysubsubsection{\texorpdfstring{transformMotion()}{transformMotion()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a71fe578530c205db375cc7a40a07b22c} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} Plucker\+Transform\+::transform\+Motion (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{vec}{}\end{DoxyParamCaption}) const}
+
+
+
+Transform a motion vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & Input motion vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Transformed motion vector 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_plucker_transform_8h}{Plucker\+Transform.\+h}}\item 
+src/Plucker\+Transform.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,133 @@
+\doxysection{Spatial\+Algebra\+::Motion\+Vector Class Reference}
+\hypertarget{class_spatial_algebra_1_1_motion_vector}{}\label{class_spatial_algebra_1_1_motion_vector}\index{SpatialAlgebra::MotionVector@{SpatialAlgebra::MotionVector}}
+
+
+Class representing spatial motion vectors.  
+
+
+
+
+{\ttfamily \#include $<$Motion\+Vector.\+h$>$}
+
+Inheritance diagram for Spatial\+Algebra\+::Motion\+Vector\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_spatial_algebra_1_1_motion_vector}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a96fd5e9a7da193a46c2c1f2a1435b8ca}\label{class_spatial_algebra_1_1_motion_vector_a96fd5e9a7da193a46c2c1f2a1435b8ca} 
+{\bfseries Motion\+Vector} ()
+\begin{DoxyCompactList}\small\item\em Default constructor creating zero motion. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a6d13a9ae74aebfccb3a495a718bd53f2}{Motion\+Vector}} (const Vector3d \&angular, const Vector3d \&linear)
+\begin{DoxyCompactList}\small\item\em Construct from angular and linear components. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a6cfc9f9b424015052024d8ac0cfa1ee7}{Motion\+Vector}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other)
+\begin{DoxyCompactList}\small\item\em Construct from spatial vector. \end{DoxyCompactList}\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_ac4805eba0aa8604af6846934ed92e136}\label{class_spatial_algebra_1_1_motion_vector_ac4805eba0aa8604af6846934ed92e136} 
+Vector3d {\bfseries get\+Angular} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a54c948627502656e0a4841747b6d8716}\label{class_spatial_algebra_1_1_motion_vector_a54c948627502656e0a4841747b6d8716} 
+Vector3d {\bfseries get\+Linear} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a0864cf5882130a43e089d46fd9e1e54e}\label{class_spatial_algebra_1_1_motion_vector_a0864cf5882130a43e089d46fd9e1e54e} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries operator+} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a9c0381b98c6414e513b0f6fe76228d73}\label{class_spatial_algebra_1_1_motion_vector_a9c0381b98c6414e513b0f6fe76228d73} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries operator-\/} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a08a6c1b86992a0df11f39d5b52ccb708}\label{class_spatial_algebra_1_1_motion_vector_a08a6c1b86992a0df11f39d5b52ccb708} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries operator\texorpdfstring{$\ast$}{*}} (double scalar) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a67184f0aed8fa5720f64fb73300b6ae5}\label{class_spatial_algebra_1_1_motion_vector_a67184f0aed8fa5720f64fb73300b6ae5} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries cross\+Motion} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a1d3ffd2f4df9fb7e9622b3b8430ffe58}\label{class_spatial_algebra_1_1_motion_vector_a1d3ffd2f4df9fb7e9622b3b8430ffe58} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries cross\+Force} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a861d7df1380ce02e94b66ca195be5a4b}\label{class_spatial_algebra_1_1_motion_vector_a861d7df1380ce02e94b66ca195be5a4b} 
+double {\bfseries dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&other) const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_aa90630d4afda8c4a6772263de7cc4bfb}\label{class_spatial_algebra_1_1_motion_vector_aa90630d4afda8c4a6772263de7cc4bfb} 
+void {\bfseries print} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Algebra\+::\+Spatial\+Vector}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Spatial\+Vector} (const Vector3d \&angular, const Vector3d \&linear)
+\item 
+{\bfseries Spatial\+Vector} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other)
+\item 
+Vector3d {\bfseries get\+Angular} () const
+\item 
+Vector3d {\bfseries get\+Linear} () const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator+} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator-\/} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries operator\texorpdfstring{$\ast$}{*}} (double scalar) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries cross\+Motion} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} {\bfseries cross\+Force} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+double {\bfseries dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&other) const
+\item 
+void {\bfseries print} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Algebra\+::\+Spatial\+Vector}}}
+\begin{DoxyCompactItemize}
+\item 
+Vector3d {\bfseries angular}
+\item 
+Vector3d {\bfseries linear}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing spatial motion vectors. 
+
+Specialized spatial vector for representing motion quantities like angular and linear velocities. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a6d13a9ae74aebfccb3a495a718bd53f2}\index{SpatialAlgebra::MotionVector@{SpatialAlgebra::MotionVector}!MotionVector@{MotionVector}}
+\index{MotionVector@{MotionVector}!SpatialAlgebra::MotionVector@{SpatialAlgebra::MotionVector}}
+\doxysubsubsection{\texorpdfstring{MotionVector()}{MotionVector()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_motion_vector_a6d13a9ae74aebfccb3a495a718bd53f2} 
+Spatial\+Algebra\+::\+Motion\+Vector\+::\+Motion\+Vector (\begin{DoxyParamCaption}\item[{const Vector3d \&}]{angular}{, }\item[{const Vector3d \&}]{linear}{}\end{DoxyParamCaption})}
+
+
+
+Construct from angular and linear components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em angular} & Angular velocity component \\
+\hline
+{\em linear} & Linear velocity component \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_spatial_algebra_1_1_motion_vector_a6cfc9f9b424015052024d8ac0cfa1ee7}\index{SpatialAlgebra::MotionVector@{SpatialAlgebra::MotionVector}!MotionVector@{MotionVector}}
+\index{MotionVector@{MotionVector}!SpatialAlgebra::MotionVector@{SpatialAlgebra::MotionVector}}
+\doxysubsubsection{\texorpdfstring{MotionVector()}{MotionVector()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_motion_vector_a6cfc9f9b424015052024d8ac0cfa1ee7} 
+Spatial\+Algebra\+::\+Motion\+Vector\+::\+Motion\+Vector (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{other}{}\end{DoxyParamCaption})}
+
+
+
+Construct from spatial vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Spatial vector to convert \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_motion_vector_8h}{Motion\+Vector.\+h}}\item 
+src/Motion\+Vector.\+cpp\end{DoxyCompactItemize}

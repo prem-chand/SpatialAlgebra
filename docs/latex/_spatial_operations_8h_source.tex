@@ -1,0 +1,29 @@
+\doxysection{Spatial\+Operations.\+h}
+\hypertarget{_spatial_operations_8h_source}{}\label{_spatial_operations_8h_source}\index{include/SpatialOperations.h@{include/SpatialOperations.h}}
+\mbox{\hyperlink{_spatial_operations_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SPATIAL\_OPERATIONS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SPATIAL\_OPERATIONS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}SpatialVector.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_plucker_transform_8h}{PluckerTransform.h}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rigid_body_inertia_8h}{RigidBodyInertia.h}}"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <Eigen/Geometry>}\ \textcolor{comment}{//\ Include\ for\ RotationMatrix}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }SpatialAlgebra\ \{}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations}{SpatialOperations}}\ \{}
+\DoxyCodeLine{00020\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_aefc007640d3f32acab8b2afcb602d669}{crossProductMotion}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ v2);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_a4a5f2524f17d8bbf07362c8bd4d380e5}{crossProductForce}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ v,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\&\ f);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_operations_a37649b59240f62c278454a55a96f679c}{transformInertia}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\&\ inertia,\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\&\ transform);}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \}\ \ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

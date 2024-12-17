@@ -1,0 +1,82 @@
+\doxysection{Plucker\+Transform.\+h}
+\hypertarget{_plucker_transform_8h_source}{}\label{_plucker_transform_8h_source}\index{include/PluckerTransform.h@{include/PluckerTransform.h}}
+\mbox{\hyperlink{_plucker_transform_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ PLUCKER\_TRANSFORM\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ PLUCKER\_TRANSFORM\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}SpatialVector.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rotation_8h}{Rotation.h}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_force_vector_8h}{ForceVector.h}}"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motion_vector_8h}{MotionVector.h}}"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rigid_body_inertia_8h}{RigidBodyInertia.h}}"{}}\ \ \ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_articulated_body_inertia_8h}{ArticulatedBodyInertia.h}}"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <Eigen/Geometry>}\ \textcolor{comment}{//\ Include\ for\ RotationMatrix}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_rotation}{Rotation}}\ rotation;\ \ \ \ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ Vector3d\ translation;\ }
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{PluckerTransform}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_rotation}{Rotation}}\ \&rotation,\ \textcolor{keyword}{const}\ Vector3d\ \&translation);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a71fe578530c205db375cc7a40a07b22c}{transformMotion}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&vec)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_ad18fce8c8c552fad4654ec106b56c600}{transformForce}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&vec)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a062872c73b2418d9c0b59da10e44de82}{inverseTransformMotion}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&vec)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_ac519219a6d3081a7454f41235cf2355b}{inverseTransformForce}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&vec)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a998fa6fd1e0caf9b6e16afe4c09cfdd3}{tformRBI}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \&Ihat)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a830222806a96b761f1f69d0431be4370}{invtformRBI}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \&Ihat)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ transform\ abi}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ tformABI(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \&Ia)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ invtformABI(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \&Ia)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe}{inverse}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ multiply\ by\ X}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ PluckerTransform\ multiply(const\ PluckerTransform\ \&X)\ const;}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ multiply(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ \&X)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ apply(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{fv}}\&\ v)\textcolor{keyword}{\ const}\{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a71fe578530c205db375cc7a40a07b22c}{transformMotion}}(v);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ apply(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}}\&\ v)\textcolor{keyword}{\ const}\{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_ad18fce8c8c552fad4654ec106b56c600}{transformForce}}(v);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ apply(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ \&X)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ template\ <typename\ T>}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ T\ apply(const\ T\&)\ const\{}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a5e6a1766a13f9092be88508715b96034}{print}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ testing}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ get(\textcolor{keywordtype}{int}\ \&a)\ \{\ \textcolor{keywordflow}{return}\ a;\ \}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ get(\textcolor{keywordtype}{double}\ \&b)}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ c\{\textcolor{charliteral}{'c'}\};}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ c;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{plux}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

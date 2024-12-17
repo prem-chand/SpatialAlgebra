@@ -1,0 +1,133 @@
+\doxysection{include/\+Spatial\+Utils.h File Reference}
+\hypertarget{_spatial_utils_8h}{}\label{_spatial_utils_8h}\index{include/SpatialUtils.h@{include/SpatialUtils.h}}
+
+
+Utility functions for spatial algebra operations.  
+
+
+{\ttfamily \#include "{}Spatial\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Motion\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Force\+Vector.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Eigen\+::\+Matrix3d \mbox{\hyperlink{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1}{Spatial\+Algebra\+::skew}} (const Eigen\+::\+Vector3d \&v) noexcept
+\begin{DoxyCompactList}\small\item\em Creates a 3x3 skew-\/symmetric matrix from a 3D vector. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}{Spatial\+Algebra\+::dot}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the spatial dot product between two spatial vectors. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{_spatial_utils_8h_a305d2d8909ad7261620f353abe14ef3a}{Spatial\+Algebra\+::dot}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the spatial dot product between two motion vectors. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad}{Spatial\+Algebra\+::dot}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the spatial dot product between two force vectors. \end{DoxyCompactList}\item 
+\Hypertarget{_spatial_utils_8h_af3deb4062cee46fd66c82b1f27a2224f}\label{_spatial_utils_8h_af3deb4062cee46fd66c82b1f27a2224f} 
+double {\bfseries Spatial\+Algebra\+::dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \mbox{\hyperlink{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}{Spatial\+Algebra\+::cross}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the spatial cross product between a motion vector and a force vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Utility functions for spatial algebra operations. 
+
+This file contains various utility functions used in spatial algebra computations, including cross products, dot products, and matrix operations. 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}\index{SpatialUtils.h@{SpatialUtils.h}!cross@{cross}}
+\index{cross@{cross}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1} 
+Force\+Vector Spatial\+Algebra\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the spatial cross product between a motion vector and a force vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & Motion vector \\
+\hline
+{\em v2} & Force vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting force vector
+\end{DoxyReturn}
+Implements\+: crf(v1, v2) = \mbox{[}w1×f1 + v1×f2, w1×f1\mbox{]} \Hypertarget{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad}\index{SpatialUtils.h@{SpatialUtils.h}!dot@{dot}}
+\index{dot@{dot}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad} 
+double Spatial\+Algebra\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the spatial dot product between two force vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First force vector \\
+\hline
+{\em v2} & Second force vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scalar dot product result 
+\end{DoxyReturn}
+\Hypertarget{_spatial_utils_8h_a305d2d8909ad7261620f353abe14ef3a}\index{SpatialUtils.h@{SpatialUtils.h}!dot@{dot}}
+\index{dot@{dot}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_a305d2d8909ad7261620f353abe14ef3a} 
+double Spatial\+Algebra\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the spatial dot product between two motion vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First motion vector \\
+\hline
+{\em v2} & Second motion vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scalar dot product result 
+\end{DoxyReturn}
+\Hypertarget{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857}\index{SpatialUtils.h@{SpatialUtils.h}!dot@{dot}}
+\index{dot@{dot}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_a762732b68b0a90c3d47f344e3d9d5857} 
+double Spatial\+Algebra\+::dot (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the spatial dot product between two spatial vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First spatial vector \\
+\hline
+{\em v2} & Second spatial vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scalar dot product result 
+\end{DoxyReturn}
+\Hypertarget{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1}\index{SpatialUtils.h@{SpatialUtils.h}!skew@{skew}}
+\index{skew@{skew}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{skew()}{skew()}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1} 
+Eigen\+::\+Matrix3d Spatial\+Algebra\+::skew (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Vector3d \&}]{v}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Creates a 3x3 skew-\/symmetric matrix from a 3D vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & Input 3D vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Skew-\/symmetric matrix representation
+\end{DoxyReturn}
+The resulting matrix S satisfies S\texorpdfstring{$\ast$}{*}x = v×x for any vector x 
