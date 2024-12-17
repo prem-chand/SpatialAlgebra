@@ -32,6 +32,10 @@
 *.app
 
 build/
+docs/
+*/latex/
 
 .github/
 .vscode/
+docs/latex/refman.fdb_latexmk
+docs/latex/refman.pdf
