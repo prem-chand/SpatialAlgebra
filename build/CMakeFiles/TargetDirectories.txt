@@ -1,6 +1,0 @@
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/SpatialAlgebra.dir
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/TestSpatialVector.dir
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/TestPluckerTransform.dir
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/test.dir
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/edit_cache.dir
-/Users/premchand/Documents/GitHub/SpatialAlgebra/build/CMakeFiles/rebuild_cache.dir

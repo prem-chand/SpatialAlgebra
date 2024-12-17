@@ -1,1 +1,0 @@
-g++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/TestSpatialVector.dir/tests/TestSpatialVector.cpp.o -o TestSpatialVector  libSpatialAlgebra.a /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a
