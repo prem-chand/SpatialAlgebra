@@ -1,11 +1,11 @@
 # Fdb version 3
-["makeindex refman.idx"] 0 "refman.idx" "refman.ind" "refman" 1734414254
+["makeindex refman.idx"] 0 "refman.idx" "refman.ind" "refman" 1734415794
   "refman.idx" 0 -1 0 "pdflatex"
   (generated)
   "refman.ind"
   "refman.ilg"
-["pdflatex"] 1734414251 "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.tex" "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.pdf" "refman" 1734414254
-  "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.aux" 1734414251 8 a94a2480d3289e625eea47cd1b285758 ""
+["pdflatex"] 1734415792 "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.tex" "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.pdf" "refman" 1734415794
+  "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.aux" 1734415792 8 a94a2480d3289e625eea47cd1b285758 ""
   "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.ind" 0 -1 0 ""
   "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.tex" 1734413368 8407 e43a961a6d124926ba436ef8bfe9447f ""
   "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.toc" 0 -1 0 ""
@@ -212,11 +212,11 @@
   "refman.toc" 0 -1 0 "pdflatex"
   "tabu_doxygen.sty" 1734413368 114990 77bb6213c96e0c5e230e3f050f65d28f ""
   (generated)
-  "refman.aux"
-  "refman.pdf"
-  "refman.toc"
-  "refman.log"
-  "refman.idx"
   "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.pdf"
   "refman.out"
+  "refman.toc"
+  "refman.log"
+  "refman.aux"
   "/Users/premchand/Documents/GitHub/SpatialAlgebra/docs/latex/refman.log"
+  "refman.idx"
+  "refman.pdf"

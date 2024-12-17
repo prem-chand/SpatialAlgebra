@@ -5,6 +5,7 @@
 #include <Eigen/Geometry> // Include for RotationMatrix
 
 using namespace SpatialAlgebra;
+using lt = LowerTriangular;
 
 int main()
 {
@@ -20,7 +21,7 @@ int main()
     transformed.print();
 
     // Rigid-body inertia
-    RigidBodyInertia inertia(10.0, Vector3d::Zero(), Vector6d::Zero());
+    RigidBodyInertia inertia(10.0, Vector3d::Zero(), lt(Vector6d::Zero(),3));
     inertia.print();
 
     return 0;

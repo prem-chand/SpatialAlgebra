@@ -11,25 +11,27 @@
 #include "SpatialVector.h"
 #include "ForceVector.h"
 #include "MotionVector.h"
+#include "LowerTriangular.h"
 #include <Eigen/Geometry> // Include for RotationMatrix
 
 using Vector3d = Eigen::Matrix<double, 3, 1>;
 using Vector6d = Eigen::Matrix<double, 6, 1>;
+using lt = LowerTriangular;
 
 namespace SpatialAlgebra
 {
     /**
      * @brief Class representing the inertial properties of a rigid body
-     * 
+     *
      * Stores and manages mass, center of mass, and rotational inertia matrix
      * for rigid body dynamics calculations.
      */
     class RigidBodyInertia
     {
     private:
-        double mass;              ///< Mass of the rigid body
-        Vector3d com;            ///< Center of mass position vector
-        Vector6d inertiaMatrixLT; ///< Lower triangular part of 3x3 rotational inertia matrix
+        double mass;        ///< Mass of the rigid body
+        Vector3d com;       ///< Center of mass position vector
+        lt inertiaMatrixLT; ///< Lower triangular part of 3x3 rotational inertia matrix
 
     public:
         /**
@@ -38,19 +40,19 @@ namespace SpatialAlgebra
          * @param com Center of mass position
          * @param inertiaMatrixLT Lower triangular part of inertia matrix
          */
-        inline RigidBodyInertia(double mass, const Vector3d &com, const Vector6d &inertiaMatrixLT)
+        inline RigidBodyInertia(double mass, const Vector3d &com, const lt &inertiaMatrixLT)
             : mass(mass), com(com), inertiaMatrixLT(inertiaMatrixLT) {}
 
-        /** @brief Default constructor creating zero inertia */
-        inline RigidBodyInertia()
-        {
-            RigidBodyInertia(0.0, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-        }
+        /**
+         * @brief Default constructor creating zero inertia
+         */
+        RigidBodyInertia()
+            : mass(0.0), com(Vector3d::Zero()), inertiaMatrixLT(lt(3)) {}
 
         // Getters
         inline double getMass() const { return mass; }
         inline const Vector3d &getCom() const { return com; }
-        inline const Vector6d &getInertiaMatrixLT() const { return inertiaMatrixLT; }
+        inline const lt &getInertiaMatrixLT() const { return inertiaMatrixLT; }
 
         /**
          * @brief Add two rigid body inertias
@@ -67,7 +69,7 @@ namespace SpatialAlgebra
         /**
          * @brief Scale rigid body inertia
          * @param scalar Scaling factor
-         * @return Scaled RigidBodyInertia 
+         * @return Scaled RigidBodyInertia
          */
         inline RigidBodyInertia operator*(double scalar) const // Changed to pass by value
         {
@@ -88,7 +90,7 @@ namespace SpatialAlgebra
             Vector3d v = mv.getLinear();
             Vector3d comCrossV = com.cross(v);
             Vector3d comCrossOmega = com.cross(omega);
-            Vector3d Iomega = inertiaMatrixLT.head<3>().cwiseProduct(omega) + inertiaMatrixLT.tail<3>().cwiseProduct(omega);
+            Vector3d Iomega = inertiaMatrixLT * omega;
             Vector3d force = mass * v - comCrossOmega;
             Vector3d torque = Iomega + comCrossV;
             return ForceVector(torque, force);
@@ -99,7 +101,7 @@ namespace SpatialAlgebra
         {
             std::cout << "Mass: " << mass << '\n'
                       << "Center of mass: " << com.transpose() << '\n'
-                      << "Inertia matrix (LT): " << inertiaMatrixLT.transpose() << std::endl;
+                      << "Inertia matrix (LT): " << inertiaMatrixLT << std::endl;
         }
     };
 
