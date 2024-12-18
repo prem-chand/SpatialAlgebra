@@ -54,13 +54,8 @@ Rotation Rotation::transpose() const
     return Rotation(Eigen::Matrix3d::transpose());
 }
 
-// operator*
+// operator* for Rotation-Rotation multiplication
 Rotation Rotation::operator*(const Rotation &other) const
 {
     return Rotation(static_cast<Eigen::Matrix3d>(*this) * static_cast<Eigen::Matrix3d>(other));
-}
-
-Eigen::Vector3d Rotation::operator*(const Eigen::Vector3d &vector) const
-{
-    return static_cast<Eigen::Matrix3d>(*this) * vector;
 }

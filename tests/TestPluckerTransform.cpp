@@ -57,7 +57,7 @@ int main()
     std::cout << "p3: ";
     p3.print();
 
-    int k = 5;
-    auto a = p1.get(k);
-    auto b = p1.get(k);
+    // int k = 5;
+    // auto a = p1.get(k);
+    // auto b = p1.get(k);
 }
