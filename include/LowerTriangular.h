@@ -279,6 +279,17 @@ public:
     }
 
     /**
+     * @brief Matrix-vector multiplication (L * v)
+     * @param v Vector to multiply with
+     * @return Result as VectorXd
+     * @throws std::invalid_argument if dimensions don't match
+     * @details Efficiently implements multiplication with a vector,
+     *          taking advantage of the lower triangular structure.
+     *          Only computes lower triangle products (O(n²/2) operations).
+     */
+    Eigen::VectorXd operator*(const Eigen::VectorXd &v) const;
+
+    /**
      * @brief Matrix addition
      * @param other Matrix to add
      * @return Sum of matrices
@@ -312,6 +323,25 @@ public:
         }
         return result;
     }
+
+    /**
+     * @brief Compute matrix inverse
+     * @return Inverse lower triangular matrix
+     * @throws std::runtime_error if matrix is singular (zero on diagonal)
+     * @details Computes inverse using forward substitution, preserving
+     *          lower triangular structure. Diagonal elements of inverse
+     *          are 1/L(i,i). Off-diagonal elements computed via:
+     *          L^-1(i,j) = -sum(L(i,k)*L^-1(k,j)) for k=j to i-1
+     *
+     * Example usage:
+     * @code{.cpp}
+     *     LowerTriangular L(3);
+     *     L(0,0) = 2.0; L(1,0) = 1.0; L(1,1) = 3.0;
+     *     LowerTriangular Linv = L.inverse();
+     *     // L * Linv should equal Identity
+     * @endcode
+     */
+    LowerTriangular inverse() const;
 
     /**
      * @brief Create identity matrix
