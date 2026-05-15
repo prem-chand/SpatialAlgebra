@@ -41,12 +41,20 @@ namespace SpatialAlgebra
     // Cross-product operations
     ForceVector ForceVector::crossMotion(const ForceVector &other) const
     {
-        return ForceVector(this->angular.cross(other.angular), this->linear.cross(other.linear));
+        // Motion cross product: [ω1×ω2; ω1×v2 + v1×ω2]
+        return ForceVector(
+            this->angular.cross(other.angular),
+            this->linear.cross(other.angular) + this->angular.cross(other.linear)
+        );
     }
 
     ForceVector ForceVector::crossForce(const ForceVector &other) const
     {
-        return ForceVector(this->angular.cross(other.angular), this->linear.cross(other.linear));
+        // [τ1×τ2 + f1×f2; τ1×f2] per Featherstone
+        return ForceVector(
+            this->angular.cross(other.angular) + this->linear.cross(other.linear),
+            this->angular.cross(other.linear)
+        );
     }
 
     // dot product
