@@ -35,7 +35,7 @@
 **Plans**: 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — GTest test scaffolding and comprehensive test suite
+- [x] 01-01-PLAN.md — GTest test scaffolding and comprehensive test suite
 - [ ] 01-02-PLAN.md — Fix MotionVector::crossMotion bug per Featherstone
 - [ ] 01-03-PLAN.md — Complete ForceVector and SpatialVector::crossForce
 - [ ] 01-04-PLAN.md — Property-based tests and textbook examples
@@ -147,7 +147,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Vectors | 0/4 | Ready to execute | - |
+| 1. Foundation Vectors | 1/4 | In Progress|  |
 | 2. Rotation & Math | 0/4 | Not started | - |
 | 3. Packed Matrix | 0/4 | Not started | - |
 | 4. Spatial Utilities | 0/4 | Not started | - |
