@@ -50,10 +50,11 @@ namespace SpatialAlgebra
 
     ForceVector ForceVector::crossForce(const ForceVector &other) const
     {
-        // [τ1×τ2 + f1×f2; τ1×f2] per Featherstone
+        // Force cross product: [τ1×τ2; τ1×f2 - τ2×f1]
+        // This ensures anti-commutativity: a×b = -(b×a)
         return ForceVector(
-            this->angular.cross(other.angular) + this->linear.cross(other.linear),
-            this->angular.cross(other.linear)
+            this->angular.cross(other.angular),
+            this->angular.cross(other.linear) - other.angular.cross(this->linear)
         );
     }
 
