@@ -42,7 +42,8 @@ namespace SpatialAlgebra
     // Cross-product operations
     MotionVector MotionVector::crossMotion(const MotionVector &other) const
     {
-        return MotionVector(angular.cross(other.angular), linear.cross(other.linear));
+        // Correct formula: [ω1×ω2; ω1×v2 + v1×ω2]
+        return MotionVector(angular.cross(other.angular), angular.cross(other.linear) + linear.cross(other.angular));
     }
 
     MotionVector MotionVector::crossForce(const MotionVector &other) const

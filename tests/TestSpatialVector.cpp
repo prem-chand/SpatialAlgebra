@@ -241,6 +241,33 @@ TEST(TestMotionVector, CrossMotionAntiCommutativity)
 }
 
 /**
+ * @brief Test MotionVector crossMotion with non-zero linear components (bug detection)
+ * Formula: [ω1×ω2; ω1×v2 + v1×ω2]
+ * This test exposes the bug where linear.cross(other.linear) is used incorrectly
+ */
+TEST(TestMotionVector, CrossMotionWithLinearComponents)
+{
+    // ω1 = (1,0,0), v1 = (0,1,0)
+    // ω2 = (0,1,0), v2 = (0,0,1)
+    MotionVector mv1(Vector3d(1.0, 0.0, 0.0), Vector3d(0.0, 1.0, 0.0));
+    MotionVector mv2(Vector3d(0.0, 1.0, 0.0), Vector3d(0.0, 0.0, 1.0));
+
+    // Expected result using correct formula:
+    // ω1×ω2 = (1,0,0)×(0,1,0) = (0,0,1)
+    // ω1×v2 = (1,0,0)×(0,0,1) = (0,-1,0)
+    // v1×ω2 = (0,1,0)×(0,1,0) = (0,0,0)
+    // Linear result = (0,-1,0) + (0,0,0) = (0,-1,0)
+    MotionVector result = mv1.crossMotion(mv2);
+
+    EXPECT_DOUBLE_EQ(result.getAngular()[0], 0.0);
+    EXPECT_DOUBLE_EQ(result.getAngular()[1], 0.0);
+    EXPECT_DOUBLE_EQ(result.getAngular()[2], 1.0);
+    EXPECT_DOUBLE_EQ(result.getLinear()[0], 0.0);
+    EXPECT_DOUBLE_EQ(result.getLinear()[1], -1.0);
+    EXPECT_DOUBLE_EQ(result.getLinear()[2], 0.0);
+}
+
+/**
  * @brief Test MotionVector dot product
  */
 TEST(TestMotionVector, DotProduct)
