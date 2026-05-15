@@ -96,7 +96,12 @@ Plans:
   4. User can transform articulated body inertia using `tformABI()`
   5. User can compute inverse Plücker transform
   6. User can compute inverse articulated body inertia transform using `invtformABI()`
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Verify and test transformMotion/transformForce (PLX-01, PLX-02)
+- [ ] 05-02-PLAN.md — Verify and test tformRBI/invtformRBI/inverse (PLX-03, PLX-05)
+- [ ] 05-03-PLAN.md — Implement invtformABI and test tformABI (PLX-04, PLX-06)
 
 ### Phase 6: Inertia Properties
 **Goal**: Users can define and manipulate rigid body and articulated body inertias
