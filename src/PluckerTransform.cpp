@@ -16,14 +16,11 @@ SpatialVector PluckerTransform::transformMotion(const SpatialVector &vec) const
 {
     // vec = [ω, v]
     // X = [R, 0; -R[t]x, R]
-
     // return X * vec = [Rω, R(v - [t]xω)]
-
-    // mv(E^(T)omega,E^(T)v+r xxE^(T)omega)
-    // $\operatorname{mv}\left(\boldsymbol{E}^{\mathrm{T}} \boldsymbol{\omega}, \boldsymbol{E}^{\mathrm{T}} \boldsymbol{v}+\boldsymbol{r} \times \boldsymbol{E}^{\mathrm{T}} \boldsymbol{\omega}\right)$
+    // Featherstone (2008) Eq 2.43: ω' = R*ω, v' = R*(v - r×ω)
 
     Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * vec.getAngular();
-    Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation) * (vec.getLinear() + skew(translation) * vec.getAngular());
+    Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation) * (vec.getLinear() - skew(translation) * vec.getAngular());
 
     return SpatialVector(transformedAngular, transformedLinear);
 }
@@ -32,9 +29,10 @@ SpatialVector PluckerTransform::transformForce(const SpatialVector &vec) const
 {
     // vec = [τ, f]
     // X = [R, 0; -R[t]x, R]
-    // return X^{-T} * vec = [R(τ - [t]xf), Rf]
+    // return X^{-T} * vec = [R(τ + [t]xf), Rf]
+    // Featherstone (2008) Eq 2.44: τ' = R*(τ + r×f), f' = R*f
 
-    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * (vec.getAngular() - skew(translation) * vec.getLinear());
+    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * (vec.getAngular() + skew(translation) * vec.getLinear());
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation) * vec.getLinear();
     return SpatialVector(transformedAngular, transformedLinear);
 }
@@ -42,9 +40,9 @@ SpatialVector PluckerTransform::transformForce(const SpatialVector &vec) const
 SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformMotion(const SpatialVector &vec) const
 {
     // vec = [ω, v]
-    // X = [R, 0; -R[t]x, R]
-
-    // return X^{-1} * vec = [R^Tω, R^Tv + [t]xR^Tω)]
+    // X^{-1} = [R^T, 0; skew(t)*R^T, R^T]
+    // return X^{-1} * vec = [R^T*ω, R^T*v + t×(R^T*ω)]
+    // Featherstone (2008) Eq 2.46
     Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getAngular();
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getLinear() + skew(translation) * transformedAngular;
     return SpatialVector(transformedAngular, transformedLinear);
@@ -53,11 +51,12 @@ SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformMotion(const Spa
 SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformForce(const SpatialVector &vec) const
 {
     // vec = [τ, f]
-    // X = [R, 0; -R[t]x, R]
-
-    // return X^{T} * vec = [R^Tτ + [t]xR^Tf, R^Tf ]
+    // X^{-T} = [R^T, -skew(t)*R^T; 0, R^T]
+    // return X^{T} * vec = [R^T*τ - skew(t)*R^T*f, R^T*f]
+    //                    = [R^T*(τ - t×f), R^T*f]
+    // Featherstone (2008) Eq 2.46
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getLinear();
-    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getAngular() + skew(translation) * transformedLinear;
+    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getAngular() - skew(translation) * transformedLinear;
 
     return SpatialVector(transformedAngular, transformedLinear);
 }
