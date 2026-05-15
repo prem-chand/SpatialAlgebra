@@ -78,7 +78,12 @@ Plans:
   2. User can compute dot products for spatial vectors
   3. User can compute cross products for spatial vectors
   4. User can use SpatialOperations utility class for common operations
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Complete SpatialUtils.h free functions (skew, dot, cross)
+- [ ] 04-02-PLAN.md — Implement SpatialOperations static class methods
+- [ ] 04-03-PLAN.md — Create comprehensive GTest test suite
 
 ### Phase 5: Plücker Transforms
 **Goal**: Users can transform spatial vectors and inertias between coordinate frames
