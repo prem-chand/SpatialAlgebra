@@ -10,7 +10,7 @@
 
 - [ ] **Phase 1: Foundation Vectors** - SpatialVector base class and motion/force vectors
 - [x] **Phase 2: Rotation & Math** - Rotation matrix operations and conversions (completed 2026-05-15)
-- [ ] **Phase 3: Packed Matrix** - LowerTriangular matrix with packed storage
+- [x] **Phase 3: Packed Matrix** - LowerTriangular matrix with packed storage (completed 2026-05-15)
 - [ ] **Phase 4: Spatial Utilities** - Cross product, dot product, skew operators
 - [ ] **Phase 5: Plücker Transforms** - 6D coordinate transformations
 - [ ] **Phase 6: Inertia Properties** - RigidBodyInertia and ArticulatedBodyInertia
@@ -63,7 +63,11 @@ Plans:
   2. User can multiply LowerTriangular with dense matrices
   3. User can multiply LowerTriangular with vectors
   4. User can compute transpose and inverse of LowerTriangular matrix
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [x] 03-01-PLAN.md — Implement missing LowerTriangular methods (operator*, inverse)
+- [x] 03-02-PLAN.md — Create GTest test suite for LowerTriangular class
 
 ### Phase 4: Spatial Utilities
 **Goal**: Users can compute cross products and dot products for spatial vectors
