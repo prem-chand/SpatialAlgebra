@@ -10,7 +10,7 @@ set(CMAKE_CXX_COMPILER "g++")
 include_directories(include)
 
 # Find Eigen3
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 REQUIRED NO_MODULE)
 
 # Find GTest
 find_package(GTest REQUIRED)
