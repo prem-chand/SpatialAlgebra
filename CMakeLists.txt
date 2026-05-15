@@ -30,6 +30,7 @@ enable_testing()
 # Add test executables
 add_executable(TestSpatialVector tests/TestSpatialVector.cpp)
 add_executable(TestPluckerTransform tests/TestPluckerTransform.cpp)
+add_executable(TestRotation tests/TestRotation.cpp)
 
 # Link test executables with Google Test and the main library
 target_link_libraries(TestSpatialVector 
@@ -44,6 +45,13 @@ target_link_libraries(TestPluckerTransform
     GTest::Main
 )
 
+target_link_libraries(TestRotation
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
 # Add tests to CTest
 add_test(NAME TestSpatialVector COMMAND TestSpatialVector)
 add_test(NAME TestPluckerTransform COMMAND TestPluckerTransform)
+add_test(NAME TestRotation COMMAND TestRotation)
