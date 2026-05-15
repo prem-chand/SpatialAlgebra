@@ -95,28 +95,57 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing spatial motion vectors.  
+<p>Class representing spatial motion vectors (twists) in rigid body dynamics.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
-<code>#include &quot;SpatialVector.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="_spatial_vector_8h_source.html">SpatialVector.h</a>&quot;</code><br />
 </div>
 <p><a href="_motion_vector_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_motion_vector.html">SpatialAlgebra::MotionVector</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing spatial motion vectors.  <a href="class_spatial_algebra_1_1_motion_vector.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing spatial motion vectors (twists)  <a href="class_spatial_algebra_1_1_motion_vector.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a762041a6016eb0c73c61fa5c4e612635" id="r_a762041a6016eb0c73c61fa5c4e612635"><td class="memItemLeft" align="right" valign="top"><a id="a762041a6016eb0c73c61fa5c4e612635" name="a762041a6016eb0c73c61fa5c4e612635"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>SpatialAlgebra::mv</b> = <a class="el" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a></td></tr>
+<tr class="memdesc:a762041a6016eb0c73c61fa5c4e612635"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for more concise notation. <br /></td></tr>
 <tr class="separator:a762041a6016eb0c73c61fa5c4e612635"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing spatial motion vectors. </p>
+<div class="textblock"><p>Class representing spatial motion vectors (twists) in rigid body dynamics. </p>
+<p>This file implements motion vectors (also known as twists) in spatial algebra, which unify the representation of angular and linear velocities in 3D space. Motion vectors are essential for describing the instantaneous motion state of rigid bodies in a compact and geometrically meaningful way.</p>
+<p>Mathematical Representation: A motion vector m = [ω; v] consists of:</p><ul>
+<li>ω: Angular velocity vector (rad/s)</li>
+<li>v: Linear velocity vector (m/s)</li>
+</ul>
+<p>Physical Interpretation:</p><ul>
+<li>ω represents the instantaneous angular velocity around an axis</li>
+<li>v represents the linear velocity of the body's origin</li>
+<li>Together they form a "twist" that completely describes rigid body motion</li>
+</ul>
+<p>Example usage: </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span>SpatialAlgebra;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create a pure rotation around Z-axis (1 rad/s)</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> angular_motion(Vector3d(0,0,1), Vector3d(0,0,0));</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create a pure translation along X-axis (1 m/s)</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> linear_motion(Vector3d(0,0,0), Vector3d(1,0,0));</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Combine motions</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> combined = angular_motion + linear_motion;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Compute motion cross product (for velocity propagation)</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> crossed = angular_motion.<a class="code hl_function" href="class_spatial_algebra_1_1_motion_vector.html#a67184f0aed8fa5720f64fb73300b6ae5">crossMotion</a>(linear_motion);</div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_motion_vector_html"><div class="ttname"><a href="class_spatial_algebra_1_1_motion_vector.html">SpatialAlgebra::MotionVector</a></div><div class="ttdoc">Class representing spatial motion vectors (twists)</div><div class="ttdef"><b>Definition</b> MotionVector.h:71</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_motion_vector_html_a67184f0aed8fa5720f64fb73300b6ae5"><div class="ttname"><a href="class_spatial_algebra_1_1_motion_vector.html#a67184f0aed8fa5720f64fb73300b6ae5">SpatialAlgebra::MotionVector::crossMotion</a></div><div class="ttdeci">MotionVector crossMotion(const MotionVector &amp;other) const</div><div class="ttdoc">Compute the motion cross product (crm operation)</div><div class="ttdef"><b>Definition</b> MotionVector.cpp:43</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>ForceVector for the dual space representation of forces and torques </dd>
+<dd>
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2. </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

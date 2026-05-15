@@ -95,7 +95,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing spatial force vectors.  
+<p>Class representing spatial force vectors (wrenches)  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_force_vector_8h_source.html">ForceVector.h</a>&gt;</code></p>
@@ -105,82 +105,84 @@ Inheritance diagram for SpatialAlgebra::ForceVector:</div>
  <div class="center">
   <img src="class_spatial_algebra_1_1_force_vector.png" usemap="#SpatialAlgebra::ForceVector_map" alt=""/>
   <map id="SpatialAlgebra::ForceVector_map" name="SpatialAlgebra::ForceVector_map">
-<area href="class_spatial_algebra_1_1_spatial_vector.html" alt="SpatialAlgebra::SpatialVector" shape="rect" coords="0,0,177,24"/>
+<area href="class_spatial_algebra_1_1_spatial_vector.html" title="Base class for spatial vectors in 6D space." alt="SpatialAlgebra::SpatialVector" shape="rect" coords="0,0,177,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8cc646fd643649a7917bb9dacdfeda78" id="r_a8cc646fd643649a7917bb9dacdfeda78"><td class="memItemLeft" align="right" valign="top"><a id="a8cc646fd643649a7917bb9dacdfeda78" name="a8cc646fd643649a7917bb9dacdfeda78"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ForceVector</b> ()</td></tr>
-<tr class="memdesc:a8cc646fd643649a7917bb9dacdfeda78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero force. <br /></td></tr>
+<tr class="memitem:a8cc646fd643649a7917bb9dacdfeda78" id="r_a8cc646fd643649a7917bb9dacdfeda78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cc646fd643649a7917bb9dacdfeda78">ForceVector</a> ()</td></tr>
+<tr class="memdesc:a8cc646fd643649a7917bb9dacdfeda78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero force.  <br /></td></tr>
 <tr class="separator:a8cc646fd643649a7917bb9dacdfeda78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf5a1be50f60aaeae701357e0083abe4" id="r_abf5a1be50f60aaeae701357e0083abe4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf5a1be50f60aaeae701357e0083abe4">ForceVector</a> (const Vector3d &amp;angular, const Vector3d &amp;linear)</td></tr>
+<tr class="memitem:abf5a1be50f60aaeae701357e0083abe4" id="r_abf5a1be50f60aaeae701357e0083abe4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf5a1be50f60aaeae701357e0083abe4">ForceVector</a> (const Vector3d &amp;<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#af6728c23b99251bccdeebf5a2d4d2cd6">angular</a>, const Vector3d &amp;<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a63f4336eae1a81a82a3fc1f3304c1903">linear</a>)</td></tr>
 <tr class="memdesc:abf5a1be50f60aaeae701357e0083abe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from angular and linear components.  <br /></td></tr>
 <tr class="separator:abf5a1be50f60aaeae701357e0083abe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff86e03cbd120e9d989987a94389cc2a" id="r_aff86e03cbd120e9d989987a94389cc2a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff86e03cbd120e9d989987a94389cc2a">ForceVector</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other)</td></tr>
 <tr class="memdesc:aff86e03cbd120e9d989987a94389cc2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from spatial vector.  <br /></td></tr>
 <tr class="separator:aff86e03cbd120e9d989987a94389cc2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ccff93f57efe2cc1991cc553c0b7f04" id="r_a0ccff93f57efe2cc1991cc553c0b7f04"><td class="memItemLeft" align="right" valign="top"><a id="a0ccff93f57efe2cc1991cc553c0b7f04" name="a0ccff93f57efe2cc1991cc553c0b7f04"></a>
-Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getAngular</b> () const</td></tr>
+<tr class="memitem:a0ccff93f57efe2cc1991cc553c0b7f04" id="r_a0ccff93f57efe2cc1991cc553c0b7f04"><td class="memItemLeft" align="right" valign="top">Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ccff93f57efe2cc1991cc553c0b7f04">getAngular</a> () const</td></tr>
+<tr class="memdesc:a0ccff93f57efe2cc1991cc553c0b7f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the torque/moment component.  <br /></td></tr>
 <tr class="separator:a0ccff93f57efe2cc1991cc553c0b7f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc344b1a217e4c275b65987e34d88d87" id="r_acc344b1a217e4c275b65987e34d88d87"><td class="memItemLeft" align="right" valign="top"><a id="acc344b1a217e4c275b65987e34d88d87" name="acc344b1a217e4c275b65987e34d88d87"></a>
-Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getLinear</b> () const</td></tr>
+<tr class="memitem:acc344b1a217e4c275b65987e34d88d87" id="r_acc344b1a217e4c275b65987e34d88d87"><td class="memItemLeft" align="right" valign="top">Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc344b1a217e4c275b65987e34d88d87">getLinear</a> () const</td></tr>
+<tr class="memdesc:acc344b1a217e4c275b65987e34d88d87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the force component.  <br /></td></tr>
 <tr class="separator:acc344b1a217e4c275b65987e34d88d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d638019f52a3d910ee41cb3f68189de" id="r_a8d638019f52a3d910ee41cb3f68189de"><td class="memItemLeft" align="right" valign="top"><a id="a8d638019f52a3d910ee41cb3f68189de" name="a8d638019f52a3d910ee41cb3f68189de"></a>
-<a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator+</b> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a8d638019f52a3d910ee41cb3f68189de" id="r_a8d638019f52a3d910ee41cb3f68189de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d638019f52a3d910ee41cb3f68189de">operator+</a> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a8d638019f52a3d910ee41cb3f68189de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two force vectors.  <br /></td></tr>
 <tr class="separator:a8d638019f52a3d910ee41cb3f68189de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cfd2727252d65209a1b72fca1afc34a" id="r_a1cfd2727252d65209a1b72fca1afc34a"><td class="memItemLeft" align="right" valign="top"><a id="a1cfd2727252d65209a1b72fca1afc34a" name="a1cfd2727252d65209a1b72fca1afc34a"></a>
-<a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator-</b> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a1cfd2727252d65209a1b72fca1afc34a" id="r_a1cfd2727252d65209a1b72fca1afc34a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1cfd2727252d65209a1b72fca1afc34a">operator-</a> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a1cfd2727252d65209a1b72fca1afc34a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two force vectors.  <br /></td></tr>
 <tr class="separator:a1cfd2727252d65209a1b72fca1afc34a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31fe5234840e91463516d8f834e5acf7" id="r_a31fe5234840e91463516d8f834e5acf7"><td class="memItemLeft" align="right" valign="top"><a id="a31fe5234840e91463516d8f834e5acf7" name="a31fe5234840e91463516d8f834e5acf7"></a>
-<a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (double scalar) const</td></tr>
+<tr class="memitem:a31fe5234840e91463516d8f834e5acf7" id="r_a31fe5234840e91463516d8f834e5acf7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31fe5234840e91463516d8f834e5acf7">operator*</a> (double scalar) const</td></tr>
+<tr class="memdesc:a31fe5234840e91463516d8f834e5acf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale a force vector.  <br /></td></tr>
 <tr class="separator:a31fe5234840e91463516d8f834e5acf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14254e04e0a05ab4a64f55af702d6cfe" id="r_a14254e04e0a05ab4a64f55af702d6cfe"><td class="memItemLeft" align="right" valign="top"><a id="a14254e04e0a05ab4a64f55af702d6cfe" name="a14254e04e0a05ab4a64f55af702d6cfe"></a>
-<a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>crossMotion</b> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a14254e04e0a05ab4a64f55af702d6cfe" id="r_a14254e04e0a05ab4a64f55af702d6cfe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14254e04e0a05ab4a64f55af702d6cfe">crossMotion</a> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a14254e04e0a05ab4a64f55af702d6cfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the motion cross product (crm operation)  <br /></td></tr>
 <tr class="separator:a14254e04e0a05ab4a64f55af702d6cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395cbb3e5d957e4cae93293eb89764ac" id="r_a395cbb3e5d957e4cae93293eb89764ac"><td class="memItemLeft" align="right" valign="top"><a id="a395cbb3e5d957e4cae93293eb89764ac" name="a395cbb3e5d957e4cae93293eb89764ac"></a>
-<a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>crossForce</b> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a395cbb3e5d957e4cae93293eb89764ac" id="r_a395cbb3e5d957e4cae93293eb89764ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a395cbb3e5d957e4cae93293eb89764ac">crossForce</a> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a395cbb3e5d957e4cae93293eb89764ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the force cross product (crf operation)  <br /></td></tr>
 <tr class="separator:a395cbb3e5d957e4cae93293eb89764ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee0c2b5ba510705be551c5322546a543" id="r_aee0c2b5ba510705be551c5322546a543"><td class="memItemLeft" align="right" valign="top"><a id="aee0c2b5ba510705be551c5322546a543" name="aee0c2b5ba510705be551c5322546a543"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>dot</b> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memitem:aee0c2b5ba510705be551c5322546a543" id="r_aee0c2b5ba510705be551c5322546a543"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee0c2b5ba510705be551c5322546a543">dot</a> (const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:aee0c2b5ba510705be551c5322546a543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute dot product with another force vector.  <br /></td></tr>
 <tr class="separator:aee0c2b5ba510705be551c5322546a543"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae36a0ff5b5989cbdf0cae66ea7553f9b" id="r_ae36a0ff5b5989cbdf0cae66ea7553f9b"><td class="memItemLeft" align="right" valign="top"><a id="ae36a0ff5b5989cbdf0cae66ea7553f9b" name="ae36a0ff5b5989cbdf0cae66ea7553f9b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
+<tr class="memitem:ae36a0ff5b5989cbdf0cae66ea7553f9b" id="r_ae36a0ff5b5989cbdf0cae66ea7553f9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae36a0ff5b5989cbdf0cae66ea7553f9b">print</a> () const</td></tr>
+<tr class="memdesc:ae36a0ff5b5989cbdf0cae66ea7553f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the force vector components.  <br /></td></tr>
 <tr class="separator:ae36a0ff5b5989cbdf0cae66ea7553f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_spatial_algebra_1_1_spatial_vector"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_class_spatial_algebra_1_1_spatial_vector')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialAlgebra::SpatialVector</a></td></tr>
-<tr class="memitem:a42321e5175845a9bd3587f14ad727b6c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a42321e5175845a9bd3587f14ad727b6c"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>SpatialVector</b> (const Vector3d &amp;angular, const Vector3d &amp;linear)</td></tr>
+<tr class="memitem:acdf710f9784553310d77985329ef8fbb inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_acdf710f9784553310d77985329ef8fbb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#acdf710f9784553310d77985329ef8fbb">SpatialVector</a> ()</td></tr>
+<tr class="memdesc:acdf710f9784553310d77985329ef8fbb inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating a zero spatial vector.  <br /></td></tr>
+<tr class="separator:acdf710f9784553310d77985329ef8fbb inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42321e5175845a9bd3587f14ad727b6c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a42321e5175845a9bd3587f14ad727b6c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a42321e5175845a9bd3587f14ad727b6c">SpatialVector</a> (const Vector3d &amp;<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#af6728c23b99251bccdeebf5a2d4d2cd6">angular</a>, const Vector3d &amp;<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a63f4336eae1a81a82a3fc1f3304c1903">linear</a>)</td></tr>
+<tr class="memdesc:a42321e5175845a9bd3587f14ad727b6c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a spatial vector from angular and linear components.  <br /></td></tr>
 <tr class="separator:a42321e5175845a9bd3587f14ad727b6c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397682d85e56d4eecb1d47805261f37b inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a397682d85e56d4eecb1d47805261f37b"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>SpatialVector</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other)</td></tr>
+<tr class="memitem:a397682d85e56d4eecb1d47805261f37b inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a397682d85e56d4eecb1d47805261f37b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a397682d85e56d4eecb1d47805261f37b">SpatialVector</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other)</td></tr>
+<tr class="memdesc:a397682d85e56d4eecb1d47805261f37b inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:a397682d85e56d4eecb1d47805261f37b inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06ce4701d50d41be4abb0942792e874a inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a06ce4701d50d41be4abb0942792e874a"><td class="memItemLeft" align="right" valign="top">
-Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getAngular</b> () const</td></tr>
+<tr class="memitem:a06ce4701d50d41be4abb0942792e874a inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a06ce4701d50d41be4abb0942792e874a"><td class="memItemLeft" align="right" valign="top">Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a06ce4701d50d41be4abb0942792e874a">getAngular</a> () const</td></tr>
+<tr class="memdesc:a06ce4701d50d41be4abb0942792e874a inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the angular component.  <br /></td></tr>
 <tr class="separator:a06ce4701d50d41be4abb0942792e874a inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8393104842116680f5d7130335915a3c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a8393104842116680f5d7130335915a3c"><td class="memItemLeft" align="right" valign="top">
-Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getLinear</b> () const</td></tr>
+<tr class="memitem:a8393104842116680f5d7130335915a3c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a8393104842116680f5d7130335915a3c"><td class="memItemLeft" align="right" valign="top">Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a8393104842116680f5d7130335915a3c">getLinear</a> () const</td></tr>
+<tr class="memdesc:a8393104842116680f5d7130335915a3c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the linear component.  <br /></td></tr>
 <tr class="separator:a8393104842116680f5d7130335915a3c inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f13303a04f27817c68b59e32f6a358f inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3f13303a04f27817c68b59e32f6a358f"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator+</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a3f13303a04f27817c68b59e32f6a358f inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3f13303a04f27817c68b59e32f6a358f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a3f13303a04f27817c68b59e32f6a358f">operator+</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a3f13303a04f27817c68b59e32f6a358f inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two spatial vectors.  <br /></td></tr>
 <tr class="separator:a3f13303a04f27817c68b59e32f6a358f inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a2c8de1e0da0838dc3f1fb8fe66e638 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3a2c8de1e0da0838dc3f1fb8fe66e638"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator-</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a3a2c8de1e0da0838dc3f1fb8fe66e638 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3a2c8de1e0da0838dc3f1fb8fe66e638"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a3a2c8de1e0da0838dc3f1fb8fe66e638">operator-</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a3a2c8de1e0da0838dc3f1fb8fe66e638 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two spatial vectors.  <br /></td></tr>
 <tr class="separator:a3a2c8de1e0da0838dc3f1fb8fe66e638 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3be1a99b0272bbcce2d63ce1bd4210a7 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3be1a99b0272bbcce2d63ce1bd4210a7"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (double scalar) const</td></tr>
+<tr class="memitem:a3be1a99b0272bbcce2d63ce1bd4210a7 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a3be1a99b0272bbcce2d63ce1bd4210a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a3be1a99b0272bbcce2d63ce1bd4210a7">operator*</a> (double scalar) const</td></tr>
+<tr class="memdesc:a3be1a99b0272bbcce2d63ce1bd4210a7 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar multiplication.  <br /></td></tr>
 <tr class="separator:a3be1a99b0272bbcce2d63ce1bd4210a7 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa3d28346c24f255015806dcc66b7547 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_aaa3d28346c24f255015806dcc66b7547"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>crossMotion</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memitem:aaa3d28346c24f255015806dcc66b7547 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_aaa3d28346c24f255015806dcc66b7547"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#aaa3d28346c24f255015806dcc66b7547">crossMotion</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:aaa3d28346c24f255015806dcc66b7547 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the motion cross product.  <br /></td></tr>
 <tr class="separator:aaa3d28346c24f255015806dcc66b7547 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22b91a9c60a49084e690356d695ee067 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a22b91a9c60a49084e690356d695ee067"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>crossForce</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a22b91a9c60a49084e690356d695ee067 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a22b91a9c60a49084e690356d695ee067"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a22b91a9c60a49084e690356d695ee067">crossForce</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a22b91a9c60a49084e690356d695ee067 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the force cross product.  <br /></td></tr>
 <tr class="separator:a22b91a9c60a49084e690356d695ee067 inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b1818948f738291575848762aca1fff inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a1b1818948f738291575848762aca1fff"><td class="memItemLeft" align="right" valign="top">
-double&#160;</td><td class="memItemRight" valign="bottom"><b>dot</b> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memitem:a1b1818948f738291575848762aca1fff inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a1b1818948f738291575848762aca1fff"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a1b1818948f738291575848762aca1fff">dot</a> (const <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialVector</a> &amp;other) const</td></tr>
+<tr class="memdesc:a1b1818948f738291575848762aca1fff inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the dot product with another spatial vector.  <br /></td></tr>
 <tr class="separator:a1b1818948f738291575848762aca1fff inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87053a2701cff5e0dd8ad279b9dda8fd inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a87053a2701cff5e0dd8ad279b9dda8fd"><td class="memItemLeft" align="right" valign="top">
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
+<tr class="memitem:a87053a2701cff5e0dd8ad279b9dda8fd inherit pub_methods_class_spatial_algebra_1_1_spatial_vector" id="r_a87053a2701cff5e0dd8ad279b9dda8fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_spatial_vector.html#a87053a2701cff5e0dd8ad279b9dda8fd">print</a> () const</td></tr>
+<tr class="memdesc:a87053a2701cff5e0dd8ad279b9dda8fd inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the spatial vector components.  <br /></td></tr>
 <tr class="separator:a87053a2701cff5e0dd8ad279b9dda8fd inherit pub_methods_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -188,17 +190,51 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_spatial_algebra_1_1_spatial_vector"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_class_spatial_algebra_1_1_spatial_vector')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html">SpatialAlgebra::SpatialVector</a></td></tr>
 <tr class="memitem:af6728c23b99251bccdeebf5a2d4d2cd6 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector" id="r_af6728c23b99251bccdeebf5a2d4d2cd6"><td class="memItemLeft" align="right" valign="top">
 Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>angular</b></td></tr>
+<tr class="memdesc:af6728c23b99251bccdeebf5a2d4d2cd6 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angular component (ω for motion vectors, τ for force vectors) <br /></td></tr>
 <tr class="separator:af6728c23b99251bccdeebf5a2d4d2cd6 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63f4336eae1a81a82a3fc1f3304c1903 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector" id="r_a63f4336eae1a81a82a3fc1f3304c1903"><td class="memItemLeft" align="right" valign="top">
 Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>linear</b></td></tr>
+<tr class="memdesc:a63f4336eae1a81a82a3fc1f3304c1903 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linear component (v for motion vectors, f for force vectors) <br /></td></tr>
 <tr class="separator:a63f4336eae1a81a82a3fc1f3304c1903 inherit pro_attribs_class_spatial_algebra_1_1_spatial_vector"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing spatial force vectors. </p>
-<p>Specialized spatial vector for representing force quantities like torques and linear forces. </p>
+<div class="textblock"><p>Class representing spatial force vectors (wrenches) </p>
+<p>The <a class="el" href="class_spatial_algebra_1_1_force_vector.html" title="Class representing spatial force vectors (wrenches)">ForceVector</a> class specializes <a class="el" href="class_spatial_algebra_1_1_spatial_vector.html" title="Base class for spatial vectors in 6D space.">SpatialVector</a> for representing force quantities in spatial algebra. It provides type-safe operations specific to force vectors and ensures correct geometric interpretation.</p>
+<p>Key Concepts:</p><ul>
+<li>Force vectors form a vector space</li>
+<li>They transform contravariantly under coordinate changes</li>
+<li>The cross product represents force transformation in rigid bodies</li>
+<li>Dot product with motion vectors yields power</li>
+</ul>
+<p>Common Applications:</p><ul>
+<li>Representing joint forces in articulated systems</li>
+<li>Describing external loads on rigid bodies</li>
+<li>Force propagation through kinematic chains</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Force vectors and motion vectors are dual to each other, meaning they transform differently under coordinate changes and their dot product yields physically meaningful power. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a8cc646fd643649a7917bb9dacdfeda78" name="a8cc646fd643649a7917bb9dacdfeda78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cc646fd643649a7917bb9dacdfeda78">&#9670;&#160;</a></span>ForceVector() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpatialAlgebra::ForceVector::ForceVector </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor creating zero force. </p>
+<p>Initializes a force vector with zero torque and linear force </p>
+
+</div>
+</div>
 <a id="abf5a1be50f60aaeae701357e0083abe4" name="abf5a1be50f60aaeae701357e0083abe4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf5a1be50f60aaeae701357e0083abe4">&#9670;&#160;</a></span>ForceVector() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abf5a1be50f60aaeae701357e0083abe4">&#9670;&#160;</a></span>ForceVector() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -219,16 +255,17 @@ Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>linear</b></td></
 <p>Construct from angular and linear components. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">angular</td><td>Torque component </td></tr>
-    <tr><td class="paramname">linear</td><td>Force component </td></tr>
+    <tr><td class="paramname">angular</td><td>Torque/moment component (N⋅m) </td></tr>
+    <tr><td class="paramname">linear</td><td>Force component (N)</td></tr>
   </table>
   </dd>
 </dl>
+<p>Creates a force vector representing a combined torque and force action. The angular component represents torque around an axis, while the linear component represents force along an axis. </p>
 
 </div>
 </div>
 <a id="aff86e03cbd120e9d989987a94389cc2a" name="aff86e03cbd120e9d989987a94389cc2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff86e03cbd120e9d989987a94389cc2a">&#9670;&#160;</a></span>ForceVector() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aff86e03cbd120e9d989987a94389cc2a">&#9670;&#160;</a></span>ForceVector() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,10 +282,234 @@ Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>linear</b></td></
 <p>Construct from spatial vector. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td>Spatial vector to convert </td></tr>
+    <tr><td class="paramname">other</td><td>Spatial vector to convert</td></tr>
   </table>
   </dd>
 </dl>
+<p>Converts a generic spatial vector to a force vector. This is useful when working with algorithms that operate on generic spatial vectors. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a395cbb3e5d957e4cae93293eb89764ac" name="a395cbb3e5d957e4cae93293eb89764ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a395cbb3e5d957e4cae93293eb89764ac">&#9670;&#160;</a></span>crossForce()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> SpatialAlgebra::ForceVector::crossForce </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the force cross product (crf operation) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Force vector to cross with </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Resulting force vector</dd></dl>
+<p>This operation represents how one force affects another force through the rigid body kinematics. The result follows the formula: [τ1×τ2 + f1×f2; τ1×f2] </p>
+
+</div>
+</div>
+<a id="a14254e04e0a05ab4a64f55af702d6cfe" name="a14254e04e0a05ab4a64f55af702d6cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14254e04e0a05ab4a64f55af702d6cfe">&#9670;&#160;</a></span>crossMotion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> SpatialAlgebra::ForceVector::crossMotion </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the motion cross product (crm operation) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Force vector to cross with </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Resulting force vector</dd></dl>
+<p>This operation is used in the transformation of forces when changing reference points or coordinate frames. </p>
+
+</div>
+</div>
+<a id="aee0c2b5ba510705be551c5322546a543" name="aee0c2b5ba510705be551c5322546a543"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee0c2b5ba510705be551c5322546a543">&#9670;&#160;</a></span>dot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double SpatialAlgebra::ForceVector::dot </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute dot product with another force vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Force vector to dot with </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Scalar result </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The dot product between two force vectors does not have a direct physical interpretation. Use dot product with motion vectors for computing power. </dd></dl>
+
+</div>
+</div>
+<a id="a0ccff93f57efe2cc1991cc553c0b7f04" name="a0ccff93f57efe2cc1991cc553c0b7f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ccff93f57efe2cc1991cc553c0b7f04">&#9670;&#160;</a></span>getAngular()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Vector3d SpatialAlgebra::ForceVector::getAngular </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the torque/moment component. </p>
+<dl class="section return"><dt>Returns</dt><dd>3D torque vector (N⋅m) </dd></dl>
+
+</div>
+</div>
+<a id="acc344b1a217e4c275b65987e34d88d87" name="acc344b1a217e4c275b65987e34d88d87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc344b1a217e4c275b65987e34d88d87">&#9670;&#160;</a></span>getLinear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Vector3d SpatialAlgebra::ForceVector::getLinear </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the force component. </p>
+<dl class="section return"><dt>Returns</dt><dd>3D force vector (N) </dd></dl>
+
+</div>
+</div>
+<a id="a31fe5234840e91463516d8f834e5acf7" name="a31fe5234840e91463516d8f834e5acf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31fe5234840e91463516d8f834e5acf7">&#9670;&#160;</a></span>operator*()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> SpatialAlgebra::ForceVector::operator* </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scale a force vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scalar</td><td>Scaling factor </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Scaled force vector</dd></dl>
+<p>Useful for scaling forces or representing fractional loads </p>
+
+</div>
+</div>
+<a id="a8d638019f52a3d910ee41cb3f68189de" name="a8d638019f52a3d910ee41cb3f68189de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d638019f52a3d910ee41cb3f68189de">&#9670;&#160;</a></span>operator+()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> SpatialAlgebra::ForceVector::operator+ </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add two force vectors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Force vector to add </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Combined force vector</dd></dl>
+<p>Represents the superposition of two force actions. The result describes the combined effect of both forces applied simultaneously. </p>
+
+</div>
+</div>
+<a id="a1cfd2727252d65209a1b72fca1afc34a" name="a1cfd2727252d65209a1b72fca1afc34a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cfd2727252d65209a1b72fca1afc34a">&#9670;&#160;</a></span>operator-()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> SpatialAlgebra::ForceVector::operator- </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subtract two force vectors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Force vector to subtract </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Difference force vector</dd></dl>
+<p>Represents the relative force between two force states </p>
+
+</div>
+</div>
+<a id="ae36a0ff5b5989cbdf0cae66ea7553f9b" name="ae36a0ff5b5989cbdf0cae66ea7553f9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae36a0ff5b5989cbdf0cae66ea7553f9b">&#9670;&#160;</a></span>print()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SpatialAlgebra::ForceVector::print </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Print the force vector components. </p>
+<p>Outputs the torque (τ) and force (f) components in a readable format </p>
 
 </div>
 </div>

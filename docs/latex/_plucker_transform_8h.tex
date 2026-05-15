@@ -2,7 +2,7 @@
 \hypertarget{_plucker_transform_8h}{}\label{_plucker_transform_8h}\index{include/PluckerTransform.h@{include/PluckerTransform.h}}
 
 
-Class representing coordinate transformations in Plucker coordinates.  
+Class representing coordinate transformations in Plücker coordinates.  
 
 
 {\ttfamily \#include "{}Spatial\+Vector.\+h"{}}\newline
@@ -25,9 +25,52 @@ using {\bfseries Vector3d} = Eigen\+::\+Matrix$<$double, 3, 1$>$
 \item 
 \Hypertarget{_plucker_transform_8h_a6f2c32c297aff696218f5839c7476546}\label{_plucker_transform_8h_a6f2c32c297aff696218f5839c7476546} 
 using {\bfseries Spatial\+Algebra\+::plux} = \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Type alias for more concise notation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing coordinate transformations in Plucker coordinates. 
+Class representing coordinate transformations in Plücker coordinates. 
 
+This file implements rigid body coordinate transformations using Plücker coordinates, which are essential for spatial algebra operations in robotics and multibody dynamics. These transforms combine rotation and translation in a way that preserves the dual relationship between motion and force vectors.
+
+Mathematical Representation\+: A Plücker transform X = \mbox{[}E 0; -\/E\texorpdfstring{$\ast$}{*}r̂ E\mbox{]} where\+:
+\begin{DoxyItemize}
+\item E\+: 3x3 rotation matrix
+\item r̂\+: 3x3 skew-\/symmetric matrix from translation vector r
+\item \mbox{[}A; B\mbox{]} denotes a 6x6 block matrix
+\end{DoxyItemize}
+
+Key Properties\+:
+\begin{DoxyItemize}
+\item Preserves the duality between motion and force vectors
+\item Forms a Lie group (SE(3)) with composition as the group operation
+\item Transforms spatial quantities consistently with rigid body motion
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ transform:\ 90°\ rotation\ around\ Z\ +\ translation\ along\ X}}
+\DoxyCodeLine{\mbox{\hyperlink{class_rotation}{Rotation}}\ rot\ =\ \mbox{\hyperlink{class_rotation}{Rotation}}(Eigen::AngleAxisd(M\_PI/2,\ Vector3d::UnitZ()));}
+\DoxyCodeLine{Vector3d\ trans(1,\ 0,\ 0);}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ X(rot,\ trans);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Transform\ a\ motion\ vector}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ vel(Vector3d(0,0,1),\ Vector3d(1,0,0));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ transformed\ =\ X.transformMotion(vel);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Transform\ a\ force\ vector}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ force(Vector3d(0,0,0),\ Vector3d(1,0,0));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ transformed\_force\ =\ X.transformForce(force);}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Motion\+Vector for the representation of spatial velocities 
+
+Force\+Vector for the representation of spatial forces 
+
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2.\+3 
+\end{DoxySeeAlso}

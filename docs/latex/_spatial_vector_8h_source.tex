@@ -1,55 +1,50 @@
 \doxysection{Spatial\+Vector.\+h}
 \hypertarget{_spatial_vector_8h_source}{}\label{_spatial_vector_8h_source}\index{include/SpatialVector.h@{include/SpatialVector.h}}
-
+\mbox{\hyperlink{_spatial_vector_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SPATIAL\_VECTOR\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SPATIAL\_VECTOR\_H}}
 \DoxyCodeLine{00003\ }
-\DoxyCodeLine{00004\ \textcolor{comment}{//\ \#include\ <array>}}
-\DoxyCodeLine{00005\ \textcolor{comment}{//\ \#include\ <iostream>}}
-\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
-\DoxyCodeLine{00007\ }
-\DoxyCodeLine{00008\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
-\DoxyCodeLine{00009\ }
-\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
-\DoxyCodeLine{00011\ \{}
-\DoxyCodeLine{00012\ }
-\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}}
-\DoxyCodeLine{00014\ \ \ \ \ \{}
-\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ Vector3d\ angular;\ \textcolor{comment}{//\ ω:\ Angular\ velocity/force}}
-\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ Vector3d\ linear;\ \ \textcolor{comment}{//\ v\ or\ f:\ Linear\ velocity/force}}
-\DoxyCodeLine{00018\ }
-\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Constructors}}
-\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}();}
-\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}(\textcolor{keyword}{const}\ Vector3d\ \&angular,\ \textcolor{keyword}{const}\ Vector3d\ \&linear);}
-\DoxyCodeLine{00023\ }
-\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other);}
-\DoxyCodeLine{00025\ }
-\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Accessors}}
-\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ Vector3d\ getAngular()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ Vector3d\ getLinear()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00029\ }
-\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Basic\ operations}}
-\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ operator+(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ operator-\/(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ operator*(\textcolor{keywordtype}{double}\ scalar)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00034\ }
-\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cross-\/product\ operations}}
-\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ crossMotion(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};\ \textcolor{comment}{//\ crm\ equivalent}}
-\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ crossForce(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};\ \ \textcolor{comment}{//\ crf\ equivalent}}
-\DoxyCodeLine{00038\ }
-\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dot\ product}}
-\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dot(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00041\ }
-\DoxyCodeLine{00042\ }
-\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Printing}}
-\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ print()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00045\ \ \ \ \ \};}
-\DoxyCodeLine{00046\ }
-\DoxyCodeLine{00047\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
-\DoxyCodeLine{00048\ }
-\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ Vector3d\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_af6728c23b99251bccdeebf5a2d4d2cd6}{angular}};\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ Vector3d\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a63f4336eae1a81a82a3fc1f3304c1903}{linear}};\ \ }
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_acdf710f9784553310d77985329ef8fbb}{SpatialVector}}();}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_acdf710f9784553310d77985329ef8fbb}{SpatialVector}}(\textcolor{keyword}{const}\ Vector3d\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_af6728c23b99251bccdeebf5a2d4d2cd6}{angular}},\ \textcolor{keyword}{const}\ Vector3d\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a63f4336eae1a81a82a3fc1f3304c1903}{linear}});}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_acdf710f9784553310d77985329ef8fbb}{SpatialVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ Vector3d\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a06ce4701d50d41be4abb0942792e874a}{getAngular}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ Vector3d\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a8393104842116680f5d7130335915a3c}{getLinear}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a3f13303a04f27817c68b59e32f6a358f}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a3a2c8de1e0da0838dc3f1fb8fe66e638}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a3be1a99b0272bbcce2d63ce1bd4210a7}{operator*}}(\textcolor{keywordtype}{double}\ scalar)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_aaa3d28346c24f255015806dcc66b7547}{crossMotion}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a22b91a9c60a49084e690356d695ee067}{crossForce}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a1b1818948f738291575848762aca1fff}{dot}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a87053a2701cff5e0dd8ad279b9dda8fd}{print}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00173\ \ \ \ \ \};}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SPATIAL\_VECTOR\_H}}
 
 \end{DoxyCode}

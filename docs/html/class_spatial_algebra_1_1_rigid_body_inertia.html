@@ -95,49 +95,58 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing the inertial properties of a rigid body.  
+<p>Class representing the spatial inertia of a rigid body.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_rigid_body_inertia_8h_source.html">RigidBodyInertia.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8a46734ad299fbe384d03e753e4a8f7a" id="r_a8a46734ad299fbe384d03e753e4a8f7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a46734ad299fbe384d03e753e4a8f7a">RigidBodyInertia</a> (double mass, const Vector3d &amp;com, const Vector6d &amp;inertiaMatrixLT)</td></tr>
-<tr class="memdesc:a8a46734ad299fbe384d03e753e4a8f7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a rigid body inertia.  <br /></td></tr>
-<tr class="separator:a8a46734ad299fbe384d03e753e4a8f7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a287b8e66239e905b2d6508786935811d" id="r_a287b8e66239e905b2d6508786935811d"><td class="memItemLeft" align="right" valign="top"><a id="a287b8e66239e905b2d6508786935811d" name="a287b8e66239e905b2d6508786935811d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>RigidBodyInertia</b> ()</td></tr>
-<tr class="memdesc:a287b8e66239e905b2d6508786935811d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero inertia. <br /></td></tr>
+<tr class="memitem:aee47eedff8333ec2d33ce230b0fad3a7" id="r_aee47eedff8333ec2d33ce230b0fad3a7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee47eedff8333ec2d33ce230b0fad3a7">RigidBodyInertia</a> (double mass, const Vector3d &amp;com, const <a class="el" href="class_lower_triangular.html">lt</a> &amp;inertiaMatrixLT)</td></tr>
+<tr class="memdesc:aee47eedff8333ec2d33ce230b0fad3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a rigid body inertia.  <br /></td></tr>
+<tr class="separator:aee47eedff8333ec2d33ce230b0fad3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a287b8e66239e905b2d6508786935811d" id="r_a287b8e66239e905b2d6508786935811d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a287b8e66239e905b2d6508786935811d">RigidBodyInertia</a> ()</td></tr>
+<tr class="memdesc:a287b8e66239e905b2d6508786935811d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero inertia.  <br /></td></tr>
 <tr class="separator:a287b8e66239e905b2d6508786935811d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a322860e61f5bf7422ff662d74077c17f" id="r_a322860e61f5bf7422ff662d74077c17f"><td class="memItemLeft" align="right" valign="top"><a id="a322860e61f5bf7422ff662d74077c17f" name="a322860e61f5bf7422ff662d74077c17f"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>getMass</b> () const</td></tr>
+<tr class="memitem:a322860e61f5bf7422ff662d74077c17f" id="r_a322860e61f5bf7422ff662d74077c17f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a322860e61f5bf7422ff662d74077c17f">getMass</a> () const</td></tr>
+<tr class="memdesc:a322860e61f5bf7422ff662d74077c17f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mass of the rigid body.  <br /></td></tr>
 <tr class="separator:a322860e61f5bf7422ff662d74077c17f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a577236be0d87eb7e7537b97d76283337" id="r_a577236be0d87eb7e7537b97d76283337"><td class="memItemLeft" align="right" valign="top"><a id="a577236be0d87eb7e7537b97d76283337" name="a577236be0d87eb7e7537b97d76283337"></a>
-const Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getCom</b> () const</td></tr>
+<tr class="memitem:a577236be0d87eb7e7537b97d76283337" id="r_a577236be0d87eb7e7537b97d76283337"><td class="memItemLeft" align="right" valign="top">const Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a577236be0d87eb7e7537b97d76283337">getCom</a> () const</td></tr>
+<tr class="memdesc:a577236be0d87eb7e7537b97d76283337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the center of mass position.  <br /></td></tr>
 <tr class="separator:a577236be0d87eb7e7537b97d76283337"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24c5d73c889ab89c744188c80b838bfb" id="r_a24c5d73c889ab89c744188c80b838bfb"><td class="memItemLeft" align="right" valign="top"><a id="a24c5d73c889ab89c744188c80b838bfb" name="a24c5d73c889ab89c744188c80b838bfb"></a>
-const Vector6d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInertiaMatrixLT</b> () const</td></tr>
-<tr class="separator:a24c5d73c889ab89c744188c80b838bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa22d1dff9389fe0bba2b56623e2a0823" id="r_aa22d1dff9389fe0bba2b56623e2a0823"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa22d1dff9389fe0bba2b56623e2a0823">getInertiaMatrixLT</a> () const</td></tr>
+<tr class="memdesc:aa22d1dff9389fe0bba2b56623e2a0823"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rotational inertia matrix.  <br /></td></tr>
+<tr class="separator:aa22d1dff9389fe0bba2b56623e2a0823"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f7f7add17a31b97613f5fcbfb69c43a" id="r_a7f7f7add17a31b97613f5fcbfb69c43a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f7f7add17a31b97613f5fcbfb69c43a">operator+</a> (const <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a> &amp;other) const</td></tr>
 <tr class="memdesc:a7f7f7add17a31b97613f5fcbfb69c43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two rigid body inertias.  <br /></td></tr>
 <tr class="separator:a7f7f7add17a31b97613f5fcbfb69c43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82e6ad422f521ad270ab50ca6dafa611" id="r_a82e6ad422f521ad270ab50ca6dafa611"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82e6ad422f521ad270ab50ca6dafa611">operator*</a> (double scalar) const</td></tr>
 <tr class="memdesc:a82e6ad422f521ad270ab50ca6dafa611"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale rigid body inertia.  <br /></td></tr>
 <tr class="separator:a82e6ad422f521ad270ab50ca6dafa611"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a156173ea3a8275deb32104a76a9e9516" id="r_a156173ea3a8275deb32104a76a9e9516"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156173ea3a8275deb32104a76a9e9516">apply</a> (const <a class="el" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> &amp;<a class="el" href="class_spatial_algebra_1_1_motion_vector.html">mv</a>) const</td></tr>
+<tr class="memitem:a156173ea3a8275deb32104a76a9e9516" id="r_a156173ea3a8275deb32104a76a9e9516"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156173ea3a8275deb32104a76a9e9516">apply</a> (const <a class="el" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> &amp;<a class="el" href="_motion_vector_8h.html#a762041a6016eb0c73c61fa5c4e612635">mv</a>) const</td></tr>
 <tr class="memdesc:a156173ea3a8275deb32104a76a9e9516"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply rigid body inertia to motion vector.  <br /></td></tr>
 <tr class="separator:a156173ea3a8275deb32104a76a9e9516"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45b9893be61bf972c7a611ada0c36b4c" id="r_a45b9893be61bf972c7a611ada0c36b4c"><td class="memItemLeft" align="right" valign="top"><a id="a45b9893be61bf972c7a611ada0c36b4c" name="a45b9893be61bf972c7a611ada0c36b4c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
-<tr class="memdesc:a45b9893be61bf972c7a611ada0c36b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print inertia properties. <br /></td></tr>
+<tr class="memitem:a45b9893be61bf972c7a611ada0c36b4c" id="r_a45b9893be61bf972c7a611ada0c36b4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45b9893be61bf972c7a611ada0c36b4c">print</a> () const</td></tr>
+<tr class="memdesc:a45b9893be61bf972c7a611ada0c36b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print inertia properties.  <br /></td></tr>
 <tr class="separator:a45b9893be61bf972c7a611ada0c36b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing the inertial properties of a rigid body. </p>
-<p>Stores and manages mass, center of mass, and rotational inertia matrix for rigid body dynamics calculations. </p>
+<div class="textblock"><p>Class representing the spatial inertia of a rigid body. </p>
+<p>The <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the spatial inertia of a rigid body.">RigidBodyInertia</a> class provides a compact and efficient representation of rigid body inertial properties for spatial algebra computations.</p>
+<p>Physical Properties:</p><ul>
+<li>Symmetric positive definite (when physically valid)</li>
+<li>Transforms covariantly under coordinate changes</li>
+<li>Maps motion vectors to force vectors</li>
+</ul>
+<p>Implementation Features:</p><ul>
+<li>Stores rotational inertia in lower triangular form for efficiency</li>
+<li>Provides direct access to mass, COM, and inertia components</li>
+<li>Implements efficient spatial operations</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>The rotational inertia is stored about the center of mass frame to minimize numerical errors and simplify transformations. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8a46734ad299fbe384d03e753e4a8f7a" name="a8a46734ad299fbe384d03e753e4a8f7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a46734ad299fbe384d03e753e4a8f7a">&#9670;&#160;</a></span>RigidBodyInertia()</h2>
+<a id="aee47eedff8333ec2d33ce230b0fad3a7" name="aee47eedff8333ec2d33ce230b0fad3a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee47eedff8333ec2d33ce230b0fad3a7">&#9670;&#160;</a></span>RigidBodyInertia() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,7 +167,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Vector6d &amp;</td>          <td class="paramname"><span class="paramname"><em>inertiaMatrixLT</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>inertiaMatrixLT</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -171,12 +180,41 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
 <p>Construct a rigid body inertia. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mass</td><td>Mass of the body </td></tr>
-    <tr><td class="paramname">com</td><td>Center of mass position </td></tr>
-    <tr><td class="paramname">inertiaMatrixLT</td><td>Lower triangular part of inertia matrix </td></tr>
+    <tr><td class="paramname">mass</td><td>Mass of the body (kg) </td></tr>
+    <tr><td class="paramname">com</td><td>Center of mass position (m) </td></tr>
+    <tr><td class="paramname">inertiaMatrixLT</td><td>Lower triangular part of rotational inertia matrix (kg⋅m²)</td></tr>
   </table>
   </dd>
 </dl>
+<p>Creates a spatial inertia with specified mass properties. The rotational inertia should be specified about the center of mass. </p><dl class="section warning"><dt>Warning</dt><dd>The inertia matrix must be positive definite for physical validity </dd></dl>
+
+</div>
+</div>
+<a id="a287b8e66239e905b2d6508786935811d" name="a287b8e66239e905b2d6508786935811d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a287b8e66239e905b2d6508786935811d">&#9670;&#160;</a></span>RigidBodyInertia() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpatialAlgebra::RigidBodyInertia::RigidBodyInertia </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor creating zero inertia. </p>
+<p>Initializes all components to zero, representing a massless body. This is useful as a starting point for accumulating inertias. </p>
 
 </div>
 </div>
@@ -212,7 +250,96 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Resulting force vector</dd></dl>
-<p>Implements: [Iω + com × v; m*v - com × ω] </p>
+<p>Computes the force and torque resulting from the motion of the rigid body. The operation implements: f = I * v = [Iω + h×v; mv - h×ω] where:</p><ul>
+<li>ω is angular velocity</li>
+<li>v is linear velocity</li>
+<li>h = m*com is the first moment of mass <dl class="section note"><dt>Note</dt><dd>This operation is the fundamental mapping between motion and force vectors that defines the spatial inertia. </dd></dl>
+</li>
+</ul>
+
+</div>
+</div>
+<a id="a577236be0d87eb7e7537b97d76283337" name="a577236be0d87eb7e7537b97d76283337"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a577236be0d87eb7e7537b97d76283337">&#9670;&#160;</a></span>getCom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Vector3d &amp; SpatialAlgebra::RigidBodyInertia::getCom </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the center of mass position. </p>
+<dl class="section return"><dt>Returns</dt><dd>Center of mass vector in m </dd></dl>
+
+</div>
+</div>
+<a id="aa22d1dff9389fe0bba2b56623e2a0823" name="aa22d1dff9389fe0bba2b56623e2a0823"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa22d1dff9389fe0bba2b56623e2a0823">&#9670;&#160;</a></span>getInertiaMatrixLT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_lower_triangular.html">lt</a> &amp; SpatialAlgebra::RigidBodyInertia::getInertiaMatrixLT </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the rotational inertia matrix. </p>
+<dl class="section return"><dt>Returns</dt><dd>Lower triangular part of inertia matrix in kg⋅m² </dd></dl>
+
+</div>
+</div>
+<a id="a322860e61f5bf7422ff662d74077c17f" name="a322860e61f5bf7422ff662d74077c17f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a322860e61f5bf7422ff662d74077c17f">&#9670;&#160;</a></span>getMass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double SpatialAlgebra::RigidBodyInertia::getMass </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the mass of the rigid body. </p>
+<dl class="section return"><dt>Returns</dt><dd>Mass value in kg </dd></dl>
 
 </div>
 </div>
@@ -242,11 +369,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
 <p>Scale rigid body inertia. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scalar</td><td>Scaling factor </td></tr>
+    <tr><td class="paramname">scalar</td><td>Scaling factor (dimensionless) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Scaled <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the inertial properties of a rigid body.">RigidBodyInertia</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Scaled <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the spatial inertia of a rigid body.">RigidBodyInertia</a></dd></dl>
+<p>Uniformly scales all inertial properties. This is useful for implementing symmetric scaling of bodies or applying mass distribution factors. </p>
 
 </div>
 </div>
@@ -276,11 +404,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
 <p>Add two rigid body inertias. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the inertial properties of a rigid body.">RigidBodyInertia</a> to add </td></tr>
+    <tr><td class="paramname">other</td><td><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the spatial inertia of a rigid body.">RigidBodyInertia</a> to add </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the inertial properties of a rigid body.">RigidBodyInertia</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the spatial inertia of a rigid body.">RigidBodyInertia</a></dd></dl>
+<p>Implements parallel combination of inertias, useful for computing composite body inertias. The result represents the inertia of a single rigid body equivalent to the two original bodies moving together. </p>
+
+</div>
+</div>
+<a id="a45b9893be61bf972c7a611ada0c36b4c" name="a45b9893be61bf972c7a611ada0c36b4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45b9893be61bf972c7a611ada0c36b4c">&#9670;&#160;</a></span>print()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SpatialAlgebra::RigidBodyInertia::print </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print inertia properties. </p>
+<p>Outputs the mass, center of mass position, and rotational inertia matrix in a human-readable format. </p>
 
 </div>
 </div>

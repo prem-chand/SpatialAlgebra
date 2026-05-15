@@ -37,7 +37,7 @@
 Plans:
 - [x] 01-01-PLAN.md — GTest test scaffolding and comprehensive test suite
 - [ ] 01-02-PLAN.md — Fix MotionVector::crossMotion bug per Featherstone
-- [ ] 01-03-PLAN.md — Complete ForceVector and SpatialVector::crossForce
+- [x] 01-03-PLAN.md — Complete ForceVector and SpatialVector::crossForce
 - [ ] 01-04-PLAN.md — Property-based tests and textbook examples
 
 ### Phase 2: Rotation & Math

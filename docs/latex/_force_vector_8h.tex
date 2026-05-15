@@ -2,7 +2,7 @@
 \hypertarget{_force_vector_8h}{}\label{_force_vector_8h}\index{include/ForceVector.h@{include/ForceVector.h}}
 
 
-Class representing spatial force vectors.  
+Class representing spatial force vectors (wrenches) in rigid body dynamics.  
 
 
 {\ttfamily \#include $<$iostream$>$}\newline
@@ -11,15 +11,54 @@ Class representing spatial force vectors.
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Spatial\+Algebra\+::\+Force\+Vector}}
-\begin{DoxyCompactList}\small\item\em Class representing spatial force vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Class representing spatial force vectors (wrenches) \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}\label{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83} 
 using {\bfseries Spatial\+Algebra\+::fv} = \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Type alias for more concise notation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing spatial force vectors. 
+Class representing spatial force vectors (wrenches) in rigid body dynamics. 
 
+This file implements force vectors (also known as wrenches) in spatial algebra, which unify the representation of torques and forces in 3D space. Force vectors are essential for describing the complete force state acting on rigid bodies in a compact and geometrically meaningful way.
+
+Mathematical Representation\+: A force vector f = \mbox{[}τ; f\mbox{]} consists of\+:
+\begin{DoxyItemize}
+\item τ\+: Torque/moment vector (N⋅m)
+\item f\+: Linear force vector (N)
+\end{DoxyItemize}
+
+Physical Interpretation\+:
+\begin{DoxyItemize}
+\item τ represents the moment or torque around the reference point
+\item f represents the linear force acting at the reference point
+\item Together they form a "{}wrench"{} that completely describes force action
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ pure\ torque\ around\ Z-\/axis\ (1\ N⋅m)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ torque(Vector3d(0,0,1),\ Vector3d(0,0,0));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ pure\ force\ along\ X-\/axis\ (1\ N)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ force(Vector3d(0,0,0),\ Vector3d(1,0,0));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Combine\ forces}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ combined\ =\ torque\ +\ force;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Compute\ force\ cross\ product\ (for\ force\ transformation)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ crossed\ =\ torque.\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector_a395cbb3e5d957e4cae93293eb89764ac}{crossForce}}(force);}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Motion\+Vector for the dual space representation of velocities 
+
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2. 
+\end{DoxySeeAlso}

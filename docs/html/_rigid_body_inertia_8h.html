@@ -95,13 +95,14 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing rigid body inertia properties.  
+<p>Class representing spatial rigid body inertia properties.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
-<code>#include &quot;SpatialVector.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="_spatial_vector_8h_source.html">SpatialVector.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_force_vector_8h_source.html">ForceVector.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_motion_vector_8h_source.html">MotionVector.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_lower_triangular_8h_source.html">LowerTriangular.h</a>&quot;</code><br />
 <code>#include &lt;Eigen/Geometry&gt;</code><br />
 </div>
 <p><a href="_rigid_body_inertia_8h_source.html">Go to the source code of this file.</a></p>
@@ -109,7 +110,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">SpatialAlgebra::RigidBodyInertia</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the inertial properties of a rigid body.  <a href="class_spatial_algebra_1_1_rigid_body_inertia.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing the spatial inertia of a rigid body.  <a href="class_spatial_algebra_1_1_rigid_body_inertia.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -122,10 +123,45 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Vector6d</b> = Eigen
 <tr class="separator:a44f103cf5fdeb3f539ceeeb9cd3a0a28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a345b0f61548808a0c8ef6cac52c25d96" id="r_a345b0f61548808a0c8ef6cac52c25d96"><td class="memItemLeft" align="right" valign="top"><a id="a345b0f61548808a0c8ef6cac52c25d96" name="a345b0f61548808a0c8ef6cac52c25d96"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>SpatialAlgebra::rbi</b> = <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a></td></tr>
+<tr class="memdesc:a345b0f61548808a0c8ef6cac52c25d96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for more concise notation. <br /></td></tr>
 <tr class="separator:a345b0f61548808a0c8ef6cac52c25d96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing rigid body inertia properties. </p>
+<div class="textblock"><p>Class representing spatial rigid body inertia properties. </p>
+<p>This file implements the spatial inertia of rigid bodies, which combines mass, center of mass, and rotational inertia in a unified framework. The implementation uses a compact representation that allows efficient computation of dynamics quantities.</p>
+<p>Mathematical Representation: A spatial inertia I is represented by three components:</p><ul>
+<li>m: Mass scalar (kg)</li>
+<li>h: First moment of mass / mass times COM (kg⋅m)</li>
+<li>I: Rotational inertia matrix about COM (kg⋅m²)</li>
+</ul>
+<p>The 6x6 spatial inertia matrix form is: I = [ I h×; h×ᵀ mE ] where:</p><ul>
+<li>h× is the skew-symmetric matrix of h</li>
+<li>E is the 3x3 identity matrix</li>
+</ul>
+<p>Example usage: </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span>SpatialAlgebra;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create inertia for a 1kg point mass at (1,0,0)</span></div>
+<div class="line"><span class="keywordtype">double</span> mass = 1.0;</div>
+<div class="line">Vector3d com(1, 0, 0);</div>
+<div class="line"><a class="code hl_class" href="class_lower_triangular.html">lt</a> inertia(3);  <span class="comment">// Zero rotational inertia</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a> <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a>(mass, com, inertia);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Apply to a motion vector to get forces/torques</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> vel(Vector3d(0,0,1), Vector3d(1,0,0));</div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> f = <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a>.<a class="code hl_function" href="class_spatial_algebra_1_1_rigid_body_inertia.html#a156173ea3a8275deb32104a76a9e9516">apply</a>(vel);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Combine two inertias</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a> total = <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a> + <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a>;</div>
+<div class="ttc" id="aclass_lower_triangular_html"><div class="ttname"><a href="class_lower_triangular.html">LowerTriangular</a></div><div class="ttdoc">Memory-efficient lower triangular matrix class.</div><div class="ttdef"><b>Definition</b> LowerTriangular.h:71</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_force_vector_html"><div class="ttname"><a href="class_spatial_algebra_1_1_force_vector.html">SpatialAlgebra::ForceVector</a></div><div class="ttdoc">Class representing spatial force vectors (wrenches)</div><div class="ttdef"><b>Definition</b> ForceVector.h:72</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_motion_vector_html"><div class="ttname"><a href="class_spatial_algebra_1_1_motion_vector.html">SpatialAlgebra::MotionVector</a></div><div class="ttdoc">Class representing spatial motion vectors (twists)</div><div class="ttdef"><b>Definition</b> MotionVector.h:71</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_rigid_body_inertia_html"><div class="ttname"><a href="class_spatial_algebra_1_1_rigid_body_inertia.html">SpatialAlgebra::RigidBodyInertia</a></div><div class="ttdoc">Class representing the spatial inertia of a rigid body.</div><div class="ttdef"><b>Definition</b> RigidBodyInertia.h:81</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_rigid_body_inertia_html_a156173ea3a8275deb32104a76a9e9516"><div class="ttname"><a href="class_spatial_algebra_1_1_rigid_body_inertia.html#a156173ea3a8275deb32104a76a9e9516">SpatialAlgebra::RigidBodyInertia::apply</a></div><div class="ttdeci">ForceVector apply(const MotionVector &amp;mv) const</div><div class="ttdoc">Apply rigid body inertia to motion vector.</div><div class="ttdef"><b>Definition</b> RigidBodyInertia.h:171</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>MotionVector for the velocity representation </dd>
+<dd>
+ForceVector for the force/torque representation </dd>
+<dd>
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2.4 </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

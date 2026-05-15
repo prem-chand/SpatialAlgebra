@@ -2,13 +2,14 @@
 \hypertarget{_articulated_body_inertia_8h}{}\label{_articulated_body_inertia_8h}\index{include/ArticulatedBodyInertia.h@{include/ArticulatedBodyInertia.h}}
 
 
-Class representing articulated body inertia properties.  
+Class representing articulated body inertia properties in spatial algebra.  
 
 
 {\ttfamily \#include $<$array$>$}\newline
 {\ttfamily \#include $<$iostream$>$}\newline
 {\ttfamily \#include "{}Rigid\+Body\+Inertia.\+h"{}}\newline
 {\ttfamily \#include "{}Spatial\+Utils.\+h"{}}\newline
+{\ttfamily \#include "{}Lower\+Triangular.\+h"{}}\newline
 {\ttfamily \#include $<$Eigen/\+Geometry$>$}\newline
 \doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
@@ -21,11 +22,56 @@ class \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Spati
 \Hypertarget{_articulated_body_inertia_8h_a44f103cf5fdeb3f539ceeeb9cd3a0a28}\label{_articulated_body_inertia_8h_a44f103cf5fdeb3f539ceeeb9cd3a0a28} 
 using {\bfseries Vector6d} = Eigen\+::\+Matrix$<$double, 6, 1$>$
 \item 
+\Hypertarget{_articulated_body_inertia_8h_abe7bad28acf309bb252a889bb26a6006}\label{_articulated_body_inertia_8h_abe7bad28acf309bb252a889bb26a6006} 
+using {\bfseries lt} = \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}}
+\item 
 \Hypertarget{_articulated_body_inertia_8h_a78186b8ffb0779abadbc56d351b0472b}\label{_articulated_body_inertia_8h_a78186b8ffb0779abadbc56d351b0472b} 
 using {\bfseries Spatial\+Algebra\+::abi} = \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Type alias for more concise notation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing articulated body inertia properties. 
+Class representing articulated body inertia properties in spatial algebra. 
 
+This file implements the generalized inertia of articulated bodies, which extends the concept of rigid body inertia to handle systems with internal degrees of freedom. This representation is crucial for efficient articulated body algorithms (ABA) in robotics and multibody dynamics.
+
+Mathematical Representation\+: An articulated body inertia Ia is represented by three components in 6x6 block matrix form\+: Ia = \mbox{[} I H; Hᵀ M \mbox{]} where\+:
+\begin{DoxyItemize}
+\item I\+: 3x3 rotational inertia matrix (kg⋅m²)
+\item H\+: 3x3 coupling matrix (kg⋅m)
+\item M\+: 3x3 mass matrix (kg)
+\end{DoxyItemize}
+
+Key Properties\+:
+\begin{DoxyItemize}
+\item Symmetric positive definite
+\item Includes coupling effects between joints
+\item Reduces to rigid body inertia for single bodies
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ components\ for\ articulated\ body\ inertia}}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular}{lt}}\ inertia(3);\ \ \textcolor{comment}{//\ Rotational\ inertia}}
+\DoxyCodeLine{Eigen::Matrix3d\ H\ =\ Eigen::Matrix3d::Identity();\ \ \textcolor{comment}{//\ Coupling}}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular}{lt}}\ M(3);\ \ \textcolor{comment}{//\ Mass\ matrix}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{abi}}(inertia,\ H,\ M);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Add\ a\ rigid\ body\ inertia\ to\ it}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}}(1.0,\ Vector3d(1,0,0),\ \mbox{\hyperlink{class_lower_triangular}{lt}}(3));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ combined\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{abi}}\ +\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Apply\ to\ a\ motion\ vector}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ vel(Vector3d(0,0,1),\ Vector3d(1,0,0));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ f\ =\ combined.\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a16b43dd417b6bfcc466c2e2b55e6a8c2}{apply}}(vel);}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Rigid\+Body\+Inertia for single body inertia representation 
+
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7 
+\end{DoxySeeAlso}

@@ -95,12 +95,13 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Class representing articulated body inertia properties.  
+<p>Class representing articulated body inertia properties in spatial algebra.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;<a class="el" href="_rigid_body_inertia_8h_source.html">RigidBodyInertia.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_spatial_utils_8h_source.html">SpatialUtils.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_lower_triangular_8h_source.html">LowerTriangular.h</a>&quot;</code><br />
 <code>#include &lt;Eigen/Geometry&gt;</code><br />
 </div>
 <p><a href="_articulated_body_inertia_8h_source.html">Go to the source code of this file.</a></p>
@@ -116,12 +117,51 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a44f103cf5fdeb3f539ceeeb9cd3a0a28" id="r_a44f103cf5fdeb3f539ceeeb9cd3a0a28"><td class="memItemLeft" align="right" valign="top"><a id="a44f103cf5fdeb3f539ceeeb9cd3a0a28" name="a44f103cf5fdeb3f539ceeeb9cd3a0a28"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>Vector6d</b> = Eigen::Matrix&lt;double, 6, 1&gt;</td></tr>
 <tr class="separator:a44f103cf5fdeb3f539ceeeb9cd3a0a28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe7bad28acf309bb252a889bb26a6006" id="r_abe7bad28acf309bb252a889bb26a6006"><td class="memItemLeft" align="right" valign="top"><a id="abe7bad28acf309bb252a889bb26a6006" name="abe7bad28acf309bb252a889bb26a6006"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>lt</b> = <a class="el" href="class_lower_triangular.html">LowerTriangular</a></td></tr>
+<tr class="separator:abe7bad28acf309bb252a889bb26a6006"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78186b8ffb0779abadbc56d351b0472b" id="r_a78186b8ffb0779abadbc56d351b0472b"><td class="memItemLeft" align="right" valign="top"><a id="a78186b8ffb0779abadbc56d351b0472b" name="a78186b8ffb0779abadbc56d351b0472b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>SpatialAlgebra::abi</b> = <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a></td></tr>
+<tr class="memdesc:a78186b8ffb0779abadbc56d351b0472b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for more concise notation. <br /></td></tr>
 <tr class="separator:a78186b8ffb0779abadbc56d351b0472b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Class representing articulated body inertia properties. </p>
+<div class="textblock"><p>Class representing articulated body inertia properties in spatial algebra. </p>
+<p>This file implements the generalized inertia of articulated bodies, which extends the concept of rigid body inertia to handle systems with internal degrees of freedom. This representation is crucial for efficient articulated body algorithms (ABA) in robotics and multibody dynamics.</p>
+<p>Mathematical Representation: An articulated body inertia Ia is represented by three components in 6x6 block matrix form: Ia = [ I H; Hᵀ M ] where:</p><ul>
+<li>I: 3x3 rotational inertia matrix (kg⋅m²)</li>
+<li>H: 3x3 coupling matrix (kg⋅m)</li>
+<li>M: 3x3 mass matrix (kg)</li>
+</ul>
+<p>Key Properties:</p><ul>
+<li>Symmetric positive definite</li>
+<li>Includes coupling effects between joints</li>
+<li>Reduces to rigid body inertia for single bodies</li>
+</ul>
+<p>Example usage: </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span>SpatialAlgebra;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create components for articulated body inertia</span></div>
+<div class="line"><a class="code hl_class" href="class_lower_triangular.html">lt</a> inertia(3);  <span class="comment">// Rotational inertia</span></div>
+<div class="line">Eigen::Matrix3d H = Eigen::Matrix3d::Identity();  <span class="comment">// Coupling</span></div>
+<div class="line"><a class="code hl_class" href="class_lower_triangular.html">lt</a> M(3);  <span class="comment">// Mass matrix</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a> <a class="code hl_class" href="class_spatial_algebra_1_1_articulated_body_inertia.html">abi</a>(inertia, H, M);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Add a rigid body inertia to it</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a> <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a>(1.0, Vector3d(1,0,0), <a class="code hl_class" href="class_lower_triangular.html">lt</a>(3));</div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a> combined = <a class="code hl_class" href="class_spatial_algebra_1_1_articulated_body_inertia.html">abi</a> + <a class="code hl_class" href="class_spatial_algebra_1_1_rigid_body_inertia.html">rbi</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Apply to a motion vector</span></div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_motion_vector.html">MotionVector</a> vel(Vector3d(0,0,1), Vector3d(1,0,0));</div>
+<div class="line"><a class="code hl_class" href="class_spatial_algebra_1_1_force_vector.html">ForceVector</a> f = combined.<a class="code hl_function" href="class_spatial_algebra_1_1_articulated_body_inertia.html#a16b43dd417b6bfcc466c2e2b55e6a8c2">apply</a>(vel);</div>
+<div class="ttc" id="aclass_lower_triangular_html"><div class="ttname"><a href="class_lower_triangular.html">LowerTriangular</a></div><div class="ttdoc">Memory-efficient lower triangular matrix class.</div><div class="ttdef"><b>Definition</b> LowerTriangular.h:71</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_articulated_body_inertia_html"><div class="ttname"><a href="class_spatial_algebra_1_1_articulated_body_inertia.html">SpatialAlgebra::ArticulatedBodyInertia</a></div><div class="ttdoc">Class representing inertial properties of an articulated body.</div><div class="ttdef"><b>Definition</b> ArticulatedBodyInertia.h:82</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_articulated_body_inertia_html_a16b43dd417b6bfcc466c2e2b55e6a8c2"><div class="ttname"><a href="class_spatial_algebra_1_1_articulated_body_inertia.html#a16b43dd417b6bfcc466c2e2b55e6a8c2">SpatialAlgebra::ArticulatedBodyInertia::apply</a></div><div class="ttdeci">fv apply(const mv &amp;mv) const</div><div class="ttdoc">Apply articulated body inertia to motion vector.</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_force_vector_html"><div class="ttname"><a href="class_spatial_algebra_1_1_force_vector.html">SpatialAlgebra::ForceVector</a></div><div class="ttdoc">Class representing spatial force vectors (wrenches)</div><div class="ttdef"><b>Definition</b> ForceVector.h:72</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_motion_vector_html"><div class="ttname"><a href="class_spatial_algebra_1_1_motion_vector.html">SpatialAlgebra::MotionVector</a></div><div class="ttdoc">Class representing spatial motion vectors (twists)</div><div class="ttdef"><b>Definition</b> MotionVector.h:71</div></div>
+<div class="ttc" id="aclass_spatial_algebra_1_1_rigid_body_inertia_html"><div class="ttname"><a href="class_spatial_algebra_1_1_rigid_body_inertia.html">SpatialAlgebra::RigidBodyInertia</a></div><div class="ttdoc">Class representing the spatial inertia of a rigid body.</div><div class="ttdef"><b>Definition</b> RigidBodyInertia.h:81</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>RigidBodyInertia for single body inertia representation </dd>
+<dd>
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7 </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

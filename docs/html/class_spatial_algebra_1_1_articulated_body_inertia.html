@@ -102,53 +102,65 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a642bea92490e932db69821fe9dfff8a8" id="r_a642bea92490e932db69821fe9dfff8a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642bea92490e932db69821fe9dfff8a8">ArticulatedBodyInertia</a> (const Vector6d &amp;inertia, const Eigen::Matrix3d &amp;h, const Vector6d &amp;M)</td></tr>
-<tr class="memdesc:a642bea92490e932db69821fe9dfff8a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct articulated body inertia.  <br /></td></tr>
-<tr class="separator:a642bea92490e932db69821fe9dfff8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71ce89c823832c5dfe5b2294b7537f1b" id="r_a71ce89c823832c5dfe5b2294b7537f1b"><td class="memItemLeft" align="right" valign="top"><a id="a71ce89c823832c5dfe5b2294b7537f1b" name="a71ce89c823832c5dfe5b2294b7537f1b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ArticulatedBodyInertia</b> ()</td></tr>
-<tr class="memdesc:a71ce89c823832c5dfe5b2294b7537f1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero inertia. <br /></td></tr>
+<tr class="memitem:a51fcac296b822250a37c4c64eed9fb7d" id="r_a51fcac296b822250a37c4c64eed9fb7d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51fcac296b822250a37c4c64eed9fb7d">ArticulatedBodyInertia</a> (const <a class="el" href="class_lower_triangular.html">lt</a> &amp;inertia, const Eigen::Matrix3d &amp;h, const <a class="el" href="class_lower_triangular.html">lt</a> &amp;M)</td></tr>
+<tr class="memdesc:a51fcac296b822250a37c4c64eed9fb7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct articulated body inertia.  <br /></td></tr>
+<tr class="separator:a51fcac296b822250a37c4c64eed9fb7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ce89c823832c5dfe5b2294b7537f1b" id="r_a71ce89c823832c5dfe5b2294b7537f1b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71ce89c823832c5dfe5b2294b7537f1b">ArticulatedBodyInertia</a> ()</td></tr>
+<tr class="memdesc:a71ce89c823832c5dfe5b2294b7537f1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor creating zero inertia.  <br /></td></tr>
 <tr class="separator:a71ce89c823832c5dfe5b2294b7537f1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fcaa1f2126a484bb6f6d06b50ef9ecd" id="r_a9fcaa1f2126a484bb6f6d06b50ef9ecd"><td class="memItemLeft" align="right" valign="top"><a id="a9fcaa1f2126a484bb6f6d06b50ef9ecd" name="a9fcaa1f2126a484bb6f6d06b50ef9ecd"></a>
-const Vector6d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInertia</b> () const</td></tr>
-<tr class="separator:a9fcaa1f2126a484bb6f6d06b50ef9ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad308b32e36ec9a634bdaee1d0dbd3df" id="r_aad308b32e36ec9a634bdaee1d0dbd3df"><td class="memItemLeft" align="right" valign="top"><a id="aad308b32e36ec9a634bdaee1d0dbd3df" name="aad308b32e36ec9a634bdaee1d0dbd3df"></a>
-const Eigen::Matrix3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getH</b> () const</td></tr>
+<tr class="memitem:aaee63273e2cd578f4950dabc8f2cbc70" id="r_aaee63273e2cd578f4950dabc8f2cbc70"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaee63273e2cd578f4950dabc8f2cbc70">getInertia</a> () const</td></tr>
+<tr class="memdesc:aaee63273e2cd578f4950dabc8f2cbc70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rotational inertia matrix.  <br /></td></tr>
+<tr class="separator:aaee63273e2cd578f4950dabc8f2cbc70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad308b32e36ec9a634bdaee1d0dbd3df" id="r_aad308b32e36ec9a634bdaee1d0dbd3df"><td class="memItemLeft" align="right" valign="top">const Eigen::Matrix3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad308b32e36ec9a634bdaee1d0dbd3df">getH</a> () const</td></tr>
+<tr class="memdesc:aad308b32e36ec9a634bdaee1d0dbd3df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the coupling matrix.  <br /></td></tr>
 <tr class="separator:aad308b32e36ec9a634bdaee1d0dbd3df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabc7c01f2d8c9a9e80ee97cf38499c4c" id="r_aabc7c01f2d8c9a9e80ee97cf38499c4c"><td class="memItemLeft" align="right" valign="top"><a id="aabc7c01f2d8c9a9e80ee97cf38499c4c" name="aabc7c01f2d8c9a9e80ee97cf38499c4c"></a>
-const Vector6d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getM</b> () const</td></tr>
-<tr class="separator:aabc7c01f2d8c9a9e80ee97cf38499c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95dfb777a58f332b08438fe6581d33f7" id="r_a95dfb777a58f332b08438fe6581d33f7"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95dfb777a58f332b08438fe6581d33f7">getM</a> () const</td></tr>
+<tr class="memdesc:a95dfb777a58f332b08438fe6581d33f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mass matrix.  <br /></td></tr>
+<tr class="separator:a95dfb777a58f332b08438fe6581d33f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c26b2a477f27bb1fbb203464dee92f9" id="r_a7c26b2a477f27bb1fbb203464dee92f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c26b2a477f27bb1fbb203464dee92f9">operator+</a> (const <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a> &amp;other) const</td></tr>
 <tr class="memdesc:a7c26b2a477f27bb1fbb203464dee92f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two articulated body inertias.  <br /></td></tr>
 <tr class="separator:a7c26b2a477f27bb1fbb203464dee92f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a146fd8c08e3741600fae2acfca9ddadb" id="r_a146fd8c08e3741600fae2acfca9ddadb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a146fd8c08e3741600fae2acfca9ddadb">operator+</a> (const <a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html">RigidBodyInertia</a> &amp;other) const</td></tr>
 <tr class="memdesc:a146fd8c08e3741600fae2acfca9ddadb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add rigid body inertia to articulated body inertia.  <br /></td></tr>
 <tr class="separator:a146fd8c08e3741600fae2acfca9ddadb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a843e9c5393d7e60f1854f537d147f444" id="r_a843e9c5393d7e60f1854f537d147f444"><td class="memItemLeft" align="right" valign="top"><a id="a843e9c5393d7e60f1854f537d147f444" name="a843e9c5393d7e60f1854f537d147f444"></a>
-<a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (double scalar) const</td></tr>
+<tr class="memitem:a843e9c5393d7e60f1854f537d147f444" id="r_a843e9c5393d7e60f1854f537d147f444"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a843e9c5393d7e60f1854f537d147f444">operator*</a> (double scalar) const</td></tr>
+<tr class="memdesc:a843e9c5393d7e60f1854f537d147f444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale articulated body inertia.  <br /></td></tr>
 <tr class="separator:a843e9c5393d7e60f1854f537d147f444"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16b43dd417b6bfcc466c2e2b55e6a8c2" id="r_a16b43dd417b6bfcc466c2e2b55e6a8c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">fv</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16b43dd417b6bfcc466c2e2b55e6a8c2">apply</a> (const <a class="el" href="class_spatial_algebra_1_1_motion_vector.html">mv</a> &amp;<a class="el" href="class_spatial_algebra_1_1_motion_vector.html">mv</a>) const</td></tr>
+<tr class="memitem:a16b43dd417b6bfcc466c2e2b55e6a8c2" id="r_a16b43dd417b6bfcc466c2e2b55e6a8c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_force_vector_8h.html#a8a1c7fa29b893993e8c899342b117f83">fv</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16b43dd417b6bfcc466c2e2b55e6a8c2">apply</a> (const <a class="el" href="_motion_vector_8h.html#a762041a6016eb0c73c61fa5c4e612635">mv</a> &amp;<a class="el" href="_motion_vector_8h.html#a762041a6016eb0c73c61fa5c4e612635">mv</a>) const</td></tr>
 <tr class="memdesc:a16b43dd417b6bfcc466c2e2b55e6a8c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply articulated body inertia to motion vector.  <br /></td></tr>
 <tr class="separator:a16b43dd417b6bfcc466c2e2b55e6a8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af56fd764072182dce3afcd9b62763ce6" id="r_af56fd764072182dce3afcd9b62763ce6"><td class="memItemLeft" align="right" valign="top"><a id="af56fd764072182dce3afcd9b62763ce6" name="af56fd764072182dce3afcd9b62763ce6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
-<tr class="memdesc:af56fd764072182dce3afcd9b62763ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print inertia properties. <br /></td></tr>
+<tr class="memitem:af56fd764072182dce3afcd9b62763ce6" id="r_af56fd764072182dce3afcd9b62763ce6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af56fd764072182dce3afcd9b62763ce6">print</a> () const</td></tr>
+<tr class="memdesc:af56fd764072182dce3afcd9b62763ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print inertia properties.  <br /></td></tr>
 <tr class="separator:af56fd764072182dce3afcd9b62763ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class representing inertial properties of an articulated body. </p>
-<p>Stores and manages generalized inertia matrix components for articulated body dynamics calculations. </p>
+<p>The <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a> class provides a specialized representation for the composite inertia of articulated systems, including the effects of internal degrees of freedom and kinematic constraints.</p>
+<p>Physical Properties:</p><ul>
+<li>Symmetric positive definite (when physically valid)</li>
+<li>Includes inertial coupling between joints</li>
+<li>Transforms covariantly under coordinate changes</li>
+</ul>
+<p>Implementation Features:</p><ul>
+<li>Efficient block matrix structure</li>
+<li>Supports composition with rigid body inertias</li>
+<li>Optimized for articulated body algorithms</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This representation is particularly efficient for the articulated body algorithm (ABA) and related computations in multibody dynamics. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a642bea92490e932db69821fe9dfff8a8" name="a642bea92490e932db69821fe9dfff8a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a642bea92490e932db69821fe9dfff8a8">&#9670;&#160;</a></span>ArticulatedBodyInertia()</h2>
+<a id="a51fcac296b822250a37c4c64eed9fb7d" name="a51fcac296b822250a37c4c64eed9fb7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51fcac296b822250a37c4c64eed9fb7d">&#9670;&#160;</a></span>ArticulatedBodyInertia() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">SpatialAlgebra::ArticulatedBodyInertia::ArticulatedBodyInertia </td>
           <td>(</td>
-          <td class="paramtype">const Vector6d &amp;</td>          <td class="paramname"><span class="paramname"><em>inertia</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>inertia</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -158,20 +170,54 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Vector6d &amp;</td>          <td class="paramname"><span class="paramname"><em>M</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="class_lower_triangular.html">lt</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>M</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Construct articulated body inertia. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">inertia</td><td>Generalized inertia vector </td></tr>
-    <tr><td class="paramname">h</td><td>Coupling matrix </td></tr>
-    <tr><td class="paramname">M</td><td>Mass matrix components </td></tr>
+    <tr><td class="paramname">inertia</td><td>Rotational inertia matrix (kg⋅m²) </td></tr>
+    <tr><td class="paramname">h</td><td>Coupling matrix (kg⋅m) </td></tr>
+    <tr><td class="paramname">M</td><td>Mass matrix (kg)</td></tr>
   </table>
   </dd>
 </dl>
+<p>Creates an articulated body inertia with specified components. The matrices must satisfy physical constraints to represent a valid inertia. </p><dl class="section warning"><dt>Warning</dt><dd>The resulting matrix must be symmetric positive definite </dd></dl>
+
+</div>
+</div>
+<a id="a71ce89c823832c5dfe5b2294b7537f1b" name="a71ce89c823832c5dfe5b2294b7537f1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71ce89c823832c5dfe5b2294b7537f1b">&#9670;&#160;</a></span>ArticulatedBodyInertia() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpatialAlgebra::ArticulatedBodyInertia::ArticulatedBodyInertia </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor creating zero inertia. </p>
+<p>Initializes all components to zero. This represents a massless articulated system and is useful as a starting point for accumulating inertias. </p>
 
 </div>
 </div>
@@ -186,9 +232,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_force_vector.html">fv</a> SpatialAlgebra::ArticulatedBodyInertia::apply </td>
+          <td class="memname"><a class="el" href="_force_vector_8h.html#a8a1c7fa29b893993e8c899342b117f83">fv</a> SpatialAlgebra::ArticulatedBodyInertia::apply </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_spatial_algebra_1_1_motion_vector.html">mv</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mv</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="_motion_vector_8h.html#a762041a6016eb0c73c61fa5c4e612635">mv</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mv</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -206,7 +252,127 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Resulting force vector </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Resulting force vector</dd></dl>
+<p>Computes the force and torque resulting from the motion of the articulated body. The operation implements: f = Ia * v = [Iω + Hv; Hᵀω + Mv] </p>
+
+</div>
+</div>
+<a id="aad308b32e36ec9a634bdaee1d0dbd3df" name="aad308b32e36ec9a634bdaee1d0dbd3df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad308b32e36ec9a634bdaee1d0dbd3df">&#9670;&#160;</a></span>getH()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Matrix3d &amp; SpatialAlgebra::ArticulatedBodyInertia::getH </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the coupling matrix. </p>
+<dl class="section return"><dt>Returns</dt><dd>Coupling matrix between rotational and linear motion (kg⋅m) </dd></dl>
+
+</div>
+</div>
+<a id="aaee63273e2cd578f4950dabc8f2cbc70" name="aaee63273e2cd578f4950dabc8f2cbc70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaee63273e2cd578f4950dabc8f2cbc70">&#9670;&#160;</a></span>getInertia()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_lower_triangular.html">lt</a> &amp; SpatialAlgebra::ArticulatedBodyInertia::getInertia </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the rotational inertia matrix. </p>
+<dl class="section return"><dt>Returns</dt><dd>Rotational inertia in lower triangular form (kg⋅m²) </dd></dl>
+
+</div>
+</div>
+<a id="a95dfb777a58f332b08438fe6581d33f7" name="a95dfb777a58f332b08438fe6581d33f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95dfb777a58f332b08438fe6581d33f7">&#9670;&#160;</a></span>getM()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_lower_triangular.html">lt</a> &amp; SpatialAlgebra::ArticulatedBodyInertia::getM </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the mass matrix. </p>
+<dl class="section return"><dt>Returns</dt><dd>Mass matrix in lower triangular form (kg) </dd></dl>
+
+</div>
+</div>
+<a id="a843e9c5393d7e60f1854f537d147f444" name="a843e9c5393d7e60f1854f537d147f444"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a843e9c5393d7e60f1854f537d147f444">&#9670;&#160;</a></span>operator*()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html">ArticulatedBodyInertia</a> SpatialAlgebra::ArticulatedBodyInertia::operator* </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>scalar</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Scale articulated body inertia. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scalar</td><td>Scaling factor (dimensionless) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Scaled <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a></dd></dl>
+<p>Uniformly scales all components of the inertia. This is useful for implementing symmetric scaling of articulated systems or applying distribution factors. </p>
 
 </div>
 </div>
@@ -240,7 +406,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a></dd></dl>
+<p>Implements parallel combination of articulated body inertias. This operation is fundamental in the articulated body algorithm for combining inertias of connected bodies. </p>
 
 </div>
 </div>
@@ -270,11 +437,40 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</t
 <p>Add rigid body inertia to articulated body inertia. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">other</td><td><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the inertial properties of a rigid body.">RigidBodyInertia</a> to add </td></tr>
+    <tr><td class="paramname">other</td><td><a class="el" href="class_spatial_algebra_1_1_rigid_body_inertia.html" title="Class representing the spatial inertia of a rigid body.">RigidBodyInertia</a> to add </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Combined <a class="el" href="class_spatial_algebra_1_1_articulated_body_inertia.html" title="Class representing inertial properties of an articulated body.">ArticulatedBodyInertia</a></dd></dl>
+<p>Converts the rigid body inertia to articulated body form and combines it with this inertia. This is useful when building composite articulated bodies from rigid components. </p>
+
+</div>
+</div>
+<a id="af56fd764072182dce3afcd9b62763ce6" name="af56fd764072182dce3afcd9b62763ce6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af56fd764072182dce3afcd9b62763ce6">&#9670;&#160;</a></span>print()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SpatialAlgebra::ArticulatedBodyInertia::print </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print inertia properties. </p>
+<p>Outputs the rotational inertia, coupling matrix, and mass matrix components in a human-readable format with units. </p>
 
 </div>
 </div>

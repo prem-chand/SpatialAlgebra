@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['tformrbi_0',['tformRBI',['../class_spatial_algebra_1_1_plucker_transform.html#a998fa6fd1e0caf9b6e16afe4c09cfdd3',1,'SpatialAlgebra::PluckerTransform']]],
-  ['toangleaxis_1',['toAngleAxis',['../class_rotation.html#a39fe5b30edd5fd7c49bbb9be024c1534',1,'Rotation']]],
-  ['toquaternion_2',['toQuaternion',['../class_rotation.html#afa153b52fad87002c8d2111847b2ae95',1,'Rotation']]],
-  ['transformforce_3',['transformForce',['../class_spatial_algebra_1_1_plucker_transform.html#ad18fce8c8c552fad4654ec106b56c600',1,'SpatialAlgebra::PluckerTransform']]],
-  ['transforminertia_4',['transformInertia',['../class_spatial_algebra_1_1_spatial_operations.html#a37649b59240f62c278454a55a96f679c',1,'SpatialAlgebra::SpatialOperations']]],
-  ['transformmotion_5',['transformMotion',['../class_spatial_algebra_1_1_plucker_transform.html#a71fe578530c205db375cc7a40a07b22c',1,'SpatialAlgebra::PluckerTransform']]],
-  ['transpose_6',['transpose',['../class_rotation.html#a548a345dfee3d1e43cfe25da291a068a',1,'Rotation']]]
+  ['rbi_0',['rbi',['../_rigid_body_inertia_8h.html#a345b0f61548808a0c8ef6cac52c25d96',1,'SpatialAlgebra']]],
+  ['rigidbodyinertia_1',['RigidBodyInertia',['../class_spatial_algebra_1_1_rigid_body_inertia.html',1,'SpatialAlgebra::RigidBodyInertia'],['../class_spatial_algebra_1_1_rigid_body_inertia.html#aee47eedff8333ec2d33ce230b0fad3a7',1,'SpatialAlgebra::RigidBodyInertia::RigidBodyInertia(double mass, const Vector3d &amp;com, const lt &amp;inertiaMatrixLT)'],['../class_spatial_algebra_1_1_rigid_body_inertia.html#a287b8e66239e905b2d6508786935811d',1,'SpatialAlgebra::RigidBodyInertia::RigidBodyInertia()']]],
+  ['rigidbodyinertia_2eh_2',['RigidBodyInertia.h',['../_rigid_body_inertia_8h.html',1,'']]],
+  ['rotation_3',['Rotation',['../class_rotation.html',1,'Rotation'],['../class_rotation.html#a13ea1d345ca0a92c0f09b4de544ca460',1,'Rotation::Rotation()'],['../class_rotation.html#abb54da20707a6fe186f7b83c579fd9b2',1,'Rotation::Rotation(const Eigen::Matrix3d &amp;matrix)'],['../class_rotation.html#a4e5eb4f857cc7a3b18149f569e398e60',1,'Rotation::Rotation(const Eigen::AngleAxisd &amp;angleAxis)'],['../class_rotation.html#aa1beb86f529a3a800c7354f9e9a24fd0',1,'Rotation::Rotation(const Eigen::Quaterniond &amp;quaternion)']]],
+  ['rotation_2eh_4',['Rotation.h',['../_rotation_8h.html',1,'']]]
 ];

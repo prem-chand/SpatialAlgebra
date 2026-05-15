@@ -86,6 +86,7 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="class_rotation-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Rotation Class Reference</div></div>
 </div><!--header-->
@@ -104,9 +105,8 @@ Inheritance diagram for Rotation:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a13ea1d345ca0a92c0f09b4de544ca460" id="r_a13ea1d345ca0a92c0f09b4de544ca460"><td class="memItemLeft" align="right" valign="top"><a id="a13ea1d345ca0a92c0f09b4de544ca460" name="a13ea1d345ca0a92c0f09b4de544ca460"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Rotation</b> ()</td></tr>
-<tr class="memdesc:a13ea1d345ca0a92c0f09b4de544ca460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor initializing to identity rotation. <br /></td></tr>
+<tr class="memitem:a13ea1d345ca0a92c0f09b4de544ca460" id="r_a13ea1d345ca0a92c0f09b4de544ca460"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13ea1d345ca0a92c0f09b4de544ca460">Rotation</a> ()</td></tr>
+<tr class="memdesc:a13ea1d345ca0a92c0f09b4de544ca460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor initializing to identity rotation.  <br /></td></tr>
 <tr class="separator:a13ea1d345ca0a92c0f09b4de544ca460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb54da20707a6fe186f7b83c579fd9b2" id="r_abb54da20707a6fe186f7b83c579fd9b2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb54da20707a6fe186f7b83c579fd9b2">Rotation</a> (const Eigen::Matrix3d &amp;matrix)</td></tr>
 <tr class="memdesc:abb54da20707a6fe186f7b83c579fd9b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct from 3x3 rotation matrix.  <br /></td></tr>
@@ -123,21 +123,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af6ec5129f17944692726d4cc0a196455" id="r_af6ec5129f17944692726d4cc0a196455"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ec5129f17944692726d4cc0a196455">setFromQuaternion</a> (const Eigen::Quaterniond &amp;quaternion)</td></tr>
 <tr class="memdesc:af6ec5129f17944692726d4cc0a196455"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set rotation from quaternion representation.  <br /></td></tr>
 <tr class="separator:af6ec5129f17944692726d4cc0a196455"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39fe5b30edd5fd7c49bbb9be024c1534" id="r_a39fe5b30edd5fd7c49bbb9be024c1534"><td class="memItemLeft" align="right" valign="top"><a id="a39fe5b30edd5fd7c49bbb9be024c1534" name="a39fe5b30edd5fd7c49bbb9be024c1534"></a>
-Eigen::AngleAxisd&#160;</td><td class="memItemRight" valign="bottom"><b>toAngleAxis</b> () const</td></tr>
-<tr class="memdesc:a39fe5b30edd5fd7c49bbb9be024c1534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to angle-axis representation. <br /></td></tr>
+<tr class="memitem:a39fe5b30edd5fd7c49bbb9be024c1534" id="r_a39fe5b30edd5fd7c49bbb9be024c1534"><td class="memItemLeft" align="right" valign="top">Eigen::AngleAxisd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39fe5b30edd5fd7c49bbb9be024c1534">toAngleAxis</a> () const</td></tr>
+<tr class="memdesc:a39fe5b30edd5fd7c49bbb9be024c1534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to angle-axis representation.  <br /></td></tr>
 <tr class="separator:a39fe5b30edd5fd7c49bbb9be024c1534"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa153b52fad87002c8d2111847b2ae95" id="r_afa153b52fad87002c8d2111847b2ae95"><td class="memItemLeft" align="right" valign="top"><a id="afa153b52fad87002c8d2111847b2ae95" name="afa153b52fad87002c8d2111847b2ae95"></a>
-Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuaternion</b> () const</td></tr>
-<tr class="memdesc:afa153b52fad87002c8d2111847b2ae95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to quaternion representation. <br /></td></tr>
+<tr class="memitem:afa153b52fad87002c8d2111847b2ae95" id="r_afa153b52fad87002c8d2111847b2ae95"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa153b52fad87002c8d2111847b2ae95">toQuaternion</a> () const</td></tr>
+<tr class="memdesc:afa153b52fad87002c8d2111847b2ae95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to quaternion representation.  <br /></td></tr>
 <tr class="separator:afa153b52fad87002c8d2111847b2ae95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a9f25fb1ab2ab0f607a9caf0e54b96a" id="r_a6a9f25fb1ab2ab0f607a9caf0e54b96a"><td class="memItemLeft" align="right" valign="top"><a id="a6a9f25fb1ab2ab0f607a9caf0e54b96a" name="a6a9f25fb1ab2ab0f607a9caf0e54b96a"></a>
-<a class="el" href="class_rotation.html">Rotation</a>&#160;</td><td class="memItemRight" valign="bottom"><b>inverse</b> () const</td></tr>
-<tr class="memdesc:a6a9f25fb1ab2ab0f607a9caf0e54b96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute inverse rotation. <br /></td></tr>
+<tr class="memitem:a6a9f25fb1ab2ab0f607a9caf0e54b96a" id="r_a6a9f25fb1ab2ab0f607a9caf0e54b96a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_rotation.html">Rotation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a9f25fb1ab2ab0f607a9caf0e54b96a">inverse</a> () const</td></tr>
+<tr class="memdesc:a6a9f25fb1ab2ab0f607a9caf0e54b96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute inverse rotation.  <br /></td></tr>
 <tr class="separator:a6a9f25fb1ab2ab0f607a9caf0e54b96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a548a345dfee3d1e43cfe25da291a068a" id="r_a548a345dfee3d1e43cfe25da291a068a"><td class="memItemLeft" align="right" valign="top"><a id="a548a345dfee3d1e43cfe25da291a068a" name="a548a345dfee3d1e43cfe25da291a068a"></a>
-<a class="el" href="class_rotation.html">Rotation</a>&#160;</td><td class="memItemRight" valign="bottom"><b>transpose</b> () const</td></tr>
-<tr class="memdesc:a548a345dfee3d1e43cfe25da291a068a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute matrix transpose. <br /></td></tr>
+<tr class="memitem:a548a345dfee3d1e43cfe25da291a068a" id="r_a548a345dfee3d1e43cfe25da291a068a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_rotation.html">Rotation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a548a345dfee3d1e43cfe25da291a068a">transpose</a> () const</td></tr>
+<tr class="memdesc:a548a345dfee3d1e43cfe25da291a068a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute matrix transpose.  <br /></td></tr>
 <tr class="separator:a548a345dfee3d1e43cfe25da291a068a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff3dd602c4024533fc790a1dbaf5ae65" id="r_aff3dd602c4024533fc790a1dbaf5ae65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_rotation.html">Rotation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff3dd602c4024533fc790a1dbaf5ae65">operator*</a> (const <a class="el" href="class_rotation.html">Rotation</a> &amp;other) const</td></tr>
 <tr class="memdesc:aff3dd602c4024533fc790a1dbaf5ae65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply with another rotation.  <br /></td></tr>
@@ -145,13 +141,49 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
 <tr class="memitem:a6d6ab3065f71e3fc7d1569bb14fe58fd" id="r_a6d6ab3065f71e3fc7d1569bb14fe58fd"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d6ab3065f71e3fc7d1569bb14fe58fd">operator*</a> (const Eigen::Vector3d &amp;vector) const</td></tr>
 <tr class="memdesc:a6d6ab3065f71e3fc7d1569bb14fe58fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply rotation to a vector.  <br /></td></tr>
 <tr class="separator:a6d6ab3065f71e3fc7d1569bb14fe58fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2695ed95c2e41d08da94a894b4d4e55" id="r_ae2695ed95c2e41d08da94a894b4d4e55"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2695ed95c2e41d08da94a894b4d4e55">operator*</a> (const Eigen::Matrix3d &amp;matrix) const</td></tr>
+<tr class="memdesc:ae2695ed95c2e41d08da94a894b4d4e55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply rotation matrix with a general 3x3 matrix from the right.  <br /></td></tr>
+<tr class="separator:ae2695ed95c2e41d08da94a894b4d4e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:acbe7c531b3168e6c1d1f9935c54d7175" id="r_acbe7c531b3168e6c1d1f9935c54d7175"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbe7c531b3168e6c1d1f9935c54d7175">operator*</a> (const Eigen::Matrix3d &amp;matrix, const <a class="el" href="class_rotation.html">Rotation</a> &amp;rotation)</td></tr>
+<tr class="memdesc:acbe7c531b3168e6c1d1f9935c54d7175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Friend operator for multiplication with a general 3x3 matrix from the left.  <br /></td></tr>
+<tr class="separator:acbe7c531b3168e6c1d1f9935c54d7175"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class for handling 3D rotations with multiple representations. </p>
-<p>Extends Eigen::Matrix3d to provide additional functionality for rotation operations including conversions between different rotation representations. </p>
+<p>The <a class="el" href="class_rotation.html" title="Class for handling 3D rotations with multiple representations.">Rotation</a> class extends Eigen::Matrix3d to provide a robust interface for working with 3D rotations. It maintains the underlying rotation matrix representation while offering convenient conversions to and from other common rotation representations.</p>
+<p>Key features:</p><ul>
+<li>Automatic handling of rotation composition</li>
+<li>Conversion between different rotation representations</li>
+<li>Vector transformation operations</li>
+<li>Proper handling of rotation inverse and transpose</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>When constructing from matrices, the input should be a valid rotation matrix. The class does not currently enforce orthogonality or proper determinant. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a13ea1d345ca0a92c0f09b4de544ca460" name="a13ea1d345ca0a92c0f09b4de544ca460"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13ea1d345ca0a92c0f09b4de544ca460">&#9670;&#160;</a></span>Rotation() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Rotation::Rotation </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor initializing to identity rotation. </p>
+<p>Creates a rotation matrix representing no rotation (identity matrix) </p>
+
+</div>
+</div>
 <a id="abb54da20707a6fe186f7b83c579fd9b2" name="abb54da20707a6fe186f7b83c579fd9b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb54da20707a6fe186f7b83c579fd9b2">&#9670;&#160;</a></span>Rotation() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abb54da20707a6fe186f7b83c579fd9b2">&#9670;&#160;</a></span>Rotation() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,11 +204,12 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
   </table>
   </dd>
 </dl>
+<dl class="section warning"><dt>Warning</dt><dd>The input matrix should be a valid rotation matrix (orthogonal with det = +1) </dd></dl>
 
 </div>
 </div>
 <a id="a4e5eb4f857cc7a3b18149f569e398e60" name="a4e5eb4f857cc7a3b18149f569e398e60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e5eb4f857cc7a3b18149f569e398e60">&#9670;&#160;</a></span>Rotation() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e5eb4f857cc7a3b18149f569e398e60">&#9670;&#160;</a></span>Rotation() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,15 +226,16 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
 <p>Construct from angle-axis representation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">angleAxis</td><td>Angle-axis rotation </td></tr>
+    <tr><td class="paramname">angleAxis</td><td>Angle-axis rotation (angle in radians)</td></tr>
   </table>
   </dd>
 </dl>
+<p>Converts the angle-axis representation to the internal rotation matrix format. The angle is specified in radians, and the axis should be a unit vector. </p>
 
 </div>
 </div>
 <a id="aa1beb86f529a3a800c7354f9e9a24fd0" name="aa1beb86f529a3a800c7354f9e9a24fd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1beb86f529a3a800c7354f9e9a24fd0">&#9670;&#160;</a></span>Rotation() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1beb86f529a3a800c7354f9e9a24fd0">&#9670;&#160;</a></span>Rotation() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,19 +252,72 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
 <p>Construct from quaternion representation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">quaternion</td><td>Unit quaternion representing rotation </td></tr>
+    <tr><td class="paramname">quaternion</td><td>Unit quaternion representing rotation</td></tr>
   </table>
   </dd>
 </dl>
+<p>Converts the quaternion representation to the internal rotation matrix format. The quaternion should be normalized (unit quaternion). </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6d6ab3065f71e3fc7d1569bb14fe58fd" name="a6d6ab3065f71e3fc7d1569bb14fe58fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d6ab3065f71e3fc7d1569bb14fe58fd">&#9670;&#160;</a></span>operator*() <span class="overload">[1/2]</span></h2>
+<a id="a6a9f25fb1ab2ab0f607a9caf0e54b96a" name="a6a9f25fb1ab2ab0f607a9caf0e54b96a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a9f25fb1ab2ab0f607a9caf0e54b96a">&#9670;&#160;</a></span>inverse()</h2>
 
 <div class="memitem">
 <div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_rotation.html">Rotation</a> Rotation::inverse </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute inverse rotation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Inverse of the current rotation</dd></dl>
+<p>For a rotation matrix R, its inverse equals its transpose: R^(-1) = R^T </p>
+
+</div>
+</div>
+<a id="ae2695ed95c2e41d08da94a894b4d4e55" name="ae2695ed95c2e41d08da94a894b4d4e55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2695ed95c2e41d08da94a894b4d4e55">&#9670;&#160;</a></span>operator*() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix3d Rotation::operator* </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Matrix3d &amp;</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Multiply rotation matrix with a general 3x3 matrix from the right. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">matrix</td><td>Right-hand side 3x3 matrix </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Result of matrix multiplication </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Result may not be a valid rotation matrix</dd></dl>
+<p>Performs standard matrix multiplication: result = R * M </p>
+
+</div>
+</div>
+<a id="a6d6ab3065f71e3fc7d1569bb14fe58fd" name="a6d6ab3065f71e3fc7d1569bb14fe58fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d6ab3065f71e3fc7d1569bb14fe58fd">&#9670;&#160;</a></span>operator*() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Eigen::Vector3d Rotation::operator* </td>
@@ -239,6 +326,11 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Apply rotation to a vector. </p>
@@ -248,12 +340,13 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Rotated vector </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Rotated vector</dd></dl>
+<p>Transforms the input vector by this rotation: result = R * v </p>
 
 </div>
 </div>
 <a id="aff3dd602c4024533fc790a1dbaf5ae65" name="aff3dd602c4024533fc790a1dbaf5ae65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff3dd602c4024533fc790a1dbaf5ae65">&#9670;&#160;</a></span>operator*() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aff3dd602c4024533fc790a1dbaf5ae65">&#9670;&#160;</a></span>operator*() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,7 +367,8 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Combined rotation </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Combined rotation (this * other)</dd></dl>
+<p>Composes two rotations: result = this * other The resulting rotation represents applying 'other' first, then 'this' </p>
 
 </div>
 </div>
@@ -296,10 +390,11 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
 <p>Set rotation from angle-axis representation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">angleAxis</td><td>Angle-axis rotation </td></tr>
+    <tr><td class="paramname">angleAxis</td><td>Angle-axis rotation</td></tr>
   </table>
   </dd>
 </dl>
+<p>Updates the internal rotation matrix based on the provided angle-axis representation. The angle should be in radians and the axis should be a unit vector. </p>
 
 </div>
 </div>
@@ -321,10 +416,116 @@ Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><b>toQuate
 <p>Set rotation from quaternion representation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">quaternion</td><td>Unit quaternion </td></tr>
+    <tr><td class="paramname">quaternion</td><td>Unit quaternion</td></tr>
   </table>
   </dd>
 </dl>
+<p>Updates the internal rotation matrix based on the provided quaternion. The quaternion should be normalized. </p>
+
+</div>
+</div>
+<a id="a39fe5b30edd5fd7c49bbb9be024c1534" name="a39fe5b30edd5fd7c49bbb9be024c1534"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39fe5b30edd5fd7c49bbb9be024c1534">&#9670;&#160;</a></span>toAngleAxis()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::AngleAxisd Rotation::toAngleAxis </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert to angle-axis representation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Angle-axis representation of the rotation</dd></dl>
+<p>The returned angle is in radians and the axis is a unit vector </p>
+
+</div>
+</div>
+<a id="afa153b52fad87002c8d2111847b2ae95" name="afa153b52fad87002c8d2111847b2ae95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa153b52fad87002c8d2111847b2ae95">&#9670;&#160;</a></span>toQuaternion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Quaterniond Rotation::toQuaternion </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert to quaternion representation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Unit quaternion representation of the rotation</dd></dl>
+<p>The returned quaternion is guaranteed to be normalized </p>
+
+</div>
+</div>
+<a id="a548a345dfee3d1e43cfe25da291a068a" name="a548a345dfee3d1e43cfe25da291a068a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a548a345dfee3d1e43cfe25da291a068a">&#9670;&#160;</a></span>transpose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_rotation.html">Rotation</a> Rotation::transpose </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute matrix transpose. </p>
+<dl class="section return"><dt>Returns</dt><dd>Transpose of the current rotation matrix</dd></dl>
+<p>For a valid rotation matrix, transpose equals inverse </p>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="acbe7c531b3168e6c1d1f9935c54d7175" name="acbe7c531b3168e6c1d1f9935c54d7175"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbe7c531b3168e6c1d1f9935c54d7175">&#9670;&#160;</a></span>operator*</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix3d operator* </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Matrix3d &amp;</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_rotation.html">Rotation</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rotation</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Friend operator for multiplication with a general 3x3 matrix from the left. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">matrix</td><td>Left-hand side 3x3 matrix </td></tr>
+    <tr><td class="paramname">rotation</td><td>Right-hand side rotation </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Result of matrix multiplication </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Result may not be a valid rotation matrix</dd></dl>
+<p>Performs standard matrix multiplication: result = M * R </p>
 
 </div>
 </div>

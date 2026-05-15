@@ -2,7 +2,7 @@
 \hypertarget{_rotation_8h}{}\label{_rotation_8h}\index{include/Rotation.h@{include/Rotation.h}}
 
 
-Class representing 3D rotations with various representations.  
+Class representing 3D rotations with various representations and operations.  
 
 
 {\ttfamily \#include $<$Eigen/\+Dense$>$}\newline
@@ -14,5 +14,36 @@ class \mbox{\hyperlink{class_rotation}{Rotation}}
 
 
 \doxysubsection{Detailed Description}
-Class representing 3D rotations with various representations. 
+Class representing 3D rotations with various representations and operations. 
 
+This file defines the \doxylink{class_rotation}{Rotation} class which provides a comprehensive interface for handling 3D rotations. It supports multiple rotation representations including\+:
+\begin{DoxyItemize}
+\item 3x3 rotation matrices (inherits from Eigen\+::\+Matrix3d)
+\item Angle-\/axis representation (via Eigen\+::\+Angle\+Axisd)
+\item Quaternions (via Eigen\+::\+Quaterniond)
+\end{DoxyItemize}
+
+The class ensures proper conversion between these representations and provides operations like composition, inversion, and vector transformation.
+
+\begin{DoxyNote}{Note}
+All rotation matrices are guaranteed to be orthogonal with determinant +1
+\end{DoxyNote}
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ rotation\ from\ angle-\/axis\ representation}}
+\DoxyCodeLine{Eigen::AngleAxisd\ angleAxis(M\_PI/4,\ Eigen::Vector3d::UnitZ());\ \textcolor{comment}{//\ 45°\ around\ Z}}
+\DoxyCodeLine{\mbox{\hyperlink{class_rotation}{Rotation}}\ rot1(angleAxis);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ another\ rotation\ from\ a\ quaternion}}
+\DoxyCodeLine{Eigen::Quaterniond\ quat(Eigen::AngleAxisd(M\_PI/2,\ Eigen::Vector3d::UnitX()));}
+\DoxyCodeLine{\mbox{\hyperlink{class_rotation}{Rotation}}\ rot2(quat);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Compose\ rotations}}
+\DoxyCodeLine{\mbox{\hyperlink{class_rotation}{Rotation}}\ combined\ =\ rot1\ *\ rot2;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Transform\ a\ vector}}
+\DoxyCodeLine{Eigen::Vector3d\ vec(1,\ 0,\ 0);}
+\DoxyCodeLine{Eigen::Vector3d\ rotated\ =\ combined\ *\ vec;}
+
+\end{DoxyCode}
+ 

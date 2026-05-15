@@ -2,7 +2,7 @@
 \hypertarget{_motion_vector_8h}{}\label{_motion_vector_8h}\index{include/MotionVector.h@{include/MotionVector.h}}
 
 
-Class representing spatial motion vectors.  
+Class representing spatial motion vectors (twists) in rigid body dynamics.  
 
 
 {\ttfamily \#include $<$array$>$}\newline
@@ -12,15 +12,54 @@ Class representing spatial motion vectors.
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Spatial\+Algebra\+::\+Motion\+Vector}}
-\begin{DoxyCompactList}\small\item\em Class representing spatial motion vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Class representing spatial motion vectors (twists) \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}\label{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635} 
 using {\bfseries Spatial\+Algebra\+::mv} = \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Type alias for more concise notation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing spatial motion vectors. 
+Class representing spatial motion vectors (twists) in rigid body dynamics. 
 
+This file implements motion vectors (also known as twists) in spatial algebra, which unify the representation of angular and linear velocities in 3D space. Motion vectors are essential for describing the instantaneous motion state of rigid bodies in a compact and geometrically meaningful way.
+
+Mathematical Representation\+: A motion vector m = \mbox{[}ω; v\mbox{]} consists of\+:
+\begin{DoxyItemize}
+\item ω\+: Angular velocity vector (rad/s)
+\item v\+: Linear velocity vector (m/s)
+\end{DoxyItemize}
+
+Physical Interpretation\+:
+\begin{DoxyItemize}
+\item ω represents the instantaneous angular velocity around an axis
+\item v represents the linear velocity of the body\textquotesingle{}s origin
+\item Together they form a "{}twist"{} that completely describes rigid body motion
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ pure\ rotation\ around\ Z-\/axis\ (1\ rad/s)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ angular\_motion(Vector3d(0,0,1),\ Vector3d(0,0,0));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ pure\ translation\ along\ X-\/axis\ (1\ m/s)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ linear\_motion(Vector3d(0,0,0),\ Vector3d(1,0,0));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Combine\ motions}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ combined\ =\ angular\_motion\ +\ linear\_motion;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Compute\ motion\ cross\ product\ (for\ velocity\ propagation)}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ crossed\ =\ angular\_motion.\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a67184f0aed8fa5720f64fb73300b6ae5}{crossMotion}}(linear\_motion);}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Force\+Vector for the dual space representation of forces and torques 
+
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2. 
+\end{DoxySeeAlso}

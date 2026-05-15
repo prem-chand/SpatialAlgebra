@@ -2,7 +2,7 @@
 \hypertarget{_rigid_body_inertia_8h}{}\label{_rigid_body_inertia_8h}\index{include/RigidBodyInertia.h@{include/RigidBodyInertia.h}}
 
 
-Class representing rigid body inertia properties.  
+Class representing spatial rigid body inertia properties.  
 
 
 {\ttfamily \#include $<$array$>$}\newline
@@ -10,12 +10,13 @@ Class representing rigid body inertia properties.
 {\ttfamily \#include "{}Spatial\+Vector.\+h"{}}\newline
 {\ttfamily \#include "{}Force\+Vector.\+h"{}}\newline
 {\ttfamily \#include "{}Motion\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Lower\+Triangular.\+h"{}}\newline
 {\ttfamily \#include $<$Eigen/\+Geometry$>$}\newline
 \doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Spatial\+Algebra\+::\+Rigid\+Body\+Inertia}}
-\begin{DoxyCompactList}\small\item\em Class representing the inertial properties of a rigid body. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Class representing the spatial inertia of a rigid body. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
@@ -27,9 +28,51 @@ using {\bfseries Vector6d} = Eigen\+::\+Matrix$<$double, 6, 1$>$
 \item 
 \Hypertarget{_rigid_body_inertia_8h_a345b0f61548808a0c8ef6cac52c25d96}\label{_rigid_body_inertia_8h_a345b0f61548808a0c8ef6cac52c25d96} 
 using {\bfseries Spatial\+Algebra\+::rbi} = \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Type alias for more concise notation. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing rigid body inertia properties. 
+Class representing spatial rigid body inertia properties. 
 
+This file implements the spatial inertia of rigid bodies, which combines mass, center of mass, and rotational inertia in a unified framework. The implementation uses a compact representation that allows efficient computation of dynamics quantities.
+
+Mathematical Representation\+: A spatial inertia I is represented by three components\+:
+\begin{DoxyItemize}
+\item m\+: Mass scalar (kg)
+\item h\+: First moment of mass / mass times COM (kg⋅m)
+\item I\+: Rotational inertia matrix about COM (kg⋅m²)
+\end{DoxyItemize}
+
+The 6x6 spatial inertia matrix form is\+: I = \mbox{[} I h×; h×ᵀ mE \mbox{]} where\+:
+\begin{DoxyItemize}
+\item h× is the skew-\/symmetric matrix of h
+\item E is the 3x3 identity matrix
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ inertia\ for\ a\ 1kg\ point\ mass\ at\ (1,0,0)}}
+\DoxyCodeLine{\textcolor{keywordtype}{double}\ mass\ =\ 1.0;}
+\DoxyCodeLine{Vector3d\ com(1,\ 0,\ 0);}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular}{lt}}\ inertia(3);\ \ \textcolor{comment}{//\ Zero\ rotational\ inertia}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}}(mass,\ com,\ inertia);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Apply\ to\ a\ motion\ vector\ to\ get\ forces/torques}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ vel(Vector3d(0,0,1),\ Vector3d(1,0,0));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ f\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}}.\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516}{apply}}(vel);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Combine\ two\ inertias}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ total\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}}\ +\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{rbi}};}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Motion\+Vector for the velocity representation 
+
+Force\+Vector for the force/torque representation 
+
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2.\+4 
+\end{DoxySeeAlso}
