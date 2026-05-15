@@ -49,6 +49,9 @@
 #include <iostream>
 #include <iomanip>
 
+// Type aliases for convenience
+using Vector3d = Eigen::Matrix<double, 3, 1>;
+
 /**
  * @brief Memory-efficient lower triangular matrix class
  * @details Implements a lower triangular matrix using packed storage format,
@@ -247,11 +250,14 @@ public:
             throw std::invalid_argument("Matrix dimension mismatch");
 
         Eigen::MatrixXd result = Eigen::MatrixXd::Zero(lhs.rows(), rhs.n);
-        for (int j = 0; j < rhs.n; ++j)
+        for (int i = 0; i < lhs.rows(); ++i)
         {
-            for (int k = 0; k <= j; ++k)
+            for (int j = 0; j < rhs.n; ++j)
             {
-                result.col(j) += rhs(j, k) * lhs.col(k);
+                for (int k = j; k < rhs.n; ++k)
+                {
+                    result(i, j) += lhs(i, k) * rhs(k, j);
+                }
             }
         }
         return result;
@@ -288,6 +294,26 @@ public:
      *          Only computes lower triangle products (O(n²/2) operations).
      */
     Eigen::VectorXd operator*(const Eigen::VectorXd &v) const;
+
+    /**
+     * @brief Matrix-vector multiplication for fixed-size 3D vectors (L * v)
+     * @param v 3D vector to multiply with
+     * @return Result as Vector3d
+     * @throws std::invalid_argument if matrix dimension is not 3
+     * @details Specialized overload for 3D vectors to avoid ambiguity
+     *          with MatrixXd operator*. Returns Vector3d for efficiency.
+     */
+    Vector3d operator*(const Vector3d &v) const
+    {
+        if (n != 3)
+            throw std::invalid_argument("LowerTriangular::operator* requires 3x3 matrix for Vector3d");
+        
+        Vector3d result;
+        result(0) = (*this)(0, 0) * v(0);
+        result(1) = (*this)(1, 0) * v(0) + (*this)(1, 1) * v(1);
+        result(2) = (*this)(2, 0) * v(0) + (*this)(2, 1) * v(1) + (*this)(2, 2) * v(2);
+        return result;
+    }
 
     /**
      * @brief Matrix addition
