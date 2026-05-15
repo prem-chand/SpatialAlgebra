@@ -45,6 +45,15 @@ SpatialVector SpatialAlgebra::SpatialVector::crossMotion(const SpatialVector &ot
     return SpatialVector(angular.cross(other.angular), linear.cross(other.angular) + angular.cross(other.linear));
 }
 
+SpatialVector SpatialAlgebra::SpatialVector::crossForce(const SpatialVector &other) const
+{
+    // Force cross product: [τ1×τ2 + f1×f2; τ1×f2] per Featherstone
+    return SpatialVector(
+        angular.cross(other.angular) + linear.cross(other.linear),
+        angular.cross(other.linear)
+    );
+}
+
 double SpatialVector::dot(const SpatialVector &other) const
 {
     return angular.dot(other.angular) + linear.dot(other.linear);
