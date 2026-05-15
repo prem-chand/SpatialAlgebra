@@ -59,3 +59,9 @@ Rotation Rotation::operator*(const Rotation &other) const
 {
     return Rotation(static_cast<Eigen::Matrix3d>(*this) * static_cast<Eigen::Matrix3d>(other));
 }
+
+// operator* for Rotation-Matrix multiplication
+Eigen::Matrix3d Rotation::operator*(const Eigen::Matrix3d &matrix) const
+{
+    return static_cast<Eigen::Matrix3d>(*this) * matrix;
+}
