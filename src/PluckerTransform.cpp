@@ -63,14 +63,18 @@ SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformForce(const Spat
 
 RigidBodyInertia SpatialAlgebra::PluckerTransform::tformRBI(const RigidBodyInertia &Ihat) const
 {
+    // Featherstone (2008) Eq 2.52: I' = X*I*X^T
+    // m' = m
+    // h' = R*(h - m*r)
+    // I' = R*(I + r̂*ĥ + ĥ*r̂)*R^T where ĥ = h - m*r
     auto m = Ihat.getMass();
     auto h = Ihat.getCom();
     auto I = Ihat.getInertiaMatrixLT();
 
-    auto y = h - m * translation;
+    auto y = h - m * translation;  // y = h - m*r = ĥ
     auto h_new = static_cast<const Eigen::Matrix3d &>(rotation) * y;
 
-    auto Z = I + LowerTriangular::fromFullMatrix(skew(translation) * skew(h) + skew(y) * skew(translation));
+    auto Z = I + LowerTriangular::fromFullMatrix(skew(translation) * skew(y) + skew(y) * skew(translation));
     lt I_new = LowerTriangular::fromFullMatrix(static_cast<const Eigen::Matrix3d &>(rotation) * Z * static_cast<const Eigen::Matrix3d &>(rotation).transpose());
 
     return RigidBodyInertia(m, h_new, I_new);
@@ -78,13 +82,18 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::tformRBI(const RigidBodyInert
 
 RigidBodyInertia SpatialAlgebra::PluckerTransform::invtformRBI(const RigidBodyInertia &Ihat) const
 {
+    // Inverse transform: I' = X^{-1}*I*X^{-T}
+    // Using inverse transform parameters: R' = R^T, t' = -R^T*t
+    // m' = m
+    // h' = R^T*h + m*t
+    // I' = R^T*I*R - (r̂*ĥ + ĥ*r̂) where ĥ = h_new
     auto m = Ihat.getMass();
     auto h = Ihat.getCom();
     auto I = Ihat.getInertiaMatrixLT();
 
     auto h_new = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * h + m * translation;
     auto I1 = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * I * static_cast<const Eigen::Matrix3d &>(rotation);
-    auto I2 = skew(translation) * skew(static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * h);
+    auto I2 = skew(translation) * skew(h_new);
     auto I3 = skew(h_new) * skew(translation);
 
     lt I_new = LowerTriangular::fromFullMatrix(I1 - I2 - I3);

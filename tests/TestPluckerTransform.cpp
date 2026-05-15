@@ -343,6 +343,179 @@ TEST(InverseTransformForceTest, InverseFormula)
 }
 
 // ============================================================================
+// TransformRBI Tests
+// ============================================================================
+
+TEST(TransformRBITest, IdentityTransform)
+{
+    // Identity rotation, zero translation
+    Rotation E{Eigen::Matrix3d::Identity()};
+    PluckerTransform transform(E, Vector3d::Zero());
+    
+    // Input: mass=1, COM=[1,0,0], identity inertia
+    RigidBodyInertia input(1.0, Vector3d(1, 0, 0), LowerTriangular::Identity(3));
+    
+    // Transform
+    RigidBodyInertia output = transform.tformRBI(input);
+    
+    // Expected: unchanged
+    EXPECT_NEAR(output.getMass(), 1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[0], 1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[1], 0.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[2], 0.0, EPSILON);
+}
+
+TEST(TransformRBITest, PureRotation)
+{
+    // 90° rotation around Z, zero translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 2.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d::Zero());
+    
+    // Input: mass=1, COM=[1,0,0], diagonal inertia
+    LowerTriangular I_diag = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 2.0);
+    RigidBodyInertia input(1.0, Vector3d(1, 0, 0), I_diag);
+    
+    // Transform
+    RigidBodyInertia output = transform.tformRBI(input);
+    
+    // Expected: COM rotated 90°, inertia rotated: R*I*R^T
+    EXPECT_NEAR(output.getMass(), 1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[0], 0.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[1], 1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[2], 0.0, EPSILON);
+}
+
+TEST(TransformRBITest, PureTranslation)
+{
+    // Identity rotation, translation [1,0,0]
+    Rotation E{Eigen::Matrix3d::Identity()};
+    PluckerTransform transform(E, Vector3d(1, 0, 0));
+    
+    // Input: mass=1, COM=[0,0,0], sphere inertia
+    LowerTriangular I_sphere = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 0.4);
+    RigidBodyInertia input(1.0, Vector3d::Zero(), I_sphere);
+    
+    // Transform
+    RigidBodyInertia output = transform.tformRBI(input);
+    
+    // Expected: h' = -m*r = [-1,0,0]
+    EXPECT_NEAR(output.getMass(), 1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[0], -1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[1], 0.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[2], 0.0, EPSILON);
+}
+
+TEST(TransformRBITest, Property_MassConservation)
+{
+    // Any transform X
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    RigidBodyInertia input(2.5, Vector3d(1, 2, 3), LowerTriangular::Identity(3));
+    RigidBodyInertia output = transform.tformRBI(input);
+    
+    // Verify: mass is conserved
+    EXPECT_NEAR(output.getMass(), input.getMass(), EPSILON);
+}
+
+TEST(TransformRBITest, Property_PositiveDefinite)
+{
+    // Identity transform with positive definite inertia
+    Rotation E{Eigen::Matrix3d::Identity()};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    // Create positive definite inertia (diagonal with positive values)
+    LowerTriangular I_pos = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 1.0);
+    RigidBodyInertia input(1.0, Vector3d(0.5, 0.3, 0.2), I_pos);
+    
+    RigidBodyInertia output = transform.tformRBI(input);
+    
+    // Convert to full matrix and check eigenvalues are positive
+    Matrix3d I_full = output.getInertiaMatrixLT().getFullMatrix();
+    EigenSolver<Matrix3d> solver(I_full);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_GT(solver.eigenvalues()[i].real(), 0.0);
+    }
+}
+
+// ============================================================================
+// Inverse TransformRBI Tests
+// ============================================================================
+
+TEST(InverseTransformRBITest, InverseIsIdentity)
+{
+    // Create transform with rotation + translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 3.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(2, 1, 0.5));
+    
+    // Input
+    LowerTriangular I_in = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 2.0);
+    RigidBodyInertia input(1.5, Vector3d(1, 2, 3), I_in);
+    
+    // Apply transform then inverse
+    RigidBodyInertia transformed = transform.tformRBI(input);
+    RigidBodyInertia restored = transform.invtformRBI(transformed);
+    
+    // Expected: returns original inertia
+    EXPECT_NEAR(restored.getMass(), input.getMass(), EPSILON);
+    EXPECT_NEAR((restored.getCom() - input.getCom()).norm(), 0.0, EPSILON);
+}
+
+TEST(InverseTransformRBITest, InverseFormula)
+{
+    // X with 90° Z rotation, [1,0,0] translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 2.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(1, 0, 0));
+    
+    // Input: mass=2, COM=[1,0,0], diagonal inertia
+    LowerTriangular I_diag = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 2.0);
+    RigidBodyInertia input(2.0, Vector3d(1, 0, 0), I_diag);
+    
+    // Inverse transform
+    RigidBodyInertia output = transform.invtformRBI(input);
+    
+    // Expected: h' = R^T*h + m*r
+    // R^T*[1,0,0] = [0,-1,0] (90° rotation transpose)
+    // m*r = 2*[1,0,0] = [2,0,0]
+    // h' = [0,-1,0] + [2,0,0] = [2,-1,0]
+    EXPECT_NEAR(output.getMass(), 2.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[0], 2.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[1], -1.0, EPSILON);
+    EXPECT_NEAR(output.getCom()[2], 0.0, EPSILON);
+}
+
+TEST(InverseTransformRBITest, Property_MassConservation)
+{
+    // Any transform X
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    RigidBodyInertia input(3.5, Vector3d(1, -2, 3), LowerTriangular::Identity(3));
+    RigidBodyInertia output = transform.invtformRBI(input);
+    
+    // Verify: mass is conserved
+    EXPECT_NEAR(output.getMass(), input.getMass(), EPSILON);
+}
+
+TEST(InverseTransformRBITest, RoundTrip)
+{
+    // Multiple transforms round trip
+    Rotation E{Eigen::AngleAxisd(M_PI / 5.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(1.5, 0.7, 0.3));
+    
+    LowerTriangular I_in = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 1.5);
+    RigidBodyInertia original(2.0, Vector3d(0.5, 1.0, 1.5), I_in);
+    
+    // Round trip: forward then inverse
+    RigidBodyInertia transformed = transform.tformRBI(original);
+    RigidBodyInertia restored = transform.invtformRBI(transformed);
+    
+    // Verify returns original
+    EXPECT_NEAR(restored.getMass(), original.getMass(), EPSILON);
+    EXPECT_NEAR((restored.getCom() - original.getCom()).norm(), 0.0, EPSILON);
+}
+
+// ============================================================================
 // Main entry point
 // ============================================================================
 
