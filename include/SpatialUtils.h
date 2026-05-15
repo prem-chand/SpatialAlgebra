@@ -86,5 +86,43 @@ inline ForceVector cross(const MotionVector& v1, const ForceVector& v2) noexcept
     );
 };
 
+/**
+ * @brief Computes the cross product between two motion vectors
+ * @param v1 First motion vector
+ * @param v2 Second motion vector
+ * @return Resulting motion vector
+ * @details Implements: [ω1×ω2; ω1×v2 + v1×ω2] following Featherstone formulation
+ */
+inline MotionVector cross(const MotionVector& v1, const MotionVector& v2) noexcept {
+    const Vector3d& w1 = v1.getAngular();
+    const Vector3d& v1_lin = v1.getLinear();
+    const Vector3d& w2 = v2.getAngular();
+    const Vector3d& v2_lin = v2.getLinear();
+    
+    return MotionVector(
+        w1.cross(w2),
+        w1.cross(v2_lin) + v1_lin.cross(w2)
+    );
+}
+
+/**
+ * @brief Computes the cross product between two force vectors
+ * @param v1 First force vector
+ * @param v2 Second force vector
+ * @return Resulting force vector
+ * @details Implements: [τ1×τ2 + f1×f2; τ1×f2] following Featherstone formulation
+ */
+inline ForceVector cross(const ForceVector& v1, const ForceVector& v2) noexcept {
+    const Vector3d& t1 = v1.getAngular();
+    const Vector3d& f1 = v1.getLinear();
+    const Vector3d& t2 = v2.getAngular();
+    const Vector3d& f2 = v2.getLinear();
+    
+    return ForceVector(
+        t1.cross(t2) + f1.cross(f2),
+        t1.cross(f2)
+    );
+}
+
 } // namespace SpatialAlgebra
 #endif // SPATIAL_UTILS_H
