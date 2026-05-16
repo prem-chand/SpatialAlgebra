@@ -101,3 +101,13 @@ target_link_libraries(TestForwardDynamics
 )
 
 add_test(NAME TestForwardDynamics COMMAND TestForwardDynamics)
+
+add_executable(TestSpatialOperations tests/TestSpatialOperations.cpp)
+
+target_link_libraries(TestSpatialOperations
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
+add_test(NAME TestSpatialOperations COMMAND TestSpatialOperations)

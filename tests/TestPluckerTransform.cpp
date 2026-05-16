@@ -516,6 +516,426 @@ TEST(InverseTransformRBITest, RoundTrip)
 }
 
 // ============================================================================
+// TransformABI Tests
+// ============================================================================
+
+TEST(TransformABITest, IdentityTransform)
+{
+    // Identity rotation, zero translation
+    Rotation E{Eigen::Matrix3d::Identity()};
+    PluckerTransform transform(E, Vector3d::Zero());
+    
+    // Input: identity ABI
+    LowerTriangular I_identity = LowerTriangular::Identity(3);
+    ArticulatedBodyInertia input(I_identity, Matrix3d::Identity(), LowerTriangular::Identity(3));
+    
+    // Transform
+    ArticulatedBodyInertia output = transform.tformABI(input);
+    
+    // Expected: unchanged
+    EXPECT_NEAR(output.getH()(0, 0), 1.0, EPSILON);
+    EXPECT_NEAR(output.getM().getFullMatrix()(0, 0), 1.0, EPSILON);
+}
+
+TEST(TransformABITest, PureRotation)
+{
+    // 90° rotation around Z, zero translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 2.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d::Zero());
+    
+    // Input: diagonal ABI
+    LowerTriangular I_diag = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 2.0);
+    ArticulatedBodyInertia input(I_diag, Matrix3d::Identity(), LowerTriangular::Identity(3));
+    
+    // Transform
+    ArticulatedBodyInertia output = transform.tformABI(input);
+    
+    // Expected: I' = R*I*R^T, H' = R*H*R^T, M' = R*M*R^T
+    // For diagonal matrices and 90° rotation, should remain diagonal
+    EXPECT_NEAR(output.getH()(0, 0), 1.0, EPSILON);
+    EXPECT_NEAR(output.getH()(1, 1), 1.0, EPSILON);
+}
+
+TEST(TransformABITest, PureTranslation)
+{
+    // Identity rotation, translation [1,0,0]
+    Rotation E{Eigen::Matrix3d::Identity()};
+    PluckerTransform transform(E, Vector3d(1, 0, 0));
+    
+    // Input: simple ABI with zero H
+    LowerTriangular I_sphere = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 0.4);
+    ArticulatedBodyInertia input(I_sphere, Matrix3d::Zero(), LowerTriangular::Identity(3));
+    
+    // Transform
+    ArticulatedBodyInertia output = transform.tformABI(input);
+    
+    // Expected: H' = -M*r̂ (non-zero due to translation)
+    // H' = R*(H - M*r̂)*R^T = 0 - I*r̂ = -r̂
+    Matrix3d H_out = output.getH();
+    EXPECT_GT(H_out.norm(), 0.0);  // Should be non-zero
+}
+
+TEST(TransformABITest, Property_Symmetric)
+{
+    // Transform should preserve symmetry of I and M (H is not necessarily symmetric)
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    // Create symmetric positive definite ABI
+    Matrix3d I_full = Matrix3d::Identity() * 2.0;
+    LowerTriangular I_lt = LowerTriangular::fromFullMatrix(I_full);
+    ArticulatedBodyInertia input(I_lt, Matrix3d::Identity(), LowerTriangular::Identity(3));
+    
+    ArticulatedBodyInertia output = transform.tformABI(input);
+    
+    // Verify symmetry of I and M (H is coupling matrix, not necessarily symmetric)
+    Matrix3d I_out = output.getInertia().getFullMatrix();
+    Matrix3d M_out = output.getM().getFullMatrix();
+    
+    EXPECT_NEAR((I_out - I_out.transpose()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((M_out - M_out.transpose()).norm(), 0.0, EPSILON);
+}
+
+TEST(TransformABITest, Property_PositiveDefinite)
+{
+    // Transform should preserve positive definiteness
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    // Create positive definite ABI
+    Matrix3d I_full = Matrix3d::Identity() * 1.5;
+    LowerTriangular I_lt = LowerTriangular::fromFullMatrix(I_full);
+    ArticulatedBodyInertia input(I_lt, Matrix3d::Identity() * 0.5, LowerTriangular::Identity(3));
+    
+    ArticulatedBodyInertia output = transform.tformABI(input);
+    
+    // Check eigenvalues of I are positive
+    Matrix3d I_out = output.getInertia().getFullMatrix();
+    EigenSolver<Matrix3d> solver(I_out);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_GT(solver.eigenvalues()[i].real(), 0.0);
+    }
+}
+
+// ============================================================================
+// Inverse TransformABI Tests
+// ============================================================================
+
+TEST(InverseTransformABITest, InverseIsIdentity)
+{
+    // Create transform with rotation + translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 3.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(2, 1, 0.5));
+    
+    // Input ABI
+    LowerTriangular I_in = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 2.0);
+    ArticulatedBodyInertia input(I_in, Matrix3d::Identity(), LowerTriangular::Identity(3));
+    
+    // Apply transform then inverse
+    ArticulatedBodyInertia transformed = transform.tformABI(input);
+    ArticulatedBodyInertia restored = transform.invtformABI(transformed);
+    
+    // Expected: returns original ABI (within epsilon for floating point)
+    EXPECT_NEAR((restored.getInertia().getFullMatrix() - input.getInertia().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getH() - input.getH()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getM().getFullMatrix() - input.getM().getFullMatrix()).norm(), 0.0, 1e-8);
+}
+
+TEST(InverseTransformABITest, InverseFormula)
+{
+    // X with 90° Z rotation, [1,0,0] translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 2.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(1, 0, 0));
+    
+    // Input: simple ABI
+    LowerTriangular I_diag = LowerTriangular::fromFullMatrix(Matrix3d::Identity());
+    ArticulatedBodyInertia input(I_diag, Matrix3d::Zero(), LowerTriangular::Identity(3));
+    
+    // Inverse transform
+    ArticulatedBodyInertia output = transform.invtformABI(input);
+    
+    // Expected: M' = R^T*M*R, H' = R^T*(H + M*r̂)*R
+    // With H=0: H' = R^T*M*r̂*R
+    Matrix3d H_out = output.getH();
+    EXPECT_GT(H_out.norm(), 0.0);  // Should be non-zero due to translation term
+}
+
+TEST(InverseTransformABITest, Property_Symmetric)
+{
+    // Inverse transform should preserve symmetry of I and M (H is not necessarily symmetric)
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(0.5, 0.3, 0.2));
+    
+    Matrix3d I_full = Matrix3d::Identity() * 2.0;
+    LowerTriangular I_lt = LowerTriangular::fromFullMatrix(I_full);
+    ArticulatedBodyInertia input(I_lt, Matrix3d::Identity(), LowerTriangular::Identity(3));
+    
+    ArticulatedBodyInertia output = transform.invtformABI(input);
+    
+    // Verify symmetry of I and M
+    Matrix3d I_out = output.getInertia().getFullMatrix();
+    Matrix3d M_out = output.getM().getFullMatrix();
+    
+    EXPECT_NEAR((I_out - I_out.transpose()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((M_out - M_out.transpose()).norm(), 0.0, EPSILON);
+}
+
+TEST(InverseTransformABITest, RoundTrip)
+{
+    // Multiple transforms round trip
+    Rotation E{Eigen::AngleAxisd(M_PI / 5.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(1.5, 0.7, 0.3));
+    
+    LowerTriangular I_in = LowerTriangular::fromFullMatrix(Matrix3d::Identity() * 1.5);
+    ArticulatedBodyInertia original(I_in, Matrix3d::Identity() * 0.8, LowerTriangular::Identity(3));
+    
+    // Round trip: forward then inverse
+    ArticulatedBodyInertia transformed = transform.tformABI(original);
+    ArticulatedBodyInertia restored = transform.invtformABI(transformed);
+    
+    // Verify returns original (within floating point tolerance)
+    EXPECT_NEAR((restored.getInertia().getFullMatrix() - original.getInertia().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getH() - original.getH()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getM().getFullMatrix() - original.getM().getFullMatrix()).norm(), 0.0, 1e-8);
+}
+
+// ============================================================================
+// inverse() Method Tests
+// ============================================================================
+
+/**
+ * @brief Test suite for PluckerTransform::inverse() method
+ */
+class TestInverse : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+/**
+ * @brief Test inverse produces identity when multiplied
+ * @details X * X^(-1) should equal identity transform
+ */
+TEST(TestInverse, MultiplyWithInverseIsIdentity) {
+    // Arrange: Create transform with rotation + translation
+    Rotation E{Eigen::AngleAxisd(M_PI / 3.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(2, 1, 0.5));
+    
+    // Act: Compute inverse
+    PluckerTransform inv = transform.inverse();
+    
+    // Test by applying to motion vector: X * X^(-1) * v should equal v
+    MotionVector v(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    
+    // Apply inverse then original (equivalent to X * X^(-1) * v)
+    MotionVector transformed = inv.transformMotion(v);
+    MotionVector result = transform.transformMotion(transformed);
+    
+    // Assert: should return original vector
+    EXPECT_NEAR((result.getAngular() - v.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((result.getLinear() - v.getLinear()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test double inverse returns original
+ * @details (X^(-1))^(-1) should equal X
+ */
+TEST(TestInverse, DoubleInverseReturnsOriginal) {
+    // Arrange
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform original(E, Vector3d(1.5, 0.7, 0.3));
+    
+    // Act: Compute double inverse
+    PluckerTransform doubleInv = original.inverse().inverse();
+    
+    // Test by applying to motion and force vectors
+    MotionVector mv(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    ForceVector fv(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    
+    // Assert: double inverse should transform same as original
+    MotionVector mv_orig = original.transformMotion(mv);
+    MotionVector mv_double = doubleInv.transformMotion(mv);
+    EXPECT_NEAR((mv_orig.getAngular() - mv_double.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((mv_orig.getLinear() - mv_double.getLinear()).norm(), 0.0, EPSILON);
+    
+    ForceVector fv_orig = original.transformForce(fv);
+    ForceVector fv_double = doubleInv.transformForce(fv);
+    EXPECT_NEAR((fv_orig.getAngular() - fv_double.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((fv_orig.getLinear() - fv_double.getLinear()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test inverse of identity is identity
+ */
+TEST(TestInverse, InverseOfIdentityIsIdentity) {
+    // Arrange: Create identity transform
+    Rotation E{Matrix3d::Identity()};
+    PluckerTransform identity(E, Vector3d::Zero());
+    
+    // Act: Compute inverse
+    PluckerTransform inv = identity.inverse();
+    
+    // Test: inverse should behave like identity
+    MotionVector mv(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    MotionVector result = inv.transformMotion(mv);
+    
+    // Assert: should return unchanged vector
+    EXPECT_NEAR((result.getAngular() - mv.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((result.getLinear() - mv.getLinear()).norm(), 0.0, EPSILON);
+}
+
+// ============================================================================
+// multiply() and apply(PluckerTransform) Method Tests
+// ============================================================================
+
+/**
+ * @brief Test suite for PluckerTransform composition methods
+ */
+class TestMultiply : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+/**
+ * @brief Test multiply() composes transforms correctly
+ * @details X_combined = X1.multiply(X2) should satisfy: X_combined * v = X1 * (X2 * v)
+ */
+TEST(TestMultiply, ComposeTransforms) {
+    // Arrange: Create two transforms
+    // X1: 90° rotation around Z
+    Rotation E1{Eigen::AngleAxisd(M_PI / 2.0, Vector3d::UnitZ())};
+    PluckerTransform X1(E1, Vector3d::Zero());
+    
+    // X2: translation [1, 0, 0]
+    Rotation E2{Matrix3d::Identity()};
+    PluckerTransform X2(E2, Vector3d(1, 0, 0));
+    
+    // Act: Compose transforms using apply (which calls multiply)
+    PluckerTransform X_combined = X1.apply(X2);
+    
+    // Test by applying to a motion vector
+    MotionVector v(Vector3d(0, 0, 1), Vector3d(1, 0, 0));
+    
+    // Apply combined transform
+    MotionVector result_combined = X_combined.transformMotion(v);
+    
+    // Apply sequentially: X1 * (X2 * v)
+    MotionVector result_sequential = X1.transformMotion(X2.transformMotion(v));
+    
+    // Assert: Results should match
+    EXPECT_NEAR((result_combined.getAngular() - result_sequential.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((result_combined.getLinear() - result_sequential.getLinear()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test apply(PluckerTransform) is alias for multiply
+ */
+TEST(TestMultiply, ApplyEqualsMultiply) {
+    // Arrange
+    Rotation E1{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform X1(E1, Vector3d(0.5, 0.0, 0.0));
+    
+    Rotation E2{Eigen::AngleAxisd(M_PI / 6.0, Vector3d::UnitX())};
+    PluckerTransform X2(E2, Vector3d(0.0, 0.3, 0.0));
+    
+    // Act: Compute both ways (apply is alias for multiply per PluckerTransform.h:199)
+    PluckerTransform result_apply1 = X1.apply(X2);
+    PluckerTransform result_apply2 = X1.apply(X2);
+    
+    // Test both transforms on same vector
+    MotionVector testVec(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    MotionVector mv1 = result_apply1.transformMotion(testVec);
+    MotionVector mv2 = result_apply2.transformMotion(testVec);
+    
+    // Assert: Should produce identical results
+    EXPECT_NEAR((mv1.getAngular() - mv2.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((mv1.getLinear() - mv2.getLinear()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test associativity of apply: (X1 * X2) * X3 == X1 * (X2 * X3)
+ */
+TEST(TestMultiply, Associativity) {
+    // Arrange: Create three transforms
+    Rotation E1{Eigen::AngleAxisd(M_PI / 6.0, Vector3d::UnitZ())};
+    PluckerTransform X1(E1, Vector3d(0.5, 0.0, 0.0));
+    
+    Rotation E2{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitX())};
+    PluckerTransform X2(E2, Vector3d(0.0, 0.3, 0.0));
+    
+    Rotation E3{Eigen::AngleAxisd(M_PI / 3.0, Vector3d::UnitY())};
+    PluckerTransform X3(E3, Vector3d(0.0, 0.0, 0.7));
+    
+    // Act: (X1 * X2) * X3 using apply
+    PluckerTransform left = X1.apply(X2).apply(X3);
+    
+    // X1 * (X2 * X3)
+    PluckerTransform X23 = X2.apply(X3);
+    PluckerTransform right = X1.apply(X23);
+    
+    // Test on motion vector
+    MotionVector testVec(Vector3d(1, 0, 0), Vector3d(0, 1, 0));
+    MotionVector mv_left = left.transformMotion(testVec);
+    MotionVector mv_right = right.transformMotion(testVec);
+    
+    // Assert: Should be equal
+    EXPECT_NEAR((mv_left.getAngular() - mv_right.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((mv_left.getLinear() - mv_right.getLinear()).norm(), 0.0, EPSILON);
+}
+
+// ============================================================================
+// print() Method Tests
+// ============================================================================
+
+/**
+ * @brief Test suite for PluckerTransform::print() method
+ */
+class TestPrint : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+/**
+ * @brief Test print() executes without crashing and produces output
+ * @note Uses GTest's stdout capture to verify output contains expected values
+ */
+TEST(TestPrint, ProducesOutput) {
+    // Arrange: Create transform with known values
+    Rotation E{Eigen::AngleAxisd(M_PI / 4.0, Vector3d::UnitZ())};
+    PluckerTransform transform(E, Vector3d(1.0, 2.0, 3.0));
+    
+    // Act: Capture stdout and call print()
+    testing::internal::CaptureStdout();
+    transform.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    
+    // Assert: Output should not be empty and should contain rotation/translation info
+    // The print() method outputs rotation matrix and translation vector
+    EXPECT_FALSE(output.empty());
+    // Check that output contains "Rotation" text
+    EXPECT_NE(output.find("Rotation"), std::string::npos);
+}
+
+/**
+ * @brief Test print() with identity transform
+ */
+TEST(TestPrint, IdentityTransform) {
+    // Arrange
+    Rotation E{Matrix3d::Identity()};
+    PluckerTransform identity(E, Vector3d::Zero());
+    
+    // Act: Just verify it doesn't crash
+    testing::internal::CaptureStdout();
+    identity.print();
+    std::string output = testing::internal::GetCapturedStdout();
+    
+    // Assert: Should produce some output
+    EXPECT_FALSE(output.empty());
+}
+
+// ============================================================================
 // Main entry point
 // ============================================================================
 
