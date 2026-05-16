@@ -13,7 +13,7 @@
 - [x] **Phase 3: Packed Matrix** - LowerTriangular matrix with packed storage (completed 2026-05-15)
 - [ ] **Phase 4: Spatial Utilities** - Cross product, dot product, skew operators
 - [ ] **Phase 5: Plücker Transforms** - 6D coordinate transformations
-- [ ] **Phase 6: Inertia Properties** - RigidBodyInertia and ArticulatedBodyInertia
+- [x] **Phase 6: Inertia Properties** - RigidBodyInertia and ArticulatedBodyInertia (completed 2026-05-16)
 - [ ] **Phase 7: Forward Dynamics** - Articulated Body Algorithm implementation
 - [ ] **Phase 8: Test Infrastructure** - Complete GTest coverage for all classes
 - [ ] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification
@@ -115,9 +115,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Implement ArticulatedBodyInertia::apply() and print() methods
-- [ ] 06-02-PLAN.md — Create GTest test suite for RigidBodyInertia
-- [ ] 06-03-PLAN.md — Create GTest test suite for ArticulatedBodyInertia
+- [x] 06-01-PLAN.md — Implement ArticulatedBodyInertia::apply() and print() methods
+- [x] 06-02-PLAN.md — Create GTest test suite for RigidBodyInertia
+- [x] 06-03-PLAN.md — Create GTest test suite for ArticulatedBodyInertia
 
 ### Phase 7: Forward Dynamics
 **Goal**: Users can compute forward dynamics for articulated rigid body systems
