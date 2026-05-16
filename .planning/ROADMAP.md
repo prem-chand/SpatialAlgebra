@@ -18,7 +18,8 @@
 - [ ] **Phase 8: Test Infrastructure** - Complete GTest coverage for all classes
 - [x] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification (completed 2026-05-16)
 - [ ] **Phase 10: Documentation** - README, examples, Doxygen
-- [ ] **Phase 11: ABI Transform Fixes** - Fix tformABI/invtformABI formulas (Featherstone Eq 7.16)
+- [x] **Phase 11: ABI Transform Fixes** - Fix tformABI/invtformABI formulas (Featherstone Eq 7.16) (completed 2026-05-16)
+- [ ] **Phase 12: Dynamics Consistency Fixes** - Fix RNEA↔ABA bias acceleration alignment (BF-02)
 
 ---
 
@@ -195,6 +196,20 @@ Plans:
 Plans:
 - [ ] 11-01-PLAN.md — Derive correct formula, fix tformABI/invtformABI, verify all tests pass
 
+### Phase 12: Dynamics Consistency Fixes
+**Goal:** Align RNEA↔ABA bias acceleration conventions, all consistency tests pass
+**Depends on**: Phase 9, Phase 11
+**Requirements**: BF-02
+**Success Criteria** (what must be TRUE):
+  1. ConsistencyTest.ThreeLinkSerialChain passes
+  2. ConsistencyTest.BranchingYConfiguration passes
+  3. Bias acceleration propagates correctly in ABA outward pass
+  4. 158/158 total tests passing (100%)
+**Plans**: 1 plan
+
+Plans:
+- [ ] 12-01-PLAN.md — Fix ABA bias acceleration propagation in outwardPass()
+
 ---
 
 ## Progress
@@ -211,7 +226,8 @@ Plans:
 | 8. Test Infrastructure | 0/6 | Not started | - |
 | 9. Integration Tests | 2/2 | Complete   | 2026-05-16 |
 | 10. Documentation | 0/3 | Not started | - |
-| 11. ABI Transform Fixes | 0/1 | Not started | - |
+| 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
+| 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
 
 ---
 
