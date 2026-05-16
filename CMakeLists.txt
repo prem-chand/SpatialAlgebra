@@ -91,3 +91,13 @@ target_link_libraries(TestArticulatedBodyInertia
 )
 
 add_test(NAME TestArticulatedBodyInertia COMMAND TestArticulatedBodyInertia)
+
+add_executable(TestForwardDynamics tests/TestForwardDynamics.cpp)
+
+target_link_libraries(TestForwardDynamics
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
+add_test(NAME TestForwardDynamics COMMAND TestForwardDynamics)
