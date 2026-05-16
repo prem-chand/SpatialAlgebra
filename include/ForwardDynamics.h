@@ -114,6 +114,9 @@ namespace SpatialAlgebra
                  pa(ForceVector(Vector3d::Zero(), Vector3d::Zero())) {}
     };
 
+    // Type alias to distinguish Link type for ForwardDynamics
+    using ForwardDynamicsLink = Link;
+
     /**
      * @brief Forward dynamics solver using Articulated Body Algorithm
      * @details The ForwardDynamics class implements Featherstone's ABA (Algorithm 7.3)

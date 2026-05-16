@@ -111,3 +111,23 @@ target_link_libraries(TestSpatialOperations
 )
 
 add_test(NAME TestSpatialOperations COMMAND TestSpatialOperations)
+
+add_executable(TestInverseDynamics tests/TestInverseDynamics.cpp)
+
+target_link_libraries(TestInverseDynamics
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
+add_test(NAME TestInverseDynamics COMMAND TestInverseDynamics)
+
+add_executable(TestDynamicsConsistency tests/TestDynamicsConsistency.cpp)
+
+target_link_libraries(TestDynamicsConsistency
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
+add_test(NAME TestDynamicsConsistency COMMAND TestDynamicsConsistency)
