@@ -181,14 +181,31 @@ namespace SpatialAlgebra
          *          the articulated body. The operation implements:
          *          f = Ia * v = [Iω + Hv; Hᵀω + Mv]
          */
-        inline fv apply(const mv &mv) const;
+        inline fv apply(const mv &motion) const
+        {
+            // f = Ia * v = [Iω + Hv; Hᵀω + Mv]
+            Vector3d omega = motion.getAngular();
+            Vector3d v = motion.getLinear();
+            Vector3d Iomega = Inertia * omega;
+            Vector3d Hv = H * v;
+            Vector3d HTomega = H.transpose() * omega;
+            Vector3d Mv = M * v;
+            Vector3d torque = Iomega + Hv;
+            Vector3d force = HTomega + Mv;
+            return fv(torque, force);
+        }
 
         /**
          * @brief Print inertia properties
          * @details Outputs the rotational inertia, coupling matrix, and mass
          *          matrix components in a human-readable format with units.
          */
-        inline void print() const;
+        inline void print() const
+        {
+            std::cout << "Rotational Inertia: " << Inertia << '\n'
+                      << "Coupling Matrix H: " << H << '\n'
+                      << "Mass Matrix: " << M << std::endl;
+        }
     };
 
     /** @brief Type alias for more concise notation */
