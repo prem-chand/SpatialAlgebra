@@ -103,28 +103,118 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::invtformRBI(const RigidBodyIn
 
 ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::tformABI(const ArticulatedBodyInertia &Ia) const
 {
+    // Featherstone (2008) Eq 7.16: I'a = X * Ia * X^T
+    // 
+    // 6x6 block structure: Ia = [I,   H;
+    //                           H^T, M]
+    // where I and M are symmetric (3x3), H is general (3x3)
+    //
+    // Spatial motion transform: X = [R,     0;
+    //                                -R*r̂,  R]
+    // where r̂ = skew(translation)
+    //
+    // We compute I'a = X * Ia * X^T directly using 6x6 matrices.
+    
     auto M = Ia.getM();
     auto H = Ia.getH();
     auto Inertia = Ia.getInertia();
 
-    auto Y = H - skew(translation) * M.getFullMatrix();
-
-    auto a1 = Inertia.getFullMatrix();
-    auto a2 = skew(translation) * H.transpose();
-    auto a3 = Y * skew(translation);
-
-    auto I_new = static_cast<const Eigen::Matrix3d &>(rotation) * (a1 - a2 + a3) * static_cast<const Eigen::Matrix3d &>(rotation).transpose();
-    lt I = LowerTriangular::fromFullMatrix(I_new);
-
-    auto M_new = LowerTriangular::fromFullMatrix(static_cast<const Eigen::Matrix3d &>(rotation) * M.getFullMatrix() * static_cast<const Eigen::Matrix3d &>(rotation).transpose());
-    auto H_new = static_cast<const Eigen::Matrix3d &>(rotation) * (Y) * static_cast<const Eigen::Matrix3d &>(rotation).transpose();
-
-    return ArticulatedBodyInertia(I, H_new, M_new);
+    const Matrix3d& R = static_cast<const Eigen::Matrix3d &>(rotation);
+    Matrix3d r_skew = skew(translation);  // r̂ = skew(t)
+    
+    // Build 6x6 articulated body inertia matrix
+    // I and M are symmetric, so we need to reconstruct the full symmetric matrix
+    // from LowerTriangular storage (copy lower triangle to upper)
+    Matrix3d I_full = Inertia.getFullMatrix();
+    I_full = 0.5 * (I_full + I_full.transpose());  // Symmetrize
+    
+    Matrix3d M_full = M.getFullMatrix();
+    M_full = 0.5 * (M_full + M_full.transpose());  // Symmetrize
+    
+    // Order: [angular; linear] so Ia = [I, H; H^T, M]
+    MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
+    Ia_6x6.block<3,3>(0,0) = I_full;
+    Ia_6x6.block<3,3>(0,3) = H;
+    Ia_6x6.block<3,3>(3,0) = H.transpose();
+    Ia_6x6.block<3,3>(3,3) = M_full;
+    
+    // Build 6x6 spatial transform X = [R, 0; -R*r̂, R]
+    MatrixXd X_6x6 = MatrixXd::Zero(6, 6);
+    X_6x6.block<3,3>(0,0) = R;
+    X_6x6.block<3,3>(0,3) = Matrix3d::Zero();
+    X_6x6.block<3,3>(3,0) = -R * r_skew;
+    X_6x6.block<3,3>(3,3) = R;
+    
+    // Compute I'a = X * Ia * X^T
+    MatrixXd Ia_prime = X_6x6 * Ia_6x6 * X_6x6.transpose();
+    
+    // Extract blocks - I' and M' should be symmetric
+    Matrix3d I_new_full = Ia_prime.block<3,3>(0,0);
+    Matrix3d M_new_full = Ia_prime.block<3,3>(3,3);
+    // Symmetrize to handle numerical errors
+    I_new_full = 0.5 * (I_new_full + I_new_full.transpose());
+    M_new_full = 0.5 * (M_new_full + M_new_full.transpose());
+    
+    lt I_new = LowerTriangular::fromFullMatrix(I_new_full);
+    Matrix3d H_new = Ia_prime.block<3,3>(0,3);
+    lt M_new = LowerTriangular::fromFullMatrix(M_new_full);
+    
+    return ArticulatedBodyInertia(I_new, H_new, M_new);
 }
 
 ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::invtformABI(const ArticulatedBodyInertia &Ia) const
 {
-    return ArticulatedBodyInertia();
+    // Inverse transform: I' = X^{-1} * Ia * X^{-T}
+    // 
+    // For X = [R, 0; -R*r̂, R], the inverse is:
+    // X^{-1} = [R^T, 0; r̂*R^T, R^T]
+    // and X^{-T} = (X^{-1})^T = [R, -R*r̂; 0, R^T]
+    //
+    // We compute I' = X^{-1} * Ia * X^{-T} directly using 6x6 matrices.
+    
+    auto M = Ia.getM();
+    auto H = Ia.getH();
+    auto Inertia = Ia.getInertia();
+    
+    const Matrix3d& R = static_cast<const Eigen::Matrix3d &>(rotation);
+    Matrix3d r_skew = skew(translation);  // r̂ = skew(t)
+    
+    // Symmetrize I and M from LowerTriangular storage
+    Matrix3d I_full = Inertia.getFullMatrix();
+    I_full = 0.5 * (I_full + I_full.transpose());
+    
+    Matrix3d M_full = M.getFullMatrix();
+    M_full = 0.5 * (M_full + M_full.transpose());
+    
+    // Build 6x6 articulated body inertia matrix
+    MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
+    Ia_6x6.block<3,3>(0,0) = I_full;
+    Ia_6x6.block<3,3>(0,3) = H;
+    Ia_6x6.block<3,3>(3,0) = H.transpose();
+    Ia_6x6.block<3,3>(3,3) = M_full;
+    
+    // Build 6x6 inverse spatial transform X^{-1} = [R^T, 0; r̂*R^T, R^T]
+    MatrixXd X_inv_6x6 = MatrixXd::Zero(6, 6);
+    X_inv_6x6.block<3,3>(0,0) = R.transpose();
+    X_inv_6x6.block<3,3>(0,3) = Matrix3d::Zero();
+    X_inv_6x6.block<3,3>(3,0) = r_skew * R.transpose();
+    X_inv_6x6.block<3,3>(3,3) = R.transpose();
+    
+    // Compute I' = X^{-1} * Ia * X^{-T}
+    MatrixXd X_inv_T = X_inv_6x6.transpose();
+    MatrixXd Ia_prime = X_inv_6x6 * Ia_6x6 * X_inv_T;
+    
+    // Extract blocks and symmetrize
+    Matrix3d I_new_full = Ia_prime.block<3,3>(0,0);
+    Matrix3d M_new_full = Ia_prime.block<3,3>(3,3);
+    I_new_full = 0.5 * (I_new_full + I_new_full.transpose());
+    M_new_full = 0.5 * (M_new_full + M_new_full.transpose());
+    
+    lt I_new = LowerTriangular::fromFullMatrix(I_new_full);
+    Matrix3d H_new = Ia_prime.block<3,3>(0,3);
+    lt M_new = LowerTriangular::fromFullMatrix(M_new_full);
+    
+    return ArticulatedBodyInertia(I_new, H_new, M_new);
 }
 
 PluckerTransform PluckerTransform::inverse() const
