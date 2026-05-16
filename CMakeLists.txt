@@ -65,9 +65,19 @@ target_link_libraries(TestSpatialUtils
     GTest::Main
 )
 
+add_executable(TestRigidBodyInertia tests/TestRigidBodyInertia.cpp)
+
+target_link_libraries(TestRigidBodyInertia
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
 # Add tests to CTest
 add_test(NAME TestSpatialVector COMMAND TestSpatialVector)
 add_test(NAME TestPluckerTransform COMMAND TestPluckerTransform)
 add_test(NAME TestRotation COMMAND TestRotation)
 add_test(NAME TestLowerTriangular COMMAND TestLowerTriangular)
 add_test(NAME TestSpatialUtils COMMAND TestSpatialUtils)
+
+add_test(NAME TestRigidBodyInertia COMMAND TestRigidBodyInertia)
