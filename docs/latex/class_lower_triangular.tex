@@ -1,0 +1,538 @@
+\doxysection{Lower\+Triangular Class Reference}
+\hypertarget{class_lower_triangular}{}\label{class_lower_triangular}\index{LowerTriangular@{LowerTriangular}}
+
+
+Memory-\/efficient lower triangular matrix class.  
+
+
+
+
+{\ttfamily \#include $<$Lower\+Triangular.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{Lower\+Triangular}} (int size)
+\begin{DoxyCompactList}\small\item\em Constructs a zero-\/initialized lower triangular matrix. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular_a8ca12f78e213b33919ccb84e4fe58df5}{Lower\+Triangular}} (const Eigen\+::\+Vector\+Xd \&packed\+Data, int size)
+\begin{DoxyCompactList}\small\item\em Constructs from packed data array. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_lower_triangular_a8fb9b8ba5a4b9f16fb2ebc68df490025}{operator()}} (int i, int j) const
+\begin{DoxyCompactList}\small\item\em Matrix element access (const). \end{DoxyCompactList}\item 
+double \& \mbox{\hyperlink{class_lower_triangular_abc6fa7c48b31fccf74b24a7534c2044b}{operator()}} (int i, int j)
+\begin{DoxyCompactList}\small\item\em Matrix element access (non-\/const). \end{DoxyCompactList}\item 
+const Eigen\+::\+Vector\+Xd \& \mbox{\hyperlink{class_lower_triangular_acef6a422d4d41e96453129daceb61c1e}{get\+Data}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Access to packed storage data. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_lower_triangular_adac3d94e766667b65827897879770c27}{get\+Size}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get matrix dimension. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a64e6846cd8ef5036eab45f8a1ce09631}{operator\texorpdfstring{$\ast$}{*}}} (const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&other) const
+\begin{DoxyCompactList}\small\item\em Matrix-\/matrix multiplication (this \texorpdfstring{$\ast$}{*} other). \end{DoxyCompactList}\item 
+Eigen\+::\+Matrix\+Xd \mbox{\hyperlink{class_lower_triangular_af4a92b65aa051ce72779d9ff63c9f624}{operator\texorpdfstring{$\ast$}{*}}} (const Eigen\+::\+Matrix\+Xd \&other) const
+\begin{DoxyCompactList}\small\item\em Matrix-\/matrix multiplication with dense matrix (L \texorpdfstring{$\ast$}{*} M). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a2c956cbe6be70dcedc03b450d88d1727}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
+\begin{DoxyCompactList}\small\item\em Scalar multiplication (matrix \texorpdfstring{$\ast$}{*} scalar). \end{DoxyCompactList}\item 
+Eigen\+::\+Vector\+Xd \mbox{\hyperlink{class_lower_triangular_a75ff4a0923f69dabd6efc332ce2e395c}{operator\texorpdfstring{$\ast$}{*}}} (const Eigen\+::\+Vector\+Xd \&v) const
+\begin{DoxyCompactList}\small\item\em Matrix-\/vector multiplication (L \texorpdfstring{$\ast$}{*} v). \end{DoxyCompactList}\item 
+Vector3d \mbox{\hyperlink{class_lower_triangular_a4758d675d2fc3cacaad33b4cf7d1a43a}{operator\texorpdfstring{$\ast$}{*}}} (const Vector3d \&v) const
+\begin{DoxyCompactList}\small\item\em Matrix-\/vector multiplication for fixed-\/size 3D vectors (L \texorpdfstring{$\ast$}{*} v). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_aa39f1779c0e46882ed6c81ce74984370}{operator+}} (const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&other) const
+\begin{DoxyCompactList}\small\item\em Matrix addition. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a7a5b2db10db90929d661d0f651e6cdb5}{transpose}} () const
+\begin{DoxyCompactList}\small\item\em Matrix transpose. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a1d087ad60fa58ad1617ad0bee9a4f062}{inverse}} () const
+\begin{DoxyCompactList}\small\item\em Compute matrix inverse. \end{DoxyCompactList}\item 
+Eigen\+::\+Matrix\+Xd \mbox{\hyperlink{class_lower_triangular_ab9a7612a396987ec504e3f7c5c5d0fa8}{get\+Full\+Matrix}} () const
+\begin{DoxyCompactList}\small\item\em Convert to full matrix representation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{Identity}} (int size)
+\begin{DoxyCompactList}\small\item\em Create identity matrix. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_aa68cd6d4f09ddbf634bff9bd1bd13abf}{from\+Full\+Matrix}} (const Eigen\+::\+Matrix\+Xd \&full\+Matrix)
+\begin{DoxyCompactList}\small\item\em Create lower triangular matrix from full matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+Eigen\+::\+Matrix\+Xd \mbox{\hyperlink{class_lower_triangular_a2138818942626c16707600393e9346f9}{operator\texorpdfstring{$\ast$}{*}}} (const Eigen\+::\+Matrix\+Xd \&lhs, const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&rhs)
+\begin{DoxyCompactList}\small\item\em Dense matrix multiplication with lower triangular (M \texorpdfstring{$\ast$}{*} L). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \mbox{\hyperlink{class_lower_triangular_a08a33b242952101a03ed0f6f220b9f10}{operator\texorpdfstring{$\ast$}{*}}} (double scalar, const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&matrix)
+\begin{DoxyCompactList}\small\item\em Scalar multiplication (scalar \texorpdfstring{$\ast$}{*} matrix). \end{DoxyCompactList}\item 
+std\+::ostream \& \mbox{\hyperlink{class_lower_triangular_afcf65b327d76e547a82effd9b5dad449}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&matrix)
+\begin{DoxyCompactList}\small\item\em Stream output operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Memory-\/efficient lower triangular matrix class. 
+
+Implements a lower triangular matrix using packed storage format, providing both memory efficiency and fast operations. The class ensures that only the lower triangular elements are stored and modified, while upper triangular elements are implicitly zero.
+
+Mathematical Properties\+:
+\begin{DoxyItemize}
+\item All elements above main diagonal are zero
+\item Matrix-\/matrix product of lower triangular matrices is lower triangular
+\item Transpose converts lower to upper triangular
+\end{DoxyItemize}
+
+Implementation Features\+:
+\begin{DoxyItemize}
+\item Packed storage format for memory efficiency
+\item Bounds checking in debug mode
+\item Exception safety for invalid operations
+\item Open\+MP parallelization for performance 
+\end{DoxyItemize}
+
+\label{doc-constructors}
+\Hypertarget{class_lower_triangular_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}\index{LowerTriangular@{LowerTriangular}!LowerTriangular@{LowerTriangular}}
+\index{LowerTriangular@{LowerTriangular}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{LowerTriangular()}{LowerTriangular()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd} 
+Lower\+Triangular\+::\+Lower\+Triangular (\begin{DoxyParamCaption}\item[{int}]{size}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Constructs a zero-\/initialized lower triangular matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & Matrix dimension (n×n)\\
+\hline
+\end{DoxyParams}
+Allocates memory for n(n+1)/2 elements and initializes them to zero. The size parameter determines both rows and columns of the matrix. \Hypertarget{class_lower_triangular_a8ca12f78e213b33919ccb84e4fe58df5}\index{LowerTriangular@{LowerTriangular}!LowerTriangular@{LowerTriangular}}
+\index{LowerTriangular@{LowerTriangular}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{LowerTriangular()}{LowerTriangular()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a8ca12f78e213b33919ccb84e4fe58df5} 
+Lower\+Triangular\+::\+Lower\+Triangular (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Vector\+Xd \&}]{packed\+Data}{, }\item[{int}]{size}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs from packed data array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em packed\+Data} & Vector containing packed lower triangular elements \\
+\hline
+{\em size} & Matrix dimension \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if data size doesn\textquotesingle{}t match n(n+1)/2\\
+\hline
+\end{DoxyExceptions}
+Creates a matrix using pre-\/packed data. The data must be in row-\/major order and contain exactly n(n+1)/2 elements. 
+
+\label{doc-func-members}
+\Hypertarget{class_lower_triangular_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_lower_triangular_aa68cd6d4f09ddbf634bff9bd1bd13abf}\index{LowerTriangular@{LowerTriangular}!fromFullMatrix@{fromFullMatrix}}
+\index{fromFullMatrix@{fromFullMatrix}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{fromFullMatrix()}{fromFullMatrix()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_aa68cd6d4f09ddbf634bff9bd1bd13abf} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::from\+Full\+Matrix (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix\+Xd \&}]{full\+Matrix}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create lower triangular matrix from full matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em full\+Matrix} & Dense matrix to convert \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Lower triangular matrix containing lower elements 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if input matrix is not square\\
+\hline
+\end{DoxyExceptions}
+Creates a \doxylink{class_lower_triangular}{Lower\+Triangular} from a dense matrix by extracting the lower triangular elements. The upper triangular part of the input matrix is ignored.
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Eigen::MatrixXd\ M(2,2);}
+\DoxyCodeLine{M\ <<\ 1,\ 2,}
+\DoxyCodeLine{\ \ \ \ \ 3,\ 4;}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ L\ =\ \mbox{\hyperlink{class_lower_triangular_aa68cd6d4f09ddbf634bff9bd1bd13abf}{LowerTriangular::fromFullMatrix}}(M);}
+\DoxyCodeLine{\textcolor{comment}{//\ L\ contains:\ [1\ 0]}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ [3\ 4]}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This method only considers the lower triangular part of the input matrix. Any values in the upper triangular part are ignored. 
+\end{DoxyNote}
+\Hypertarget{class_lower_triangular_acef6a422d4d41e96453129daceb61c1e}\index{LowerTriangular@{LowerTriangular}!getData@{getData}}
+\index{getData@{getData}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{getData()}{getData()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_acef6a422d4d41e96453129daceb61c1e} 
+const Eigen\+::\+Vector\+Xd \& Lower\+Triangular\+::get\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Access to packed storage data. 
+
+\begin{DoxyReturn}{Returns}
+Const reference to internal packed data vector 
+\end{DoxyReturn}
+\Hypertarget{class_lower_triangular_ab9a7612a396987ec504e3f7c5c5d0fa8}\index{LowerTriangular@{LowerTriangular}!getFullMatrix@{getFullMatrix}}
+\index{getFullMatrix@{getFullMatrix}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{getFullMatrix()}{getFullMatrix()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_ab9a7612a396987ec504e3f7c5c5d0fa8} 
+Eigen\+::\+Matrix\+Xd Lower\+Triangular\+::get\+Full\+Matrix (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Convert to full matrix representation. 
+
+\begin{DoxyReturn}{Returns}
+Dense matrix containing all elements
+\end{DoxyReturn}
+Creates a full n×n Eigen\+::\+Matrix\+Xd from the packed storage format. The resulting matrix contains zeros in the upper triangular part and the stored values in the lower triangular part.
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ L(3);}
+\DoxyCodeLine{L(1,0)\ =\ 2.0;\ L(2,0)\ =\ 3.0;\ L(2,1)\ =\ 4.0;}
+\DoxyCodeLine{Eigen::MatrixXd\ full\ =\ L.getFullMatrix();}
+\DoxyCodeLine{\textcolor{comment}{//\ full\ =\ [0\ 0\ 0]}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ \ \ \ \ \ \ [2\ 0\ 0]}}
+\DoxyCodeLine{\textcolor{comment}{//\ \ \ \ \ \ \ \ [3\ 4\ 0]}}
+
+\end{DoxyCode}
+ \Hypertarget{class_lower_triangular_adac3d94e766667b65827897879770c27}\index{LowerTriangular@{LowerTriangular}!getSize@{getSize}}
+\index{getSize@{getSize}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{getSize()}{getSize()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_adac3d94e766667b65827897879770c27} 
+int Lower\+Triangular\+::get\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get matrix dimension. 
+
+\begin{DoxyReturn}{Returns}
+Size of the square matrix 
+\end{DoxyReturn}
+\Hypertarget{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}\index{LowerTriangular@{LowerTriangular}!Identity@{Identity}}
+\index{Identity@{Identity}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{Identity()}{Identity()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::\+Identity (\begin{DoxyParamCaption}\item[{int}]{size}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create identity matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & Matrix dimension \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Identity matrix of given size
+\end{DoxyReturn}
+Static factory method to create an identity matrix \Hypertarget{class_lower_triangular_a1d087ad60fa58ad1617ad0bee9a4f062}\index{LowerTriangular@{LowerTriangular}!inverse@{inverse}}
+\index{inverse@{inverse}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{inverse()}{inverse()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a1d087ad60fa58ad1617ad0bee9a4f062} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::inverse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Compute matrix inverse. 
+
+\begin{DoxyReturn}{Returns}
+Inverse lower triangular matrix 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & if matrix is singular (zero on diagonal)\\
+\hline
+\end{DoxyExceptions}
+Computes inverse using forward substitution, preserving lower triangular structure. Diagonal elements of inverse are 1/L(i,i). Off-\/diagonal elements computed via\+: L\texorpdfstring{$^\wedge$}{\string^}-\/1(i,j) = -\/sum(L(i,k)\texorpdfstring{$\ast$}{*}\+L\texorpdfstring{$^\wedge$}{\string^}-\/1(k,j)) for k=j to i-\/1
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ L(3);}
+\DoxyCodeLine{L(0,0)\ =\ 2.0;\ L(1,0)\ =\ 1.0;\ L(1,1)\ =\ 3.0;}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ Linv\ =\ L.inverse();}
+\DoxyCodeLine{\textcolor{comment}{//\ L\ *\ Linv\ should\ equal\ Identity}}
+
+\end{DoxyCode}
+ \Hypertarget{class_lower_triangular_abc6fa7c48b31fccf74b24a7534c2044b}\index{LowerTriangular@{LowerTriangular}!operator()@{operator()}}
+\index{operator()@{operator()}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_abc6fa7c48b31fccf74b24a7534c2044b} 
+double \& Lower\+Triangular\+::operator() (\begin{DoxyParamCaption}\item[{int}]{i}{, }\item[{int}]{j}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix element access (non-\/const). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & Row index (0-\/based) \\
+\hline
+{\em j} & Column index (0-\/based) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to matrix element 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::out\+\_\+of\+\_\+range} & if indices are out of bounds (in debug mode) \\
+\hline
+{\em std\+::invalid\+\_\+argument} & if attempting to modify upper triangle\\
+\hline
+\end{DoxyExceptions}
+Provides write access to lower triangular elements only \Hypertarget{class_lower_triangular_a8fb9b8ba5a4b9f16fb2ebc68df490025}\index{LowerTriangular@{LowerTriangular}!operator()@{operator()}}
+\index{operator()@{operator()}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a8fb9b8ba5a4b9f16fb2ebc68df490025} 
+double Lower\+Triangular\+::operator() (\begin{DoxyParamCaption}\item[{int}]{i}{, }\item[{int}]{j}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix element access (const). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & Row index (0-\/based) \\
+\hline
+{\em j} & Column index (0-\/based) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Matrix element value 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::out\+\_\+of\+\_\+range} & if indices are out of bounds (in debug mode)\\
+\hline
+\end{DoxyExceptions}
+Returns 0 for upper triangular elements (i \texorpdfstring{$<$}{<} j) \Hypertarget{class_lower_triangular_af4a92b65aa051ce72779d9ff63c9f624}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_af4a92b65aa051ce72779d9ff63c9f624} 
+Eigen\+::\+Matrix\+Xd Lower\+Triangular\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix\+Xd \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix-\/matrix multiplication with dense matrix (L \texorpdfstring{$\ast$}{*} M). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Dense matrix to multiply with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result as dense matrix 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if dimensions don\textquotesingle{}t match\\
+\hline
+\end{DoxyExceptions}
+Efficiently implements multiplication with a dense matrix, taking advantage of the lower triangular structure. \Hypertarget{class_lower_triangular_a75ff4a0923f69dabd6efc332ce2e395c}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a75ff4a0923f69dabd6efc332ce2e395c} 
+Eigen\+::\+Vector\+Xd Lower\+Triangular\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Vector\+Xd \&}]{v}{}\end{DoxyParamCaption}) const}
+
+
+
+Matrix-\/vector multiplication (L \texorpdfstring{$\ast$}{*} v). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & Vector to multiply with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result as Vector\+Xd 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if dimensions don\textquotesingle{}t match\\
+\hline
+\end{DoxyExceptions}
+Efficiently implements multiplication with a vector, taking advantage of the lower triangular structure. Only computes lower triangle products (O(n²/2) operations). \Hypertarget{class_lower_triangular_a64e6846cd8ef5036eab45f8a1ce09631}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a64e6846cd8ef5036eab45f8a1ce09631} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix-\/matrix multiplication (this \texorpdfstring{$\ast$}{*} other). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Right-\/hand side lower triangular matrix \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result of multiplication 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if matrix dimensions don\textquotesingle{}t match\\
+\hline
+\end{DoxyExceptions}
+Implements optimized multiplication for lower triangular matrices. The result is guaranteed to be lower triangular. Uses Open\+MP for parallel computation when available. \Hypertarget{class_lower_triangular_a4758d675d2fc3cacaad33b4cf7d1a43a}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a4758d675d2fc3cacaad33b4cf7d1a43a} 
+Vector3d Lower\+Triangular\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const Vector3d \&}]{v}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix-\/vector multiplication for fixed-\/size 3D vectors (L \texorpdfstring{$\ast$}{*} v). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & 3D vector to multiply with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result as Vector3d 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if matrix dimension is not 3\\
+\hline
+\end{DoxyExceptions}
+Specialized overload for 3D vectors to avoid ambiguity with Matrix\+Xd operator\texorpdfstring{$\ast$}{*}. Returns Vector3d for efficiency. \Hypertarget{class_lower_triangular_a2c956cbe6be70dcedc03b450d88d1727}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a2c956cbe6be70dcedc03b450d88d1727} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Scalar multiplication (matrix \texorpdfstring{$\ast$}{*} scalar). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & Scaling factor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scaled matrix 
+\end{DoxyReturn}
+\Hypertarget{class_lower_triangular_aa39f1779c0e46882ed6c81ce74984370}\index{LowerTriangular@{LowerTriangular}!operator+@{operator+}}
+\index{operator+@{operator+}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_aa39f1779c0e46882ed6c81ce74984370} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix addition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Matrix to add \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Sum of matrices 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if dimensions don\textquotesingle{}t match \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_lower_triangular_a7a5b2db10db90929d661d0f651e6cdb5}\index{LowerTriangular@{LowerTriangular}!transpose@{transpose}}
+\index{transpose@{transpose}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{transpose()}{transpose()}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a7a5b2db10db90929d661d0f651e6cdb5} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} Lower\+Triangular\+::transpose (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Matrix transpose. 
+
+\begin{DoxyReturn}{Returns}
+Transposed matrix
+\end{DoxyReturn}
+Creates a new lower triangular matrix representing the transpose of this matrix. 
+
+\label{doc-related-members}
+\Hypertarget{class_lower_triangular_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_lower_triangular_a2138818942626c16707600393e9346f9}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}}{operator*}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a2138818942626c16707600393e9346f9} 
+Eigen\+::\+Matrix\+Xd operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Matrix\+Xd \&}]{lhs}{, }\item[{const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&}]{rhs}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Dense matrix multiplication with lower triangular (M \texorpdfstring{$\ast$}{*} L). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lhs} & Dense matrix on the left \\
+\hline
+{\em rhs} & Lower triangular matrix on the right \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result as dense matrix 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if dimensions don\textquotesingle{}t match \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_lower_triangular_a08a33b242952101a03ed0f6f220b9f10}\index{LowerTriangular@{LowerTriangular}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}}{operator*}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_lower_triangular_a08a33b242952101a03ed0f6f220b9f10} 
+\mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{, }\item[{const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&}]{matrix}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Scalar multiplication (scalar \texorpdfstring{$\ast$}{*} matrix). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scalar} & Scaling factor \\
+\hline
+{\em matrix} & Matrix to scale \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Scaled matrix 
+\end{DoxyReturn}
+\Hypertarget{class_lower_triangular_afcf65b327d76e547a82effd9b5dad449}\index{LowerTriangular@{LowerTriangular}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!LowerTriangular@{LowerTriangular}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily \label{class_lower_triangular_afcf65b327d76e547a82effd9b5dad449} 
+std\+::ostream \& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os}{, }\item[{const \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}} \&}]{matrix}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Stream output operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em os} & Output stream \\
+\hline
+{\em matrix} & Matrix to output \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Modified output stream 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_lower_triangular_8h}{Lower\+Triangular.\+h}}\item 
+src/Lower\+Triangular.\+cpp\end{DoxyCompactItemize}

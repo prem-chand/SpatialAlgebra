@@ -1,0 +1,84 @@
+\doxysection{Spatial\+Algebra\+::Inverse\+Dynamics\+Link Struct Reference}
+\hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link}{}\label{struct_spatial_algebra_1_1_inverse_dynamics_link}\index{SpatialAlgebra::InverseDynamicsLink@{SpatialAlgebra::InverseDynamicsLink}}
+
+
+Represents a single link in a kinematic chain for inverse dynamics.  
+
+
+
+
+{\ttfamily \#include $<$Inverse\+Dynamics.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a00848208e8b510a702d9b057abf7d26c}{Inverse\+Dynamics\+Link}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a5f4b0c8b018fea220e26239fed03b248}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_a5f4b0c8b018fea220e26239fed03b248} 
+int {\bfseries parent}
+\begin{DoxyCompactList}\small\item\em Parent link index (-\/1 for base). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_aa0d7ce5316af85a18fa11a5adafcfee0}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_aa0d7ce5316af85a18fa11a5adafcfee0} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} {\bfseries X}
+\begin{DoxyCompactList}\small\item\em Transform from parent to this link. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_ad06beca73b26817e8179ca8b70e52dd2}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_ad06beca73b26817e8179ca8b70e52dd2} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} {\bfseries I}
+\begin{DoxyCompactList}\small\item\em Rigid body inertia. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_add6f7bce3287c248ef1304b55b5e8d04}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_add6f7bce3287c248ef1304b55b5e8d04} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries S}
+\begin{DoxyCompactList}\small\item\em Joint motion axis (screw axis). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a8e140f2b5ed47b85219d443ed74ba361}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_a8e140f2b5ed47b85219d443ed74ba361} 
+double {\bfseries q}
+\begin{DoxyCompactList}\small\item\em Joint position. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a4494cb2d467d0033e791e30dfb11f67d}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_a4494cb2d467d0033e791e30dfb11f67d} 
+double {\bfseries qdot}
+\begin{DoxyCompactList}\small\item\em Joint velocity. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a50cbe35acd6e87721361367b949d09f7}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_a50cbe35acd6e87721361367b949d09f7} 
+double {\bfseries qddot}
+\begin{DoxyCompactList}\small\item\em Joint acceleration (input). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_aa5721de8aba2ff7155cae517324063db}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_aa5721de8aba2ff7155cae517324063db} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries v}
+\begin{DoxyCompactList}\small\item\em Spatial velocity (computed in outward pass). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a8b3aaa324d4d8e416e173730e04a9a65}\label{struct_spatial_algebra_1_1_inverse_dynamics_link_a8b3aaa324d4d8e416e173730e04a9a65} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries a}
+\begin{DoxyCompactList}\small\item\em Spatial acceleration (computed in outward pass). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a single link in a kinematic chain for inverse dynamics. 
+
+The \doxylink{struct_spatial_algebra_1_1_inverse_dynamics_link}{Inverse\+Dynamics\+Link} structure contains all necessary information for RNEA\+:
+\begin{DoxyItemize}
+\item Kinematic properties (parent, transform, joint axis)
+\item Inertial properties (rigid body inertia)
+\item State variables (position, velocity, acceleration)
+\item Intermediate quantities for RNEA (spatial velocity, spatial acceleration)
+\end{DoxyItemize}
+
+Memory Layout\+: All spatial vectors use 6D representation\+: \mbox{[}angular; linear\mbox{]} Transforms are stored as \doxylink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform} (rotation + translation)
+
+\begin{DoxyNote}{Note}
+Parent index -\/1 indicates the base link (no parent) 
+\end{DoxyNote}
+
+
+\label{doc-constructors}
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_spatial_algebra_1_1_inverse_dynamics_link_a00848208e8b510a702d9b057abf7d26c}\index{SpatialAlgebra::InverseDynamicsLink@{SpatialAlgebra::InverseDynamicsLink}!InverseDynamicsLink@{InverseDynamicsLink}}
+\index{InverseDynamicsLink@{InverseDynamicsLink}!SpatialAlgebra::InverseDynamicsLink@{SpatialAlgebra::InverseDynamicsLink}}
+\doxysubsubsection{\texorpdfstring{InverseDynamicsLink()}{InverseDynamicsLink()}}
+{\footnotesize\ttfamily \label{struct_spatial_algebra_1_1_inverse_dynamics_link_a00848208e8b510a702d9b057abf7d26c} 
+Spatial\+Algebra\+::\+Inverse\+Dynamics\+Link\+::\+Inverse\+Dynamics\+Link (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor. 
+
+Initializes all fields to zero/identity values 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_inverse_dynamics_8h}{Inverse\+Dynamics.\+h}}\end{DoxyCompactItemize}

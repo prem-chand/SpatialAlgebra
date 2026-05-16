@@ -1,0 +1,89 @@
+\doxysection{Spatial\+Algebra\+::Forward\+Dynamics Class Reference}
+\hypertarget{class_spatial_algebra_1_1_forward_dynamics}{}\label{class_spatial_algebra_1_1_forward_dynamics}\index{SpatialAlgebra::ForwardDynamics@{SpatialAlgebra::ForwardDynamics}}
+
+
+Forward dynamics solver using Articulated Body Algorithm.  
+
+
+
+
+{\ttfamily \#include $<$Forward\+Dynamics.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a9e7bc814694152e96025df3cad79b1c5}{compute\+Accelerations}} (const Eigen\+::\+Vector\+Xd \&tau)
+\begin{DoxyCompactList}\small\item\em Compute joint accelerations from applied torques. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_spatial_algebra_1_1_forward_dynamics_a271deae39cf15d5196a7dc005e85709a}\label{class_spatial_algebra_1_1_forward_dynamics_a271deae39cf15d5196a7dc005e85709a} 
+std\+::vector$<$ \mbox{\hyperlink{struct_spatial_algebra_1_1_link}{Link}} $>$ {\bfseries links}
+\begin{DoxyCompactList}\small\item\em Kinematic tree (ordered\+: parents before children). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Forward dynamics solver using Articulated Body Algorithm. 
+
+The \doxylink{class_spatial_algebra_1_1_forward_dynamics}{Forward\+Dynamics} class implements Featherstone\textquotesingle{}s ABA (Algorithm 7.\+3) for efficient O(n) computation of joint accelerations. The algorithm handles both serial chains and branching kinematic trees.
+
+Algorithm Complexity\+:
+\begin{DoxyItemize}
+\item Time\+: O(n) where n is the number of links
+\item Space\+: O(n) for storing link states
+\end{DoxyItemize}
+
+Usage Pattern\+:
+\begin{DoxyEnumerate}
+\item Setup kinematic tree by populating links vector
+\item Set joint states (q, qdot) and external forces (f)
+\item Call compute\+Accelerations(tau) to solve for qddot
+\end{DoxyEnumerate}
+
+\begin{DoxyNote}{Note}
+Links must be ordered such that parents appear before children 
+
+For branching trees, all children of a link must have consecutive indices 
+\end{DoxyNote}
+
+
+\label{doc-func-members}
+\Hypertarget{class_spatial_algebra_1_1_forward_dynamics_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_spatial_algebra_1_1_forward_dynamics_a9e7bc814694152e96025df3cad79b1c5}\index{SpatialAlgebra::ForwardDynamics@{SpatialAlgebra::ForwardDynamics}!computeAccelerations@{computeAccelerations}}
+\index{computeAccelerations@{computeAccelerations}!SpatialAlgebra::ForwardDynamics@{SpatialAlgebra::ForwardDynamics}}
+\doxysubsubsection{\texorpdfstring{computeAccelerations()}{computeAccelerations()}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_forward_dynamics_a9e7bc814694152e96025df3cad79b1c5} 
+void Spatial\+Algebra\+::\+Forward\+Dynamics\+::compute\+Accelerations (\begin{DoxyParamCaption}\item[{const Eigen\+::\+Vector\+Xd \&}]{tau}{}\end{DoxyParamCaption})}
+
+
+
+Compute joint accelerations from applied torques. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tau} & Vector of joint torques (must match links.\+size())\\
+\hline
+\end{DoxyParams}
+Main entry point for forward dynamics computation. Executes the three-\/phase ABA\+:
+\begin{DoxyEnumerate}
+\item Outward pass\+: propagate velocities, compute bias accelerations
+\item Inward pass\+: accumulate articulated inertias and bias forces
+\item Solve\+: compute joint accelerations from torques
+\end{DoxyEnumerate}
+
+Mathematical formulation\+: q̈ = (τ -\/ Sᵀ·pₐ) / (Sᵀ·\+Iₐ·S) where Iₐ is articulated inertia and pₐ is bias force
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument} & if tau.\+size() != links.\+size() \\
+\hline
+{\em std\+::runtime\+\_\+error} & if denominator is near zero (singular configuration) \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_forward_dynamics_8h}{Forward\+Dynamics.\+h}}\item 
+src/\mbox{\hyperlink{_forward_dynamics_8cpp}{Forward\+Dynamics.\+cpp}}\end{DoxyCompactItemize}

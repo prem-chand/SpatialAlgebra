@@ -2,7 +2,7 @@
 \hypertarget{class_spatial_algebra_1_1_rigid_body_inertia}{}\label{class_spatial_algebra_1_1_rigid_body_inertia}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
 
 
-Class representing the spatial inertia of a rigid body.  
+Class representing the inertial properties of a rigid body.  
 
 
 
@@ -12,56 +12,44 @@ Class representing the spatial inertia of a rigid body.
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} (double mass, const Vector3d \&com, const \mbox{\hyperlink{class_lower_triangular}{lt}} \&inertia\+Matrix\+LT)
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} (double mass, const Vector3d \&com, const lt \&inertia\+Matrix\+LT)
 \begin{DoxyCompactList}\small\item\em Construct a rigid body inertia. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d}{Rigid\+Body\+Inertia}} ()
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d}\label{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d} 
+{\bfseries Rigid\+Body\+Inertia} ()
 \begin{DoxyCompactList}\small\item\em Default constructor creating zero inertia. \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f}{get\+Mass}} () const
-\begin{DoxyCompactList}\small\item\em Get the mass of the rigid body. \end{DoxyCompactList}\item 
-const Vector3d \& \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337}{get\+Com}} () const
-\begin{DoxyCompactList}\small\item\em Get the center of mass position. \end{DoxyCompactList}\item 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823}{get\+Inertia\+Matrix\+LT}} () const
-\begin{DoxyCompactList}\small\item\em Get the rotational inertia matrix. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&other) const
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f}\label{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f} 
+double {\bfseries get\+Mass} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337}\label{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337} 
+const Vector3d \& {\bfseries get\+Com} () const
+\item 
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823}\label{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823} 
+const lt \& {\bfseries get\+Inertia\+Matrix\+LT} () const
+\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} \&other) const
 \begin{DoxyCompactList}\small\item\em Add two rigid body inertias. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
 \begin{DoxyCompactList}\small\item\em Scale rigid body inertia. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516}{apply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&\mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}}) const
 \begin{DoxyCompactList}\small\item\em Apply rigid body inertia to motion vector. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c}{print}} () const
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c}\label{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c} 
+void {\bfseries print} () const
 \begin{DoxyCompactList}\small\item\em Print inertia properties. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Class representing the spatial inertia of a rigid body. 
+Class representing the inertial properties of a rigid body. 
 
-The \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} class provides a compact and efficient representation of rigid body inertial properties for spatial algebra computations.
+Stores and manages mass, center of mass, and rotational inertia matrix for rigid body dynamics calculations. 
 
-Physical Properties\+:
-\begin{DoxyItemize}
-\item Symmetric positive definite (when physically valid)
-\item Transforms covariantly under coordinate changes
-\item Maps motion vectors to force vectors
-\end{DoxyItemize}
-
-Implementation Features\+:
-\begin{DoxyItemize}
-\item Stores rotational inertia in lower triangular form for efficiency
-\item Provides direct access to mass, COM, and inertia components
-\item Implements efficient spatial operations
-\end{DoxyItemize}
-
-\begin{DoxyNote}{Note}
-The rotational inertia is stored about the center of mass frame to minimize numerical errors and simplify transformations. 
-\end{DoxyNote}
-
-
+\label{doc-constructors}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_doc-constructors}
 \doxysubsection{Constructor \& Destructor Documentation}
 \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!RigidBodyInertia@{RigidBodyInertia}}
 \index{RigidBodyInertia@{RigidBodyInertia}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{RigidBodyInertia()}{RigidBodyInertia()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\doxysubsubsection{\texorpdfstring{RigidBodyInertia()}{RigidBodyInertia()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7} 
-Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::\+Rigid\+Body\+Inertia (\begin{DoxyParamCaption}\item[{double}]{mass}{, }\item[{const Vector3d \&}]{com}{, }\item[{const \mbox{\hyperlink{class_lower_triangular}{lt}} \&}]{inertia\+Matrix\+LT}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::\+Rigid\+Body\+Inertia (\begin{DoxyParamCaption}\item[{double}]{mass}{, }\item[{const Vector3d \&}]{com}{, }\item[{const lt \&}]{inertia\+Matrix\+LT}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -69,28 +57,17 @@ Construct a rigid body inertia.
 
 
 \begin{DoxyParams}{Parameters}
-{\em mass} & Mass of the body (kg) \\
+{\em mass} & Mass of the body \\
 \hline
-{\em com} & Center of mass position (m) \\
+{\em com} & Center of mass position \\
 \hline
-{\em inertia\+Matrix\+LT} & Lower triangular part of rotational inertia matrix (kg⋅m²)\\
+{\em inertia\+Matrix\+LT} & Lower triangular part of inertia matrix \\
 \hline
 \end{DoxyParams}
-Creates a spatial inertia with specified mass properties. The rotational inertia should be specified about the center of mass. \begin{DoxyWarning}{Warning}
-The inertia matrix must be positive definite for physical validity 
-\end{DoxyWarning}
-\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!RigidBodyInertia@{RigidBodyInertia}}
-\index{RigidBodyInertia@{RigidBodyInertia}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{RigidBodyInertia()}{RigidBodyInertia()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a287b8e66239e905b2d6508786935811d} 
-Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::\+Rigid\+Body\+Inertia (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
-
-Default constructor creating zero inertia. 
-
-Initializes all components to zero, representing a massless body. This is useful as a starting point for accumulating inertias. 
-
+\label{doc-func-members}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_doc-func-members}
 \doxysubsection{Member Function Documentation}
 \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a156173ea3a8275deb32104a76a9e9516}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!apply@{apply}}
 \index{apply@{apply}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
@@ -110,58 +87,11 @@ Apply rigid body inertia to motion vector.
 \begin{DoxyReturn}{Returns}
 Resulting force vector
 \end{DoxyReturn}
-Computes the force and torque resulting from the motion of the rigid body. The operation implements\+: f = I \texorpdfstring{$\ast$}{*} v = \mbox{[}Iω + h×v; mv -\/ h×ω\mbox{]} where\+:
-\begin{DoxyItemize}
-\item ω is angular velocity
-\item v is linear velocity
-\item h = m\texorpdfstring{$\ast$}{*}com is the first moment of mass \begin{DoxyNote}{Note}
-This operation is the fundamental mapping between motion and force vectors that defines the spatial inertia. 
-\end{DoxyNote}
-
-\end{DoxyItemize}\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!getCom@{getCom}}
-\index{getCom@{getCom}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{getCom()}{getCom()}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337} 
-const Vector3d \& Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::get\+Com (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-Get the center of mass position. 
-
-\begin{DoxyReturn}{Returns}
-Center of mass vector in m 
-\end{DoxyReturn}
-\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!getInertiaMatrixLT@{getInertiaMatrixLT}}
-\index{getInertiaMatrixLT@{getInertiaMatrixLT}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{getInertiaMatrixLT()}{getInertiaMatrixLT()}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823} 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::get\+Inertia\+Matrix\+LT (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-Get the rotational inertia matrix. 
-
-\begin{DoxyReturn}{Returns}
-Lower triangular part of inertia matrix in kg⋅m² 
-\end{DoxyReturn}
-\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!getMass@{getMass}}
-\index{getMass@{getMass}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{getMass()}{getMass()}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f} 
-double Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::get\+Mass (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-
-
-Get the mass of the rigid body. 
-
-\begin{DoxyReturn}{Returns}
-Mass value in kg 
-\end{DoxyReturn}
-\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+Implements\+: \mbox{[}Iω + com × v; m\texorpdfstring{$\ast$}{*}v -\/ com × ω\mbox{]} \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
 \index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
 \doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a82e6ad422f521ad270ab50ca6dafa611} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -169,17 +99,17 @@ Scale rigid body inertia.
 
 
 \begin{DoxyParams}{Parameters}
-{\em scalar} & Scaling factor (dimensionless) \\
+{\em scalar} & Scaling factor \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-Scaled \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}
+Scaled \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} 
 \end{DoxyReturn}
-Uniformly scales all inertial properties. This is useful for implementing symmetric scaling of bodies or applying mass distribution factors. \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator+@{operator+}}
+\Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!operator+@{operator+}}
 \index{operator+@{operator+}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
 \doxysubsubsection{\texorpdfstring{operator+()}{operator+()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a7f7f7add17a31b97613f5fcbfb69c43a} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aee47eedff8333ec2d33ce230b0fad3a7}{Rigid\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -191,19 +121,9 @@ Add two rigid body inertias.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-Combined \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}
+Combined \doxylink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia} 
 \end{DoxyReturn}
-Implements parallel combination of inertias, useful for computing composite body inertias. The result represents the inertia of a single rigid body equivalent to the two original bodies moving together. \Hypertarget{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c}\index{SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}!print@{print}}
-\index{print@{print}!SpatialAlgebra::RigidBodyInertia@{SpatialAlgebra::RigidBodyInertia}}
-\doxysubsubsection{\texorpdfstring{print()}{print()}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_rigid_body_inertia_a45b9893be61bf972c7a611ada0c36b4c} 
-void Spatial\+Algebra\+::\+Rigid\+Body\+Inertia\+::print (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-
-
-Print inertia properties. 
-
-Outputs the mass, center of mass position, and rotational inertia matrix in a human-\/readable format. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

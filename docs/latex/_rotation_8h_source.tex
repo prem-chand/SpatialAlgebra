@@ -5,9 +5,10 @@
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ROTATION\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ROTATION\_H}}
 \DoxyCodeLine{00003\ }
+\DoxyCodeLine{00036\ }
 \DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
 \DoxyCodeLine{00038\ }
-\DoxyCodeLine{00055\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_rotation}{Rotation}}\ :\ \textcolor{keyword}{public}\ Eigen::Matrix3d}
+\DoxyCodeLine{00055\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ :\ \textcolor{keyword}{public}\ Eigen::Matrix3d}
 \DoxyCodeLine{00056\ \{}
 \DoxyCodeLine{00057\ \textcolor{keyword}{public}:}
 \DoxyCodeLine{00062\ \ \ \ \ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}();}
@@ -26,20 +27,20 @@
 \DoxyCodeLine{00109\ }
 \DoxyCodeLine{00115\ \ \ \ \ Eigen::Quaterniond\ \mbox{\hyperlink{class_rotation_afa153b52fad87002c8d2111847b2ae95}{toQuaternion}}()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00116\ }
-\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{class_rotation}{Rotation}}\ \mbox{\hyperlink{class_rotation_a6a9f25fb1ab2ab0f607a9caf0e54b96a}{inverse}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ \mbox{\hyperlink{class_rotation_a6a9f25fb1ab2ab0f607a9caf0e54b96a}{inverse}}()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00123\ }
-\DoxyCodeLine{00129\ \ \ \ \ \mbox{\hyperlink{class_rotation}{Rotation}}\ \mbox{\hyperlink{class_rotation_a548a345dfee3d1e43cfe25da291a068a}{transpose}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00129\ \ \ \ \ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ \mbox{\hyperlink{class_rotation_a548a345dfee3d1e43cfe25da291a068a}{transpose}}()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00130\ }
-\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{class_rotation}{Rotation}}\ \mbox{\hyperlink{class_rotation_acbe7c531b3168e6c1d1f9935c54d7175}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_rotation}{Rotation}}\ \&other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ \mbox{\hyperlink{class_rotation_aff3dd602c4024533fc790a1dbaf5ae65}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ \&other)\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00139\ }
 \DoxyCodeLine{00146\ \ \ \ \ Eigen::Vector3d\ \mbox{\hyperlink{class_rotation_a6d6ab3065f71e3fc7d1569bb14fe58fd}{operator*}}(\textcolor{keyword}{const}\ Eigen::Vector3d\ \&vector)\textcolor{keyword}{\ const}}
 \DoxyCodeLine{00147\ \textcolor{keyword}{\ \ \ \ }\{}
 \DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }Eigen::Matrix3d\&\textcolor{keyword}{>}(*this)\ *\ vector;}
 \DoxyCodeLine{00149\ \ \ \ \ \}}
 \DoxyCodeLine{00150\ }
-\DoxyCodeLine{00158\ \ \ \ \ Eigen::Matrix3d\ \mbox{\hyperlink{class_rotation_ae2695ed95c2e41d08da94a894b4d4e55}{operator*}}(\textcolor{keyword}{const}\ Eigen::Matrix3d\ \&matrix)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00158\ \ \ \ \ Eigen::Matrix3d\ \mbox{\hyperlink{class_rotation_aff3dd602c4024533fc790a1dbaf5ae65}{operator*}}(\textcolor{keyword}{const}\ Eigen::Matrix3d\ \&matrix)\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00159\ }
-\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{friend}\ Eigen::Matrix3d\ \mbox{\hyperlink{class_rotation_acbe7c531b3168e6c1d1f9935c54d7175}{operator*}}(\textcolor{keyword}{const}\ Eigen::Matrix3d\ \&matrix,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_rotation}{Rotation}}\ \&rotation);}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keyword}{friend}\ Eigen::Matrix3d\ \mbox{\hyperlink{class_rotation_acbe7c531b3168e6c1d1f9935c54d7175}{operator*}}(\textcolor{keyword}{const}\ Eigen::Matrix3d\ \&matrix,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_rotation_a13ea1d345ca0a92c0f09b4de544ca460}{Rotation}}\ \&rotation);}
 \DoxyCodeLine{00169\ \};}
 \DoxyCodeLine{00170\ }
 \DoxyCodeLine{00171\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ROTATION\_H}}

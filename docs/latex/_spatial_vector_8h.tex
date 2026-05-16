@@ -1,0 +1,64 @@
+\doxysection{include/\+Spatial\+Vector.h File Reference}
+\hypertarget{_spatial_vector_8h}{}\label{_spatial_vector_8h}\index{include/SpatialVector.h@{include/SpatialVector.h}}
+
+
+Implementation of 6D spatial vectors for rigid body dynamics.  
+
+
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{Spatial\+Algebra\+::\+Spatial\+Vector}}
+\begin{DoxyCompactList}\small\item\em Base class for spatial vectors in 6D space. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_spatial_vector_8h_af7083d5321d7603913b26dd3429ae2dd}\label{_spatial_vector_8h_af7083d5321d7603913b26dd3429ae2dd} 
+using {\bfseries Vector3d} = Eigen\+::\+Matrix$<$double, 3, 1$>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of 6D spatial vectors for rigid body dynamics. 
+
+This file provides the foundation for spatial algebra operations used in rigid body dynamics. Spatial vectors are 6D vectors that combine angular and linear components to represent motion (twists) and forces (wrenches) in a unified framework.
+
+Mathematical Background\+: A spatial vector ŝ consists of two 3D vectors\+: \mbox{[}ω; v\mbox{]}
+\begin{DoxyItemize}
+\item For motion vectors (twists)\+: ω represents angular velocity, v represents linear velocity
+\item For force vectors (wrenches)\+: ω represents torque/moment, v represents linear force
+\end{DoxyItemize}
+
+Key Operations\+:
+\begin{DoxyItemize}
+\item Addition/\+Subtraction\+: Component-\/wise operations
+\item Scalar Multiplication\+: Scales both components
+\item Cross Products\+: Special 6D operations preserving motion/force duality
+\item Dot Product\+: Inner product between motion and force vectors
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ spatial\ vector}}
+\DoxyCodeLine{Vector3d\ angular(0,\ 0,\ 1);\ \ \textcolor{comment}{//\ Z-\/axis\ rotation}}
+\DoxyCodeLine{Vector3d\ linear(1,\ 0,\ 0);\ \ \ \textcolor{comment}{//\ X-\/axis\ translation}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ vec1(angular,\ linear);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Perform\ operations}}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ vec2(Vector3d(1,0,0),\ Vector3d(0,1,0));}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ sum\ =\ vec1\ +\ vec2;}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector}{SpatialVector}}\ crossed\ =\ vec1.\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_aaa3d28346c24f255015806dcc66b7547}{crossMotion}}(vec2);}
+\DoxyCodeLine{\textcolor{keywordtype}{double}\ dotProduct\ =\ vec1.\mbox{\hyperlink{class_spatial_algebra_1_1_spatial_vector_a1b1818948f738291575848762aca1fff}{dot}}(vec2);}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This implementation follows the spatial algebra formulation by Roy Featherstone 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Springer. 
+\end{DoxySeeAlso}

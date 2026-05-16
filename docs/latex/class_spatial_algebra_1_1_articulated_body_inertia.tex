@@ -12,23 +12,23 @@ Class representing inertial properties of an articulated body.
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} (const \mbox{\hyperlink{class_lower_triangular}{lt}} \&inertia, const Eigen\+::\+Matrix3d \&h, const \mbox{\hyperlink{class_lower_triangular}{lt}} \&M)
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} (const lt \&inertia, const Eigen\+::\+Matrix3d \&h, const lt \&M)
 \begin{DoxyCompactList}\small\item\em Construct articulated body inertia. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{Articulated\+Body\+Inertia}} ()
 \begin{DoxyCompactList}\small\item\em Default constructor creating zero inertia. \end{DoxyCompactList}\item 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aaee63273e2cd578f4950dabc8f2cbc70}{get\+Inertia}} () const
+const lt \& \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aaee63273e2cd578f4950dabc8f2cbc70}{get\+Inertia}} () const
 \begin{DoxyCompactList}\small\item\em Get the rotational inertia matrix. \end{DoxyCompactList}\item 
 const Eigen\+::\+Matrix3d \& \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aad308b32e36ec9a634bdaee1d0dbd3df}{getH}} () const
 \begin{DoxyCompactList}\small\item\em Get the coupling matrix. \end{DoxyCompactList}\item 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a95dfb777a58f332b08438fe6581d33f7}{getM}} () const
+const lt \& \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a95dfb777a58f332b08438fe6581d33f7}{getM}} () const
 \begin{DoxyCompactList}\small\item\em Get the mass matrix. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a7c26b2a477f27bb1fbb203464dee92f9}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \&other) const
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a7c26b2a477f27bb1fbb203464dee92f9}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} \&other) const
 \begin{DoxyCompactList}\small\item\em Add two articulated body inertias. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a146fd8c08e3741600fae2acfca9ddadb}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&other) const
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a146fd8c08e3741600fae2acfca9ddadb}{operator+}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&other) const
 \begin{DoxyCompactList}\small\item\em Add rigid body inertia to articulated body inertia. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a843e9c5393d7e60f1854f537d147f444}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a843e9c5393d7e60f1854f537d147f444}{operator\texorpdfstring{$\ast$}{*}}} (double scalar) const
 \begin{DoxyCompactList}\small\item\em Scale articulated body inertia. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a16b43dd417b6bfcc466c2e2b55e6a8c2}{apply}} (const \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}} \&\mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}}) const
+\mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}} \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a0e7dc7a3186aa0781f80f64c8ef5853a}{apply}} (const \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}} \&motion) const
 \begin{DoxyCompactList}\small\item\em Apply articulated body inertia to motion vector. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_af56fd764072182dce3afcd9b62763ce6}{print}} () const
 \begin{DoxyCompactList}\small\item\em Print inertia properties. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -58,12 +58,14 @@ This representation is particularly efficient for the articulated body algorithm
 \end{DoxyNote}
 
 
+\label{doc-constructors}
+\Hypertarget{class_spatial_algebra_1_1_articulated_body_inertia_doc-constructors}
 \doxysubsection{Constructor \& Destructor Documentation}
 \Hypertarget{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}\index{SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}!ArticulatedBodyInertia@{ArticulatedBodyInertia}}
 \index{ArticulatedBodyInertia@{ArticulatedBodyInertia}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{ArticulatedBodyInertia()}{ArticulatedBodyInertia()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d} 
-Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::\+Articulated\+Body\+Inertia (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_lower_triangular}{lt}} \&}]{inertia}{, }\item[{const Eigen\+::\+Matrix3d \&}]{h}{, }\item[{const \mbox{\hyperlink{class_lower_triangular}{lt}} \&}]{M}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::\+Articulated\+Body\+Inertia (\begin{DoxyParamCaption}\item[{const lt \&}]{inertia}{, }\item[{const Eigen\+::\+Matrix3d \&}]{h}{, }\item[{const lt \&}]{M}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -93,12 +95,14 @@ Default constructor creating zero inertia.
 
 Initializes all components to zero. This represents a massless articulated system and is useful as a starting point for accumulating inertias. 
 
+\label{doc-func-members}
+\Hypertarget{class_spatial_algebra_1_1_articulated_body_inertia_doc-func-members}
 \doxysubsection{Member Function Documentation}
-\Hypertarget{class_spatial_algebra_1_1_articulated_body_inertia_a16b43dd417b6bfcc466c2e2b55e6a8c2}\index{SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}!apply@{apply}}
+\Hypertarget{class_spatial_algebra_1_1_articulated_body_inertia_a0e7dc7a3186aa0781f80f64c8ef5853a}\index{SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}!apply@{apply}}
 \index{apply@{apply}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{apply()}{apply()}}
-{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a16b43dd417b6bfcc466c2e2b55e6a8c2} 
-\mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::apply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}} \&}]{mv}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a0e7dc7a3186aa0781f80f64c8ef5853a} 
+\mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::apply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}} \&}]{motion}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -129,7 +133,7 @@ Coupling matrix between rotational and linear motion (kg⋅m)
 \index{getInertia@{getInertia}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{getInertia()}{getInertia()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_aaee63273e2cd578f4950dabc8f2cbc70} 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::get\+Inertia (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+const lt \& Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::get\+Inertia (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -142,7 +146,7 @@ Rotational inertia in lower triangular form (kg⋅m²)
 \index{getM@{getM}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{getM()}{getM()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a95dfb777a58f332b08438fe6581d33f7} 
-const \mbox{\hyperlink{class_lower_triangular}{lt}} \& Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::getM (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+const lt \& Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::getM (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -155,7 +159,7 @@ Mass matrix in lower triangular form (kg)
 \index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a843e9c5393d7e60f1854f537d147f444} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{double}]{scalar}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -173,7 +177,7 @@ Uniformly scales all components of the inertia. This is useful for implementing 
 \index{operator+@{operator+}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a7c26b2a477f27bb1fbb203464dee92f9} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
@@ -191,7 +195,7 @@ Implements parallel combination of articulated body inertias. This operation is 
 \index{operator+@{operator+}!SpatialAlgebra::ArticulatedBodyInertia@{SpatialAlgebra::ArticulatedBodyInertia}}
 \doxysubsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_articulated_body_inertia_a146fd8c08e3741600fae2acfca9ddadb} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{Articulated\+Body\+Inertia}} Spatial\+Algebra\+::\+Articulated\+Body\+Inertia\+::operator+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 

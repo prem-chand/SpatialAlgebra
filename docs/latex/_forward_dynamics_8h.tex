@@ -1,0 +1,88 @@
+\doxysection{include/\+Forward\+Dynamics.h File Reference}
+\hypertarget{_forward_dynamics_8h}{}\label{_forward_dynamics_8h}\index{include/ForwardDynamics.h@{include/ForwardDynamics.h}}
+
+
+Articulated Body Algorithm (ABA) for forward dynamics computation.  
+
+
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\newline
+{\ttfamily \#include "{}Spatial\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Motion\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Force\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Plucker\+Transform.\+h"{}}\newline
+{\ttfamily \#include "{}Rigid\+Body\+Inertia.\+h"{}}\newline
+{\ttfamily \#include "{}Articulated\+Body\+Inertia.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_spatial_algebra_1_1_link}{Spatial\+Algebra\+::\+Link}}
+\begin{DoxyCompactList}\small\item\em Represents a single link in a kinematic chain. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics}{Spatial\+Algebra\+::\+Forward\+Dynamics}}
+\begin{DoxyCompactList}\small\item\em Forward dynamics solver using Articulated Body Algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_forward_dynamics_8h_af7083d5321d7603913b26dd3429ae2dd}\label{_forward_dynamics_8h_af7083d5321d7603913b26dd3429ae2dd} 
+using {\bfseries Vector3d} = Eigen\+::\+Matrix$<$double, 3, 1$>$
+\item 
+\Hypertarget{_forward_dynamics_8h_a57f0a76f05e3f70605300762135690b5}\label{_forward_dynamics_8h_a57f0a76f05e3f70605300762135690b5} 
+using {\bfseries Matrix3d} = Eigen\+::\+Matrix$<$double, 3, 3$>$
+\item 
+\Hypertarget{_forward_dynamics_8h_a9766982dc6c79b1c76397b24a9cb4614}\label{_forward_dynamics_8h_a9766982dc6c79b1c76397b24a9cb4614} 
+using {\bfseries Spatial\+Algebra\+::\+Forward\+Dynamics\+Link} = \mbox{\hyperlink{struct_spatial_algebra_1_1_link}{Link}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Articulated Body Algorithm (ABA) for forward dynamics computation. 
+
+This file implements Featherstone\textquotesingle{}s Articulated Body Algorithm (ABA) for computing joint accelerations from applied torques. The ABA is an O(n) recursive algorithm that efficiently solves the forward dynamics problem for serial and branching kinematic chains.
+
+Algorithm Overview\+:
+\begin{DoxyEnumerate}
+\item Outward pass (base to tip)\+: Propagate velocities, compute bias accelerations
+\item Inward pass (tip to base)\+: Accumulate articulated inertias, solve for accelerations
+\end{DoxyEnumerate}
+
+Mathematical Foundation\+: The ABA solves the equation\+: τ = H(q)q̈ + C(q,q̇) + G(q) where\+:
+\begin{DoxyItemize}
+\item H(q)\+: Joint space inertia matrix
+\item C(q,q̇)\+: Coriolis and centrifugal forces
+\item G(q)\+: Gravity forces (not implemented, add external forces)
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics}{ForwardDynamics}}\ fd;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Setup\ kinematic\ chain}}
+\DoxyCodeLine{\mbox{\hyperlink{struct_spatial_algebra_1_1_link}{Link}}\ link;}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c}{parent}}\ =\ -\/1;\ \ \textcolor{comment}{//\ Base\ link}}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5}{X}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}(Rotation::Identity(),\ Vector3d::Zero());}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3}{I}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}(1.0,\ Vector3d::Zero(),\ \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{lt::Identity}}(3));}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79}{S}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d(0,0,1),\ Vector3d::Zero());\ \ \textcolor{comment}{//\ Revolute\ Z}}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543}{q}}\ =\ 0.0;}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301}{qdot}}\ =\ 0.0;}
+\DoxyCodeLine{fd.\mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a271deae39cf15d5196a7dc005e85709a}{links}}.push\_back(link);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Apply\ torques}}
+\DoxyCodeLine{Eigen::VectorXd\ tau(1);}
+\DoxyCodeLine{tau[0]\ =\ 1.0;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Compute\ accelerations}}
+\DoxyCodeLine{fd.\mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a9e7bc814694152e96025df3cad79b1c5}{computeAccelerations}}(tau);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Access\ results}}
+\DoxyCodeLine{\textcolor{keywordtype}{double}\ qddot\ =\ fd.\mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a271deae39cf15d5196a7dc005e85709a}{links}}[0].qddot;}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7 
+
+Plucker\+Transform for coordinate transformations 
+\end{DoxySeeAlso}

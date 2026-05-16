@@ -23,7 +23,11 @@ double \mbox{\hyperlink{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad}{Spa
 double {\bfseries Spatial\+Algebra\+::dot} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
 \item 
 \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \mbox{\hyperlink{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}{Spatial\+Algebra\+::cross}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
-\begin{DoxyCompactList}\small\item\em Computes the spatial cross product between a motion vector and a force vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Computes the spatial cross product between a motion vector and a force vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \mbox{\hyperlink{_spatial_utils_8h_abacdf527fc6595c0d5e3bf979c34c87a}{Spatial\+Algebra\+::cross}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the cross product between two motion vectors. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \mbox{\hyperlink{_spatial_utils_8h_a9ebcb81127905be7affab46f59a37983}{Spatial\+Algebra\+::cross}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v1, const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&v2) noexcept
+\begin{DoxyCompactList}\small\item\em Computes the cross product between two force vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
@@ -31,10 +35,32 @@ Utility functions for spatial algebra operations.
 
 This file contains various utility functions used in spatial algebra computations, including cross products, dot products, and matrix operations. 
 
+\label{doc-func-members}
+\Hypertarget{_spatial_utils_8h_doc-func-members}
 \doxysubsection{Function Documentation}
-\Hypertarget{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}\index{SpatialUtils.h@{SpatialUtils.h}!cross@{cross}}
+\Hypertarget{_spatial_utils_8h_a9ebcb81127905be7affab46f59a37983}\index{SpatialUtils.h@{SpatialUtils.h}!cross@{cross}}
 \index{cross@{cross}!SpatialUtils.h@{SpatialUtils.h}}
-\doxysubsubsection{\texorpdfstring{cross()}{cross()}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_a9ebcb81127905be7affab46f59a37983} 
+Force\+Vector Spatial\+Algebra\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the cross product between two force vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First force vector \\
+\hline
+{\em v2} & Second force vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting force vector
+\end{DoxyReturn}
+Implements\+: \mbox{[}τ1×τ2 + f1×f2; τ1×f2\mbox{]} following Featherstone formulation \Hypertarget{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}\index{SpatialUtils.h@{SpatialUtils.h}!cross@{cross}}
+\index{cross@{cross}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
 {\footnotesize\ttfamily \label{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1} 
 Force\+Vector Spatial\+Algebra\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
 
@@ -52,7 +78,27 @@ Computes the spatial cross product between a motion vector and a force vector.
 \begin{DoxyReturn}{Returns}
 Resulting force vector
 \end{DoxyReturn}
-Implements\+: crf(v1, v2) = \mbox{[}w1×f1 + v1×f2, w1×f1\mbox{]} \Hypertarget{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad}\index{SpatialUtils.h@{SpatialUtils.h}!dot@{dot}}
+Implements\+: crf(v1, v2) = \mbox{[}w1×f1 + v1×f2, w1×f1\mbox{]} \Hypertarget{_spatial_utils_8h_abacdf527fc6595c0d5e3bf979c34c87a}\index{SpatialUtils.h@{SpatialUtils.h}!cross@{cross}}
+\index{cross@{cross}!SpatialUtils.h@{SpatialUtils.h}}
+\doxysubsubsection{\texorpdfstring{cross()}{cross()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{_spatial_utils_8h_abacdf527fc6595c0d5e3bf979c34c87a} 
+Motion\+Vector Spatial\+Algebra\+::cross (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v1}{, }\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} \&}]{v2}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Computes the cross product between two motion vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v1} & First motion vector \\
+\hline
+{\em v2} & Second motion vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting motion vector
+\end{DoxyReturn}
+Implements\+: \mbox{[}ω1×ω2; ω1×v2 + v1×ω2\mbox{]} following Featherstone formulation \Hypertarget{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad}\index{SpatialUtils.h@{SpatialUtils.h}!dot@{dot}}
 \index{dot@{dot}!SpatialUtils.h@{SpatialUtils.h}}
 \doxysubsubsection{\texorpdfstring{dot()}{dot()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
 {\footnotesize\ttfamily \label{_spatial_utils_8h_aa0818b37b06608de948a4f3e8c74e9ad} 

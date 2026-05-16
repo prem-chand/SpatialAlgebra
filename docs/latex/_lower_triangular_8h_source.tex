@@ -1,0 +1,236 @@
+\doxysection{Lower\+Triangular.\+h}
+\hypertarget{_lower_triangular_8h_source}{}\label{_lower_triangular_8h_source}\index{include/LowerTriangular.h@{include/LowerTriangular.h}}
+\mbox{\hyperlink{_lower_triangular_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{//\ Type\ aliases\ for\ convenience}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}}
+\DoxyCodeLine{00074\ \{}
+\DoxyCodeLine{00075\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00076\ \ \ \ \ Eigen::VectorXd\ data;\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ n;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getIndex(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (i\ *\ (i\ +\ 1))\ /\ 2\ +\ j;}
+\DoxyCodeLine{00091\ \ \ \ \ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ scale(\textcolor{keywordtype}{double}\ scalar)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(n);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ result.data\ =\ data\ *\ scalar;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}(\textcolor{keywordtype}{int}\ size)\ :\ n(size)}
+\DoxyCodeLine{00114\ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ data.resize(size\ *\ (size\ +\ 1)\ /\ 2);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ data.setZero();}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00127\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_a8ca12f78e213b33919ccb84e4fe58df5}{LowerTriangular}}(\textcolor{keyword}{const}\ Eigen::VectorXd\ \&packedData,\ \textcolor{keywordtype}{int}\ size)}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ :\ data(packedData),\ n(size)}
+\DoxyCodeLine{00129\ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (packedData.size()\ !=\ size\ *\ (size\ +\ 1)\ /\ 2)}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ throw\ std::invalid\_argument(\textcolor{stringliteral}{"{}Invalid\ data\ size\ for\ lower\ triangular\ matrix"{}});}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_lower_triangular_a8fb9b8ba5a4b9f16fb2ebc68df490025}{operator()}}(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00145\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#ifndef\ NDEBUG}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ >=\ n\ ||\ j\ >=\ n\ ||\ i\ <\ 0\ ||\ j\ <\ 0)}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Index\ out\ of\ bounds"{}});}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (i\ <\ j)\ ?\ 0.0\ :\ data[getIndex(i,\ j)];}
+\DoxyCodeLine{00151\ \ \ \ \ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{double}\ \&\mbox{\hyperlink{class_lower_triangular_abc6fa7c48b31fccf74b24a7534c2044b}{operator()}}(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j)}
+\DoxyCodeLine{00163\ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#ifndef\ NDEBUG}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ >=\ n\ ||\ j\ >=\ n\ ||\ i\ <\ 0\ ||\ j\ <\ 0)}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::out\_of\_range(\textcolor{stringliteral}{"{}Index\ out\ of\ bounds"{}});}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ j)}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Cannot\ modify\ upper\ triangular\ elements"{}});}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ data[getIndex(i,\ j)];}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ Eigen::VectorXd\ \&\mbox{\hyperlink{class_lower_triangular_acef6a422d4d41e96453129daceb61c1e}{getData}}()\ const\ noexcept\ \{\ \textcolor{keywordflow}{return}\ data;\ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_lower_triangular_adac3d94e766667b65827897879770c27}{getSize}}()\ const\ noexcept\ \{\ \textcolor{keywordflow}{return}\ n;\ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00194\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a64e6846cd8ef5036eab45f8a1ce09631}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00195\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ !=\ other.n)}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Matrix\ size\ mismatch"{}});}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(n);}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for\ collapse(2)}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ i;\ ++j)}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ sum\ =\ 0.0;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ j;\ k\ <=\ i;\ ++k)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sum\ +=\ (*this)(i,\ k)\ *\ other(k,\ j);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result(i,\ j)\ =\ sum;}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00214\ \ \ \ \ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00224\ \ \ \ \ Eigen::MatrixXd\ \mbox{\hyperlink{class_lower_triangular_af4a92b65aa051ce72779d9ff63c9f624}{operator*}}(\textcolor{keyword}{const}\ Eigen::MatrixXd\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00225\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ !=\ other.rows())}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Matrix\ dimension\ mismatch"{}});}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ Eigen::MatrixXd\ result\ =\ Eigen::MatrixXd::Zero(n,\ other.cols());}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ i;\ ++j)}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result.row(i)\ +=\ (*this)(i,\ j)\ *\ other.row(j);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keyword}{friend}\ Eigen::MatrixXd\ \mbox{\hyperlink{class_lower_triangular_a2138818942626c16707600393e9346f9}{operator*}}(\textcolor{keyword}{const}\ Eigen::MatrixXd\ \&lhs,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \&rhs)}
+\DoxyCodeLine{00248\ \ \ \ \ \{}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lhs.cols()\ !=\ rhs.n)}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Matrix\ dimension\ mismatch"{}});}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ Eigen::MatrixXd\ result\ =\ Eigen::MatrixXd::Zero(lhs.rows(),\ rhs.n);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ lhs.rows();\ ++i)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ rhs.n;\ ++j)}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ k\ =\ j;\ k\ <\ rhs.n;\ ++k)}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result(i,\ j)\ +=\ lhs(i,\ k)\ *\ rhs(k,\ j);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00271\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a2c956cbe6be70dcedc03b450d88d1727}{operator*}}(\textcolor{keywordtype}{double}\ scalar)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00272\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ scale(scalar);}
+\DoxyCodeLine{00274\ \ \ \ \ \}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a08a33b242952101a03ed0f6f220b9f10}{operator*}}(\textcolor{keywordtype}{double}\ scalar,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \&matrix)}
+\DoxyCodeLine{00283\ \ \ \ \ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ matrix.scale(scalar);}
+\DoxyCodeLine{00285\ \ \ \ \ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00296\ \ \ \ \ Eigen::VectorXd\ \mbox{\hyperlink{class_lower_triangular_a64e6846cd8ef5036eab45f8a1ce09631}{operator*}}(\textcolor{keyword}{const}\ Eigen::VectorXd\ \&v)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00306\ \ \ \ \ Vector3d\ \mbox{\hyperlink{class_lower_triangular_a4758d675d2fc3cacaad33b4cf7d1a43a}{operator*}}(\textcolor{keyword}{const}\ Vector3d\ \&v)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00307\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ !=\ 3)}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}LowerTriangular::operator*\ requires\ 3x3\ matrix\ for\ Vector3d"{}});}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ Vector3d\ result;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ result(0)\ =\ (*this)(0,\ 0)\ *\ v(0);}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ result(1)\ =\ (*this)(1,\ 0)\ *\ v(0)\ +\ (*this)(1,\ 1)\ *\ v(1);}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ result(2)\ =\ (*this)(2,\ 0)\ *\ v(0)\ +\ (*this)(2,\ 1)\ *\ v(1)\ +\ (*this)(2,\ 2)\ *\ v(2);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00316\ \ \ \ \ \}}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00324\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_aa39f1779c0e46882ed6c81ce74984370}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00325\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ !=\ other.n)}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Matrix\ size\ mismatch"{}});}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(n);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ result.data\ =\ data\ +\ other.data;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00332\ \ \ \ \ \}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00340\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a7a5b2db10db90929d661d0f651e6cdb5}{transpose}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00341\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(n);}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ i;\ ++j)}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result(i,\ j)\ =\ (*this)(j,\ i);}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00351\ \ \ \ \ \}}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00370\ \ \ \ \ \mbox{\hyperlink{class_lower_triangular}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a1d087ad60fa58ad1617ad0bee9a4f062}{inverse}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{Identity}}(\textcolor{keywordtype}{int}\ size)}
+\DoxyCodeLine{00379\ \ \ \ \ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(size);}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ size;\ ++i)}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ result(i,\ i)\ =\ 1.0;}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keyword}{friend}\ std::ostream\ \&\mbox{\hyperlink{class_lower_triangular_afcf65b327d76e547a82effd9b5dad449}{operator<<}}(std::ostream\ \&os,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \&matrix)}
+\DoxyCodeLine{00395\ \ \ \ \ \{}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ matrix.n;\ ++i)}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ matrix.n;\ ++j)}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ os\ <<\ std::setw(8)\ <<\ matrix(i,\ j)\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ os\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ os;}
+\DoxyCodeLine{00405\ \ \ \ \ \}}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00424\ \ \ \ \ Eigen::MatrixXd\ \mbox{\hyperlink{class_lower_triangular_ab9a7612a396987ec504e3f7c5c5d0fa8}{getFullMatrix}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00425\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ Eigen::MatrixXd\ fullMatrix\ =\ Eigen::MatrixXd::Zero(n,\ n);}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ ++i)}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ i;\ ++j)}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fullMatrix(i,\ j)\ =\ (*this)(i,\ j);}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ fullMatrix;}
+\DoxyCodeLine{00435\ \ \ \ \ \}}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ \mbox{\hyperlink{class_lower_triangular_aa68cd6d4f09ddbf634bff9bd1bd13abf}{fromFullMatrix}}(\textcolor{keyword}{const}\ Eigen::MatrixXd\ \&fullMatrix)}
+\DoxyCodeLine{00460\ \ \ \ \ \{}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fullMatrix.rows()\ !=\ fullMatrix.cols())}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::invalid\_argument(\textcolor{stringliteral}{"{}Input\ matrix\ must\ be\ square"{}});}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ size\ =\ fullMatrix.rows();}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular_ae25899fb583eda9c44f4ae6425583dbd}{LowerTriangular}}\ result(size);}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ size;\ ++i)}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ i;\ ++j)}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result(i,\ j)\ =\ fullMatrix(i,\ j);}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00477\ \ \ \ \ \}}
+\DoxyCodeLine{00478\ \};}
+
+\end{DoxyCode}

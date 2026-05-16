@@ -1,0 +1,73 @@
+\doxysection{Forward\+Dynamics.\+h}
+\hypertarget{_forward_dynamics_8h_source}{}\label{_forward_dynamics_8h_source}\index{include/ForwardDynamics.h@{include/ForwardDynamics.h}}
+\mbox{\hyperlink{_forward_dynamics_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ FORWARD\_DYNAMICS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ FORWARD\_DYNAMICS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_spatial_vector_8h}{SpatialVector.h}}"{}}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motion_vector_8h}{MotionVector.h}}"{}}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_force_vector_8h}{ForceVector.h}}"{}}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_plucker_transform_8h}{PluckerTransform.h}}"{}}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rigid_body_inertia_8h}{RigidBodyInertia.h}}"{}}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_articulated_body_inertia_8h}{ArticulatedBodyInertia.h}}"{}}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
+\DoxyCodeLine{00064\ \textcolor{keyword}{using\ }Matrix3d\ =\ Eigen::Matrix<double,\ 3,\ 3>;}
+\DoxyCodeLine{00065\ \textcolor{keyword}{using\ }lt\ =\ \mbox{\hyperlink{class_lower_triangular}{LowerTriangular}};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_spatial_algebra_1_1_link_af5d68bf913dbffbe39021d41647bece7}{Link}}}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c}{parent}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5}{X}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3}{I}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79}{S}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543}{q}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301}{qdot}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a65f9ea12fad22e43ff313bb764290ce5}{qddot}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a24ff87d7a04a39add2823eed5d562891}{v}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a4aef66174228e5b366f9d653409d85f4}{c}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a53480a05991ff2cb61bdbc3fb4064c6a}{f}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab325aad42805940bd9d8427cc4b52e75}{Ia}};\ \ \ \ \ \ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a68288488404692bcf42f244cf5cb6c1d}{pa}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_af5d68bf913dbffbe39021d41647bece7}{Link}}()\ :\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c}{parent}}(-\/1),\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5}{X}}(\mbox{\hyperlink{class_rotation}{Rotation}}(Eigen::Matrix3d::Identity()),\ Vector3d::Zero()),}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3}{I}}(1.0,\ Vector3d::Zero(),\ lt::Identity(3)),}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79}{S}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543}{q}}(0.0),\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301}{qdot}}(0.0),\ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a65f9ea12fad22e43ff313bb764290ce5}{qddot}}(0.0),}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a24ff87d7a04a39add2823eed5d562891}{v}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a4aef66174228e5b366f9d653409d85f4}{c}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a53480a05991ff2cb61bdbc3fb4064c6a}{f}}(\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab325aad42805940bd9d8427cc4b52e75}{Ia}}(lt::Identity(3),\ Eigen::Matrix3d::Zero(),\ lt::Identity(3)),}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_link_a68288488404692bcf42f244cf5cb6c1d}{pa}}(\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}(Vector3d::Zero(),\ Vector3d::Zero()))\ \{\}}
+\DoxyCodeLine{00115\ \ \ \ \ \};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{comment}{//\ Type\ alias\ to\ distinguish\ Link\ type\ for\ ForwardDynamics}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{using\ }ForwardDynamicsLink\ =\ Link;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics}{ForwardDynamics}}}
+\DoxyCodeLine{00139\ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ std::vector<Link>\ \mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a271deae39cf15d5196a7dc005e85709a}{links}};\ \ }
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_spatial_algebra_1_1_forward_dynamics_a9e7bc814694152e96025df3cad79b1c5}{computeAccelerations}}(\textcolor{keyword}{const}\ Eigen::VectorXd\&\ tau);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ outwardPass();}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ inwardPass(\textcolor{keyword}{const}\ Eigen::VectorXd\&\ tau);}
+\DoxyCodeLine{00192\ \ \ \ \ \};}
+\DoxyCodeLine{00193\ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ FORWARD\_DYNAMICS\_H}}
+
+\end{DoxyCode}

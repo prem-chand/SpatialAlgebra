@@ -1,0 +1,93 @@
+\doxysection{Spatial\+Algebra\+::Link Struct Reference}
+\hypertarget{struct_spatial_algebra_1_1_link}{}\label{struct_spatial_algebra_1_1_link}\index{SpatialAlgebra::Link@{SpatialAlgebra::Link}}
+
+
+Represents a single link in a kinematic chain.  
+
+
+
+
+{\ttfamily \#include $<$Forward\+Dynamics.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_spatial_algebra_1_1_link_af5d68bf913dbffbe39021d41647bece7}{Link}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c}\label{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c} 
+int {\bfseries parent}
+\begin{DoxyCompactList}\small\item\em Parent link index (-\/1 for base). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5}\label{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} {\bfseries X}
+\begin{DoxyCompactList}\small\item\em Transform from parent to this link. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3}\label{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{Rigid\+Body\+Inertia}} {\bfseries I}
+\begin{DoxyCompactList}\small\item\em Rigid body inertia. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79}\label{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries S}
+\begin{DoxyCompactList}\small\item\em Joint motion axis (screw axis). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543}\label{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543} 
+double {\bfseries q}
+\begin{DoxyCompactList}\small\item\em Joint position. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301}\label{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301} 
+double {\bfseries qdot}
+\begin{DoxyCompactList}\small\item\em Joint velocity. \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a65f9ea12fad22e43ff313bb764290ce5}\label{struct_spatial_algebra_1_1_link_a65f9ea12fad22e43ff313bb764290ce5} 
+double {\bfseries qddot}
+\begin{DoxyCompactList}\small\item\em Joint acceleration (output). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a24ff87d7a04a39add2823eed5d562891}\label{struct_spatial_algebra_1_1_link_a24ff87d7a04a39add2823eed5d562891} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries v}
+\begin{DoxyCompactList}\small\item\em Spatial velocity (computed in outward pass). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a4aef66174228e5b366f9d653409d85f4}\label{struct_spatial_algebra_1_1_link_a4aef66174228e5b366f9d653409d85f4} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{Motion\+Vector}} {\bfseries c}
+\begin{DoxyCompactList}\small\item\em Bias acceleration (Coriolis/centrifugal). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a53480a05991ff2cb61bdbc3fb4064c6a}\label{struct_spatial_algebra_1_1_link_a53480a05991ff2cb61bdbc3fb4064c6a} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries f}
+\begin{DoxyCompactList}\small\item\em Spatial force (external forces). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_ab325aad42805940bd9d8427cc4b52e75}\label{struct_spatial_algebra_1_1_link_ab325aad42805940bd9d8427cc4b52e75} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} {\bfseries Ia}
+\begin{DoxyCompactList}\small\item\em Articulated body inertia (computed in inward pass). \end{DoxyCompactList}\item 
+\Hypertarget{struct_spatial_algebra_1_1_link_a68288488404692bcf42f244cf5cb6c1d}\label{struct_spatial_algebra_1_1_link_a68288488404692bcf42f244cf5cb6c1d} 
+\mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{Force\+Vector}} {\bfseries pa}
+\begin{DoxyCompactList}\small\item\em Bias force (computed in inward pass). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a single link in a kinematic chain. 
+
+The \doxylink{struct_spatial_algebra_1_1_link}{Link} structure contains all necessary information for ABA\+:
+\begin{DoxyItemize}
+\item Kinematic properties (parent, transform, joint axis)
+\item Inertial properties (rigid body inertia)
+\item State variables (position, velocity, acceleration)
+\item Intermediate quantities for ABA (velocities, forces, articulated inertia)
+\end{DoxyItemize}
+
+Memory Layout\+: All spatial vectors use 6D representation\+: \mbox{[}angular; linear\mbox{]} Transforms are stored as \doxylink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform} (rotation + translation)
+
+\begin{DoxyNote}{Note}
+Parent index -\/1 indicates the base link (no parent) 
+\end{DoxyNote}
+
+
+\label{doc-constructors}
+\Hypertarget{struct_spatial_algebra_1_1_link_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_spatial_algebra_1_1_link_af5d68bf913dbffbe39021d41647bece7}\index{SpatialAlgebra::Link@{SpatialAlgebra::Link}!Link@{Link}}
+\index{Link@{Link}!SpatialAlgebra::Link@{SpatialAlgebra::Link}}
+\doxysubsubsection{\texorpdfstring{Link()}{Link()}}
+{\footnotesize\ttfamily \label{struct_spatial_algebra_1_1_link_af5d68bf913dbffbe39021d41647bece7} 
+Spatial\+Algebra\+::\+Link\+::\+Link (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor. 
+
+Initializes all fields to zero/identity values 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{_forward_dynamics_8h}{Forward\+Dynamics.\+h}}\end{DoxyCompactItemize}

@@ -30,15 +30,15 @@ Class representing spatial coordinate transformations.
 \begin{DoxyCompactList}\small\item\em Transform articulated body inertia. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a7a003fd15a297d8dad7f8e05a25749be}{invtform\+ABI}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{Articulated\+Body\+Inertia}} \&Ia) const
 \begin{DoxyCompactList}\small\item\em Inverse transform articulated body inertia. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe}{inverse}} () const
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe}{inverse}} () const
 \begin{DoxyCompactList}\small\item\em Compute inverse transform. \end{DoxyCompactList}\item 
-auto \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_aad6f22b9e2623583535fb508179d8a15}{multiply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&X) const
+auto \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_aad6f22b9e2623583535fb508179d8a15}{multiply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \&X) const
 \begin{DoxyCompactList}\small\item\em Compose with another transform. \end{DoxyCompactList}\item 
 auto \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a36f8dfe11063719c8c60238678fa0681}{apply}} (const \mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}} \&v) const
 \begin{DoxyCompactList}\small\item\em Apply transform to a force vector. \end{DoxyCompactList}\item 
 auto \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a4f74cd29852e1ad205126b93c6bebf3f}{apply}} (const \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}} \&v) const
 \begin{DoxyCompactList}\small\item\em Apply transform to a motion vector. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a1a0a3dfe745ce92761435b34d0f3472c}{apply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&X) const
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a1a0a3dfe745ce92761435b34d0f3472c}{apply}} (const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \&X) const
 \begin{DoxyCompactList}\small\item\em Compose with another transform. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a5e6a1766a13f9092be88508715b96034}{print}} () const
 \begin{DoxyCompactList}\small\item\em Print transform components. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -70,6 +70,8 @@ The translation vector represents the origin of the new frame expressed in the o
 \end{DoxyWarning}
 
 
+\label{doc-constructors}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_doc-constructors}
 \doxysubsection{Constructor \& Destructor Documentation}
 \Hypertarget{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!PluckerTransform@{PluckerTransform}}
 \index{PluckerTransform@{PluckerTransform}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
@@ -90,6 +92,8 @@ Construct a Plücker transform.
 \end{DoxyParams}
 Creates a spatial transform that rotates and translates spatial vectors. The translation is applied after the rotation in the rotated frame. 
 
+\label{doc-func-members}
+\Hypertarget{class_spatial_algebra_1_1_plucker_transform_doc-func-members}
 \doxysubsection{Member Function Documentation}
 \Hypertarget{class_spatial_algebra_1_1_plucker_transform_a36f8dfe11063719c8c60238678fa0681}\index{SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}!apply@{apply}}
 \index{apply@{apply}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
@@ -131,7 +135,7 @@ Transformed motion vector
 \index{apply@{apply}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
 \doxysubsubsection{\texorpdfstring{apply()}{apply()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a1a0a3dfe745ce92761435b34d0f3472c} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} Plucker\+Transform\+::apply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&}]{X}{}\end{DoxyParamCaption}) const}
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} Plucker\+Transform\+::apply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \&}]{X}{}\end{DoxyParamCaption}) const}
 
 
 
@@ -149,7 +153,7 @@ Combined transform
 \index{inverse@{inverse}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
 \doxysubsubsection{\texorpdfstring{inverse()}{inverse()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_a59f4492b92329484bfaaec7276ec3ebe} 
-\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} Plucker\+Transform\+::inverse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+\mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} Plucker\+Transform\+::inverse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
 
 
 
@@ -234,7 +238,7 @@ Applies the inverse transformation\+: X\texorpdfstring{$^\wedge$}{\string^}(-\/1
 \index{multiply@{multiply}!SpatialAlgebra::PluckerTransform@{SpatialAlgebra::PluckerTransform}}
 \doxysubsubsection{\texorpdfstring{multiply()}{multiply()}}
 {\footnotesize\ttfamily \label{class_spatial_algebra_1_1_plucker_transform_aad6f22b9e2623583535fb508179d8a15} 
-auto Plucker\+Transform\+::multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{Plucker\+Transform}} \&}]{X}{}\end{DoxyParamCaption}) const}
+auto Plucker\+Transform\+::multiply (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform_a0d162e3d92db918a85fea97c4ac9e867}{Plucker\+Transform}} \&}]{X}{}\end{DoxyParamCaption}) const}
 
 
 

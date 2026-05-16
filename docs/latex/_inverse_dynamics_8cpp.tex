@@ -1,0 +1,23 @@
+\doxysection{src/\+Inverse\+Dynamics.cpp File Reference}
+\hypertarget{_inverse_dynamics_8cpp}{}\label{_inverse_dynamics_8cpp}\index{src/InverseDynamics.cpp@{src/InverseDynamics.cpp}}
+
+
+Implementation of Recursive Newton-\/\+Euler Algorithm (RNEA) for inverse dynamics.  
+
+
+{\ttfamily \#include "{}Inverse\+Dynamics.\+h"{}}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+{\ttfamily \#include $<$cmath$>$}\newline
+
+
+\doxysubsection{Detailed Description}
+Implementation of Recursive Newton-\/\+Euler Algorithm (RNEA) for inverse dynamics. 
+
+This file implements the core RNEA recursive algorithms\+:
+\begin{DoxyItemize}
+\item outward\+Pass()\+: velocity and acceleration propagation
+\item inward\+Pass()\+: force propagation and torque computation
+\item compute\+Torques()\+: main solver combining both passes
+\end{DoxyItemize}
+
+The implementation follows Featherstone (2008) Algorithm 7.\+1 with O(n) computational complexity for serial chains. 

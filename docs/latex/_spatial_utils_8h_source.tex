@@ -5,6 +5,7 @@
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SPATIAL\_UTILS\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SPATIAL\_UTILS\_H}}
 \DoxyCodeLine{00003\ }
+\DoxyCodeLine{00011\ }
 \DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_spatial_vector_8h}{SpatialVector.h}}"{}}}
 \DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motion_vector_8h}{MotionVector.h}}"{}}}
 \DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_force_vector_8h}{ForceVector.h}}"{}}}
@@ -51,7 +52,31 @@
 \DoxyCodeLine{00086\ \ \ \ \ );}
 \DoxyCodeLine{00087\ \};}
 \DoxyCodeLine{00088\ }
-\DoxyCodeLine{00089\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
-\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SPATIAL\_UTILS\_H}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}{cross}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ w1\ =\ v1.getAngular();}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ v1\_lin\ =\ v1.getLinear();}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ w2\ =\ v2.getAngular();}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ v2\_lin\ =\ v2.getLinear();}
+\DoxyCodeLine{00101\ \ \ \ \ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ w1.cross(w2),}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ w1.cross(v2\_lin)\ +\ v1\_lin.cross(w2)}
+\DoxyCodeLine{00105\ \ \ \ \ );}
+\DoxyCodeLine{00106\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00115\ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\ \mbox{\hyperlink{_spatial_utils_8h_a361f3f3721e727bf8be879119cecd3f1}{cross}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\&\ v1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}\&\ v2)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ t1\ =\ v1.getAngular();}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ f1\ =\ v1.getLinear();}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ t2\ =\ v2.getAngular();}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{const}\ Vector3d\&\ f2\ =\ v2.getLinear();}
+\DoxyCodeLine{00120\ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{ForceVector}}(}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ t1.cross(t2)\ +\ f1.cross(f2),}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ t1.cross(f2)}
+\DoxyCodeLine{00124\ \ \ \ \ );}
+\DoxyCodeLine{00125\ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SPATIAL\_UTILS\_H}}
 
 \end{DoxyCode}

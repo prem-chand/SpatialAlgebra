@@ -1,0 +1,81 @@
+\doxysection{include/\+Inverse\+Dynamics.h File Reference}
+\hypertarget{_inverse_dynamics_8h}{}\label{_inverse_dynamics_8h}\index{include/InverseDynamics.h@{include/InverseDynamics.h}}
+
+
+Recursive Newton-\/\+Euler Algorithm (RNEA) for inverse dynamics computation.  
+
+
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\newline
+{\ttfamily \#include "{}Spatial\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Motion\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Force\+Vector.\+h"{}}\newline
+{\ttfamily \#include "{}Plucker\+Transform.\+h"{}}\newline
+{\ttfamily \#include "{}Rigid\+Body\+Inertia.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link}{Spatial\+Algebra\+::\+Inverse\+Dynamics\+Link}}
+\begin{DoxyCompactList}\small\item\em Represents a single link in a kinematic chain for inverse dynamics. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_spatial_algebra_1_1_inverse_dynamics}{Spatial\+Algebra\+::\+Inverse\+Dynamics}}
+\begin{DoxyCompactList}\small\item\em Inverse dynamics solver using Recursive Newton-\/\+Euler Algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_inverse_dynamics_8h_af7083d5321d7603913b26dd3429ae2dd}\label{_inverse_dynamics_8h_af7083d5321d7603913b26dd3429ae2dd} 
+using {\bfseries Vector3d} = Eigen\+::\+Matrix$<$double, 3, 1$>$
+\item 
+\Hypertarget{_inverse_dynamics_8h_a57f0a76f05e3f70605300762135690b5}\label{_inverse_dynamics_8h_a57f0a76f05e3f70605300762135690b5} 
+using {\bfseries Matrix3d} = Eigen\+::\+Matrix$<$double, 3, 3$>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Recursive Newton-\/\+Euler Algorithm (RNEA) for inverse dynamics computation. 
+
+This file implements Featherstone\textquotesingle{}s Recursive Newton-\/\+Euler Algorithm (RNEA) for computing joint torques from joint motion. The RNEA is an O(n) recursive algorithm that efficiently solves the inverse dynamics problem for serial and branching kinematic chains.
+
+Algorithm Overview\+:
+\begin{DoxyEnumerate}
+\item Outward pass (base to tip)\+: Propagate velocities and accelerations
+\item Inward pass (tip to base)\+: Propagate forces, compute joint torques
+\end{DoxyEnumerate}
+
+Mathematical Foundation\+: The RNEA solves the equation\+: τ = H(q)q̈ + C(q,q̇) + G(q) where\+:
+\begin{DoxyItemize}
+\item H(q)\+: Joint space inertia matrix
+\item C(q,q̇)\+: Coriolis and centrifugal forces
+\item G(q)\+: Gravity forces (not implemented, add external forces)
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }SpatialAlgebra;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{class_spatial_algebra_1_1_inverse_dynamics}{InverseDynamics}}\ id;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Setup\ kinematic\ chain}}
+\DoxyCodeLine{\mbox{\hyperlink{struct_spatial_algebra_1_1_link}{Link}}\ link;}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1646d19288e5dc4b03b53173a655458c}{parent}}\ =\ -\/1;\ \ \textcolor{comment}{//\ Base\ link}}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_ab58be7af0138ce5ce458d80e1ef2d2c5}{X}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}(Rotation::Identity(),\ Vector3d::Zero());}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_ac8572718238bc88bd6a7bbba95d8cad3}{I}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}(1.0,\ Vector3d::Zero(),\ \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{lt::Identity}}(3));}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_af4c7570751f20c9ce9995c237e9d2c79}{S}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d(0,0,1),\ Vector3d::Zero());\ \ \textcolor{comment}{//\ Revolute\ Z}}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a1472cc4d2ff78c67ac7b20f620cf0543}{q}}\ =\ 0.0;}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a5f5b8617b00bacc87f4fb92bccbd3301}{qdot}}\ =\ 0.0;}
+\DoxyCodeLine{link.\mbox{\hyperlink{struct_spatial_algebra_1_1_link_a65f9ea12fad22e43ff313bb764290ce5}{qddot}}\ =\ 1.0;}
+\DoxyCodeLine{\textcolor{keywordtype}{id}.links.push\_back(link);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Compute\ torques}}
+\DoxyCodeLine{Eigen::VectorXd\ qddot(1);}
+\DoxyCodeLine{qddot[0]\ =\ 1.0;}
+\DoxyCodeLine{}
+\DoxyCodeLine{Eigen::VectorXd\ tau\ =\ \textcolor{keywordtype}{id}.computeTorques(qddot);}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7 
+
+Plucker\+Transform for coordinate transformations 
+\end{DoxySeeAlso}

@@ -5,6 +5,7 @@
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ARTIC\_BODY\_INERTIA\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ARTIC\_BODY\_INERTIA\_H}}
 \DoxyCodeLine{00003\ }
+\DoxyCodeLine{00049\ }
 \DoxyCodeLine{00050\ \textcolor{preprocessor}{\#include\ <array>}}
 \DoxyCodeLine{00051\ \textcolor{preprocessor}{\#include\ <iostream>}}
 \DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rigid_body_inertia_8h}{RigidBodyInertia.h}}"{}}}
@@ -13,62 +14,79 @@
 \DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ <Eigen/Geometry>}}
 \DoxyCodeLine{00056\ }
 \DoxyCodeLine{00057\ \textcolor{keyword}{using\ }Vector6d\ =\ Eigen::Matrix<double,\ 6,\ 1>;}
-\DoxyCodeLine{00058\ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_lower_triangular}{lt}}\ =\ \mbox{\hyperlink{class_lower_triangular}{LowerTriangular}};}
+\DoxyCodeLine{00058\ \textcolor{keyword}{using\ }lt\ =\ \mbox{\hyperlink{class_lower_triangular}{LowerTriangular}};}
 \DoxyCodeLine{00059\ }
 \DoxyCodeLine{00060\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
 \DoxyCodeLine{00061\ \{}
-\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}}
 \DoxyCodeLine{00082\ \ \ \ \ \{}
 \DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular}{lt}}\ Inertia;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ lt\ Inertia;\ \ \ \ \ \ \ \ }
 \DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ Eigen::Matrix3d\ H;\ \ }
-\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_lower_triangular}{lt}}\ M;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ lt\ M;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
 \DoxyCodeLine{00087\ }
 \DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular}{lt}}\ \&inertia,\ \textcolor{keyword}{const}\ Eigen::Matrix3d\ \&h,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular}{lt}}\ \&M)\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}(\textcolor{keyword}{const}\ lt\ \&inertia,\ \textcolor{keyword}{const}\ Eigen::Matrix3d\ \&h,\ \textcolor{keyword}{const}\ lt\ \&M)\ }
 \DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ :\ Inertia(inertia),\ H(h),\ M(M)\ \{\}}
 \DoxyCodeLine{00101\ }
 \DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{ArticulatedBodyInertia}}()\ }
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ :\ Inertia(\mbox{\hyperlink{class_lower_triangular}{lt}}(Vector6d::Zero(),3)),\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ :\ Inertia(lt(Vector6d::Zero(),3)),\ }
 \DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ H(Eigen::Matrix3d::Zero()),\ }
-\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ M(\mbox{\hyperlink{class_lower_triangular}{lt}}(Vector6d::Zero(),3))\ \{\}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ M(lt(Vector6d::Zero(),3))\ \{\}}
 \DoxyCodeLine{00112\ }
-\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular}{lt}}\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aaee63273e2cd578f4950dabc8f2cbc70}{getInertia}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Inertia;\ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ lt\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aaee63273e2cd578f4950dabc8f2cbc70}{getInertia}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Inertia;\ \}}
 \DoxyCodeLine{00118\ }
 \DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ Eigen::Matrix3d\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_aad308b32e36ec9a634bdaee1d0dbd3df}{getH}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ H;\ \}}
 \DoxyCodeLine{00124\ }
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_lower_triangular}{lt}}\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a95dfb777a58f332b08438fe6581d33f7}{getM}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ M;\ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ lt\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a95dfb777a58f332b08438fe6581d33f7}{getM}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ M;\ \}}
 \DoxyCodeLine{00130\ }
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a7c26b2a477f27bb1fbb203464dee92f9}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a7c26b2a477f27bb1fbb203464dee92f9}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}\ \&other)\textcolor{keyword}{\ const}}
 \DoxyCodeLine{00140\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
 \DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{ArticulatedBodyInertia}}(Inertia\ +\ other.Inertia,\ }
 \DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ H\ +\ other.H,\ }
 \DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ M\ +\ other.M);}
 \DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00145\ }
-\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a146fd8c08e3741600fae2acfca9ddadb}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \&other)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a146fd8c08e3741600fae2acfca9ddadb}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \&other)\textcolor{keyword}{\ const}}
 \DoxyCodeLine{00155\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
-\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{ArticulatedBodyInertia}}(M\ +\ \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{lt::Identity}}(3)\ *\ other.\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a322860e61f5bf7422ff662d74077c17f}{getMass}}(),}
-\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ H\ +\ \mbox{\hyperlink{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1}{skew}}(other.\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_a577236be0d87eb7e7537b97d76283337}{getCom}}()),}
-\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Inertia\ +\ other.\mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia_aa22d1dff9389fe0bba2b56623e2a0823}{getInertiaMatrixLT}}());}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{ArticulatedBodyInertia}}(M\ +\ \mbox{\hyperlink{class_lower_triangular_a58148d36d14bdf21e4c70f390d8fc009}{lt::Identity}}(3)\ *\ other.getMass(),}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ H\ +\ \mbox{\hyperlink{_spatial_utils_8h_a4e10092a93324e07c349ed64f93a62f1}{skew}}(other.getCom()),}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Inertia\ +\ other.getInertiaMatrixLT());}
 \DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00160\ }
-\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a843e9c5393d7e60f1854f537d147f444}{operator*}}(\textcolor{keywordtype}{double}\ scalar)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a51fcac296b822250a37c4c64eed9fb7d}{ArticulatedBodyInertia}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a843e9c5393d7e60f1854f537d147f444}{operator*}}(\textcolor{keywordtype}{double}\ scalar)\textcolor{keyword}{\ const}}
 \DoxyCodeLine{00170\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
 \DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a71ce89c823832c5dfe5b2294b7537f1b}{ArticulatedBodyInertia}}(Inertia\ *\ scalar,}
 \DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ H\ *\ scalar,}
 \DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ M\ *\ scalar);}
 \DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00175\ }
-\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{class_spatial_algebra_1_1_force_vector}{fv}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a16b43dd417b6bfcc466c2e2b55e6a8c2}{apply}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}}\ \&\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{mv}})\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00185\ }
-\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_af56fd764072182dce3afcd9b62763ce6}{print}}()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00192\ \ \ \ \ \};}
-\DoxyCodeLine{00193\ }
-\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{abi}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}};}
-\DoxyCodeLine{00196\ }
-\DoxyCodeLine{00197\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
-\DoxyCodeLine{00198\ }
-\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ARTIC\_BODY\_INERTIA\_H}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_a0e7dc7a3186aa0781f80f64c8ef5853a}{apply}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{_motion_vector_8h_a762041a6016eb0c73c61fa5c4e612635}{mv}}\ \&motion)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00185\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ f\ =\ Ia\ *\ v\ =\ [Iω\ +\ Hv;\ Hᵀω\ +\ Mv]}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ omega\ =\ motion.\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_ac4805eba0aa8604af6846934ed92e136}{getAngular}}();}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ v\ =\ motion.\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector_a54c948627502656e0a4841747b6d8716}{getLinear}}();}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ Iomega\ =\ Inertia\ *\ omega;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ Hv\ =\ H\ *\ v;}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ HTomega\ =\ H.transpose()\ *\ omega;}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ Mv\ =\ M\ *\ v;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ torque\ =\ Iomega\ +\ Hv;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3d\ force\ =\ HTomega\ +\ Mv;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{_force_vector_8h_a8a1c7fa29b893993e8c899342b117f83}{fv}}(torque,\ force);}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia_af56fd764072182dce3afcd9b62763ce6}{print}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00204\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Rotational\ Inertia:\ "{}}\ <<\ Inertia\ <<\ \textcolor{charliteral}{'\(\backslash\)n'}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}Coupling\ Matrix\ H:\ "{}}\ <<\ H\ <<\ \textcolor{charliteral}{'\(\backslash\)n'}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}Mass\ Matrix:\ "{}}\ <<\ M\ <<\ std::endl;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{_articulated_body_inertia_8h_a78186b8ffb0779abadbc56d351b0472b}{abi}}\ =\ \mbox{\hyperlink{class_spatial_algebra_1_1_articulated_body_inertia}{ArticulatedBodyInertia}};}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \}\ \textcolor{comment}{//\ namespace\ SpatialAlgebra}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ARTIC\_BODY\_INERTIA\_H}}
 
 \end{DoxyCode}

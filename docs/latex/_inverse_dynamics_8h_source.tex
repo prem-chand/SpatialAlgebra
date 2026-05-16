@@ -1,0 +1,62 @@
+\doxysection{Inverse\+Dynamics.\+h}
+\hypertarget{_inverse_dynamics_8h_source}{}\label{_inverse_dynamics_8h_source}\index{include/InverseDynamics.h@{include/InverseDynamics.h}}
+\mbox{\hyperlink{_inverse_dynamics_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ INVERSE\_DYNAMICS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ INVERSE\_DYNAMICS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_spatial_vector_8h}{SpatialVector.h}}"{}}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_motion_vector_8h}{MotionVector.h}}"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_force_vector_8h}{ForceVector.h}}"{}}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_plucker_transform_8h}{PluckerTransform.h}}"{}}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_rigid_body_inertia_8h}{RigidBodyInertia.h}}"{}}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{using\ }Vector3d\ =\ Eigen::Matrix<double,\ 3,\ 1>;}
+\DoxyCodeLine{00060\ \textcolor{keyword}{using\ }Matrix3d\ =\ Eigen::Matrix<double,\ 3,\ 3>;}
+\DoxyCodeLine{00061\ \textcolor{keyword}{using\ }lt\ =\ \mbox{\hyperlink{class_lower_triangular}{LowerTriangular}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{keyword}{namespace\ }SpatialAlgebra}
+\DoxyCodeLine{00064\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a00848208e8b510a702d9b057abf7d26c}{InverseDynamicsLink}}}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a5f4b0c8b018fea220e26239fed03b248}{parent}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_plucker_transform}{PluckerTransform}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_aa0d7ce5316af85a18fa11a5adafcfee0}{X}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_rigid_body_inertia}{RigidBodyInertia}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_ad06beca73b26817e8179ca8b70e52dd2}{I}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_add6f7bce3287c248ef1304b55b5e8d04}{S}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a8e140f2b5ed47b85219d443ed74ba361}{q}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a4494cb2d467d0033e791e30dfb11f67d}{qdot}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a50cbe35acd6e87721361367b949d09f7}{qddot}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_aa5721de8aba2ff7155cae517324063db}{v}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a8b3aaa324d4d8e416e173730e04a9a65}{a}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a00848208e8b510a702d9b057abf7d26c}{InverseDynamicsLink}}()\ :\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a5f4b0c8b018fea220e26239fed03b248}{parent}}(-\/1),\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_aa0d7ce5316af85a18fa11a5adafcfee0}{X}}(\mbox{\hyperlink{class_rotation}{Rotation}}(Eigen::Matrix3d::Identity()),\ Vector3d::Zero()),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_ad06beca73b26817e8179ca8b70e52dd2}{I}}(1.0,\ Vector3d::Zero(),\ lt::Identity(3)),}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_add6f7bce3287c248ef1304b55b5e8d04}{S}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a8e140f2b5ed47b85219d443ed74ba361}{q}}(0.0),\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a4494cb2d467d0033e791e30dfb11f67d}{qdot}}(0.0),\ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a50cbe35acd6e87721361367b949d09f7}{qddot}}(0.0),}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_aa5721de8aba2ff7155cae517324063db}{v}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero())),}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_spatial_algebra_1_1_inverse_dynamics_link_a8b3aaa324d4d8e416e173730e04a9a65}{a}}(\mbox{\hyperlink{class_spatial_algebra_1_1_motion_vector}{MotionVector}}(Vector3d::Zero(),\ Vector3d::Zero()))\ \{\}}
+\DoxyCodeLine{00104\ \ \ \ \ \};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_spatial_algebra_1_1_inverse_dynamics}{InverseDynamics}}}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ std::vector<InverseDynamicsLink>\ \mbox{\hyperlink{class_spatial_algebra_1_1_inverse_dynamics_a3193d409083d90eb10d723d62ae5fe1a}{links}};\ \ }
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ Eigen::VectorXd\ \mbox{\hyperlink{class_spatial_algebra_1_1_inverse_dynamics_a84d324addab41ac97e74dc2ed60f7e99}{computeTorques}}(\textcolor{keyword}{const}\ Eigen::VectorXd\&\ qddot);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ outwardPass();}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ Eigen::VectorXd\ inwardPass();}
+\DoxyCodeLine{00176\ \ \ \ \ \};}
+\DoxyCodeLine{00177\ \}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ INVERSE\_DYNAMICS\_H}}
+
+\end{DoxyCode}

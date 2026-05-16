@@ -1,0 +1,60 @@
+\doxysection{include/\+Lower\+Triangular.h File Reference}
+\hypertarget{_lower_triangular_8h}{}\label{_lower_triangular_8h}\index{include/LowerTriangular.h@{include/LowerTriangular.h}}
+
+
+Memory-\/efficient implementation of lower triangular matrices.  
+
+
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$iomanip$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_lower_triangular}{Lower\+Triangular}}
+\begin{DoxyCompactList}\small\item\em Memory-\/efficient lower triangular matrix class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_lower_triangular_8h_af7083d5321d7603913b26dd3429ae2dd}\label{_lower_triangular_8h_af7083d5321d7603913b26dd3429ae2dd} 
+using {\bfseries Vector3d} = Eigen\+::\+Matrix$<$double, 3, 1$>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Memory-\/efficient implementation of lower triangular matrices. 
+
+This file provides a specialized implementation of lower triangular matrices optimized for both memory usage and computational efficiency. It uses a packed storage format that only stores the non-\/zero elements, making it particularly suitable for applications in spatial algebra and robotics.
+
+Storage Format\+: For an n×n matrix, elements are stored in a 1D array in row-\/major order\+: \mbox{[} a11, a21, a22, a31, a32, a33, ... \mbox{]} Total storage\+: n(n+1)/2 elements
+
+Performance Features\+:
+\begin{DoxyItemize}
+\item O(n²/2) storage instead of O(n²)
+\item Implicit zeros in upper triangle
+\item Open\+MP parallelization for matrix operations
+\item Efficient matrix-\/vector and matrix-\/matrix products
+\end{DoxyItemize}
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ a\ 3x3\ lower\ triangular\ matrix}}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular}{LowerTriangular}}\ L(3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Set\ elements\ (only\ lower\ triangle)}}
+\DoxyCodeLine{L(0,0)\ =\ 1.0;}
+\DoxyCodeLine{L(1,0)\ =\ 2.0;\ L(1,1)\ =\ 3.0;}
+\DoxyCodeLine{L(2,0)\ =\ 4.0;\ L(2,1)\ =\ 5.0;\ L(2,2)\ =\ 6.0;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Matrix\ operations}}
+\DoxyCodeLine{\mbox{\hyperlink{class_lower_triangular}{LowerTriangular}}\ L2(3);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ product\ =\ L\ *\ L2;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Matrix-\/matrix\ multiplication}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ scaled\ =\ L\ *\ 2.0;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scalar\ multiplication}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ L\ *\ someVector;\ \textcolor{comment}{//\ Matrix-\/vector\ multiplication}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This implementation is particularly optimized for the needs of spatial algebra computations, where lower triangular matrices frequently appear in inertia tensors and articulated body calculations. 
+\end{DoxyNote}

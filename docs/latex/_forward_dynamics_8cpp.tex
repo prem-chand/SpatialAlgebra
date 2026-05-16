@@ -1,0 +1,23 @@
+\doxysection{src/\+Forward\+Dynamics.cpp File Reference}
+\hypertarget{_forward_dynamics_8cpp}{}\label{_forward_dynamics_8cpp}\index{src/ForwardDynamics.cpp@{src/ForwardDynamics.cpp}}
+
+
+Implementation of Articulated Body Algorithm (ABA) for forward dynamics.  
+
+
+{\ttfamily \#include "{}Forward\+Dynamics.\+h"{}}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+{\ttfamily \#include $<$cmath$>$}\newline
+
+
+\doxysubsection{Detailed Description}
+Implementation of Articulated Body Algorithm (ABA) for forward dynamics. 
+
+This file implements the core ABA recursive algorithms\+:
+\begin{DoxyItemize}
+\item outward\+Pass()\+: velocity propagation and bias acceleration
+\item inward\+Pass()\+: articulated inertia accumulation and force propagation
+\item compute\+Accelerations()\+: main solver combining both passes
+\end{DoxyItemize}
+
+The implementation follows Featherstone (2008) Algorithm 7.\+3 with O(n) computational complexity for serial chains. 
