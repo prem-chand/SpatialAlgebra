@@ -159,7 +159,11 @@ Plans:
   1. Integration tests verify complete dynamics pipeline (RNEA + ABA)
   2. Tests verify consistency between inverse and forward dynamics
   3. Tests pass for multi-body systems with multiple links
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Implement InverseDynamics (RNEA) solver
+- [ ] 09-02-PLAN.md — Create RNEA unit tests and RNEA↔ABA consistency integration tests
 
 ### Phase 10: Documentation
 **Goal**: Users can learn and use the library from documentation
