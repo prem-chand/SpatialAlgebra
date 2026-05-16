@@ -145,7 +145,11 @@ Plans:
   4. SpatialOperations utilities have 100% test coverage
   5. LowerTriangular has 100% test coverage for all operations
   6. All PluckerTransform methods have tests
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Implement empty TestSpatialOperations.cpp with GTest tests (TST-01, TST-04)
+- [ ] 08-02-PLAN.md — Add missing tests for PluckerTransform methods (inverse, multiply, apply, print) (TST-06)
 
 ### Phase 9: Integration Tests
 **Goal**: Complete dynamics pipeline works end-to-end
