@@ -18,6 +18,7 @@
 - [ ] **Phase 8: Test Infrastructure** - Complete GTest coverage for all classes
 - [x] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification (completed 2026-05-16)
 - [ ] **Phase 10: Documentation** - README, examples, Doxygen
+- [ ] **Phase 11: ABI Transform Fixes** - Fix tformABI/invtformABI formulas (Featherstone Eq 7.16)
 
 ---
 
@@ -180,6 +181,20 @@ Plans:
 - [ ] 10-02-PLAN.md — Generate Doxygen documentation and verify completeness
 - [ ] 10-03-PLAN.md — Create compilable examples demonstrating core operations
 
+### Phase 11: ABI Transform Fixes
+**Goal**: Fix ArticulatedBodyInertia transform formulas to correctly implement Featherstone Eq 7.16
+**Depends on**: Phase 5
+**Requirements**: BF-01
+**Success Criteria** (what must be TRUE):
+  1. tformABI() formula matches Featherstone Algorithm 7.3, Eq 7.16
+  2. invtformABI() correctly implements inverse transform
+  3. All 5 failing ABI transform tests pass
+  4. Round-trip transform (forward then inverse) returns original ABI within floating point tolerance
+**Plans**: 1 plan
+
+Plans:
+- [ ] 11-01-PLAN.md — Derive correct formula, fix tformABI/invtformABI, verify all tests pass
+
 ---
 
 ## Progress
@@ -196,6 +211,7 @@ Plans:
 | 8. Test Infrastructure | 0/6 | Not started | - |
 | 9. Integration Tests | 2/2 | Complete   | 2026-05-16 |
 | 10. Documentation | 0/3 | Not started | - |
+| 11. ABI Transform Fixes | 0/1 | Not started | - |
 
 ---
 
