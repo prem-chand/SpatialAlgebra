@@ -81,3 +81,13 @@ add_test(NAME TestLowerTriangular COMMAND TestLowerTriangular)
 add_test(NAME TestSpatialUtils COMMAND TestSpatialUtils)
 
 add_test(NAME TestRigidBodyInertia COMMAND TestRigidBodyInertia)
+
+add_executable(TestArticulatedBodyInertia tests/TestArticulatedBodyInertia.cpp)
+
+target_link_libraries(TestArticulatedBodyInertia
+    SpatialAlgebra
+    GTest::GTest
+    GTest::Main
+)
+
+add_test(NAME TestArticulatedBodyInertia COMMAND TestArticulatedBodyInertia)
