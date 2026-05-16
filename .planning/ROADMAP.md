@@ -128,7 +128,11 @@ Plans:
   2. User can compute accelerations for serial kinematic chains
   3. User can compute accelerations for branching kinematic trees
   4. ABA correctly uses PluckerTransform operations for coordinate transformations
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Implement ABA algorithm (outward/inward pass, computeAccelerations)
+- [ ] 07-02-PLAN.md — Create comprehensive GTest test suite for ABA
 
 ### Phase 8: Test Infrastructure
 **Goal**: All core classes have comprehensive GTest test suites
