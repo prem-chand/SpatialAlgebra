@@ -112,7 +112,12 @@ Plans:
   2. User can apply MotionVector to RigidBodyInertia to get ForceVector
   3. User can create ArticulatedBodyInertia with full parameterization
   4. User can apply MotionVector to ArticulatedBodyInertia to get ForceVector
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Implement ArticulatedBodyInertia::apply() and print() methods
+- [ ] 06-02-PLAN.md — Create GTest test suite for RigidBodyInertia
+- [ ] 06-03-PLAN.md — Create GTest test suite for ArticulatedBodyInertia
 
 ### Phase 7: Forward Dynamics
 **Goal**: Users can compute forward dynamics for articulated rigid body systems
