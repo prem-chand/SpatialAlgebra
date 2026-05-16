@@ -16,7 +16,7 @@
 - [x] **Phase 6: Inertia Properties** - RigidBodyInertia and ArticulatedBodyInertia (completed 2026-05-16)
 - [ ] **Phase 7: Forward Dynamics** - Articulated Body Algorithm implementation
 - [ ] **Phase 8: Test Infrastructure** - Complete GTest coverage for all classes
-- [ ] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification
+- [x] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification (completed 2026-05-16)
 - [ ] **Phase 10: Documentation** - README, examples, Doxygen
 
 ---
@@ -162,8 +162,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Implement InverseDynamics (RNEA) solver
-- [ ] 09-02-PLAN.md — Create RNEA unit tests and RNEA↔ABA consistency integration tests
+- [x] 09-01-PLAN.md — Implement InverseDynamics (RNEA) solver
+- [x] 09-02-PLAN.md — Create RNEA unit tests and RNEA↔ABA consistency integration tests
 
 ### Phase 10: Documentation
 **Goal**: Users can learn and use the library from documentation
@@ -189,7 +189,7 @@ Plans:
 | 6. Inertia Properties | 0/4 | Not started | - |
 | 7. Forward Dynamics | 0/4 | Not started | - |
 | 8. Test Infrastructure | 0/6 | Not started | - |
-| 9. Integration Tests | 0/3 | Not started | - |
+| 9. Integration Tests | 2/2 | Complete   | 2026-05-16 |
 | 10. Documentation | 0/3 | Not started | - |
 
 ---
