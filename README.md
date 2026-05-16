@@ -213,10 +213,10 @@ The `examples/` directory contains compilable examples demonstrating core operat
 cmake --build build --target example_vectors example_transforms example_inertia example_dynamics
 
 # Run individual examples
-./build/example_vectors      # Basic vector operations
-./build/example_transforms   # Plücker coordinate transforms
-./build/example_inertia      # Rigid body inertia
-./build/example_dynamics     # Forward dynamics (ABA)
+./build/examples/example_vectors      # Basic vector operations
+./build/examples/example_transforms   # Plücker coordinate transforms
+./build/examples/example_inertia      # Rigid body inertia
+./build/examples/example_dynamics     # Forward dynamics (ABA)
 ```
 
 ## Testing
