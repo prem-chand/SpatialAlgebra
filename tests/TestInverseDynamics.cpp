@@ -481,6 +481,42 @@ TEST(InverseDynamicsTest, GravityFiniteValidResults) {
 }
 
 /**
+ * @brief Release-mode stability: valid inputs produce finite output
+ * @details Verifies RNEA produces stable finite torques with valid inputs
+ *          regardless of NDEBUG mode. Single link, identity inertia,
+ *          Z-axis joint. Tests qddot=[1.0] without gravity and with
+ *          gravity. Documents gravity API doesn't introduce NaN/Inf for
+ *          valid inputs in any build mode.
+ *          Per reviewer: "release-mode tests verifying behavior stays stable
+ *          when inputs are valid" (MEDIUM, 13-03).
+ */
+TEST(InverseDynamicsTest, ReleaseModeStability) {
+    // Single link: Z-axis revolute, identity inertia
+    InverseDynamics id;
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link.q = 0.0;
+    link.qdot = 0.0;
+    id.links.push_back(link);
+    
+    Eigen::VectorXd qddot(1);
+    qddot[0] = 1.0;
+    
+    // Without gravity
+    Eigen::VectorXd tau = id.computeTorques(qddot, Vector3d::Zero());
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_GT(tau[0], 0.0);
+    
+    // With gravity
+    tau = id.computeTorques(qddot, Vector3d(0, 0, -9.81));
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_GT(tau[0], 0.0);
+}
+
+/**
  * @brief Edge case: zero-mass single link
  * @details Tests RNEA with a degenerate inertia (mass=0, COM=zero,
  *          inertia tensor=zero). For zero acceleration, the torques

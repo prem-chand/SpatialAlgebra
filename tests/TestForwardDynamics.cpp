@@ -530,6 +530,42 @@ TEST(ForwardDynamicsTest, GravityProportionalityInvariant) {
 }
 
 /**
+ * @brief Release-mode stability: valid inputs produce finite output
+ * @details Verifies ABA produces stable finite results with valid inputs
+ *          regardless of NDEBUG mode (where NaN/Inf assertions are compiled
+ *          out). Single link with identity inertia, Z-axis revolute joint,
+ *          tau=[1.0]. Tests both zero gravity and Earth gravity.
+ *          Per reviewer: "release-mode tests verifying behavior stays stable
+ *          when inputs are valid" (MEDIUM, 13-03).
+ */
+TEST(ForwardDynamicsTest, ReleaseModeStability) {
+    // Single link: Z-axis revolute, identity inertia
+    ForwardDynamics fd;
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link.q = 0.0;
+    link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+    
+    Eigen::VectorXd tau(1);
+    tau[0] = 1.0;
+    
+    // Without gravity
+    fd.computeAccelerations(tau, Vector3d::Zero());
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    EXPECT_GT(fd.links[0].qddot, 0.0);
+    
+    // With gravity
+    fd.computeAccelerations(tau, Vector3d(0, 0, -9.81));
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    EXPECT_GT(fd.links[0].qddot, 0.0);
+}
+
+/**
  * @brief Edge case: zero-mass single link
  * @details Tests ABA with a degenerate inertia (mass=0, COM=zero,
  *          inertia tensor=zero). The solver must not crash on this
