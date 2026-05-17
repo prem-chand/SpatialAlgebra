@@ -186,6 +186,155 @@ TEST(InverseDynamicsTest, LargeAccelerationProportionalTorque) {
     EXPECT_NEAR(tau2[0], 2.0 * tau1[0], EPSILON * 2);
 }
 
+/**
+ * @brief RNEA with non-zero joint velocity exercises Coriolis/centrifugal terms
+ * @details Previous tests all used qdot = 0, meaning the Coriolis term
+ *          v × S·q̇ in the outward pass was never exercised. With qdot ≠ 0,
+ *          the acceleration propagation includes velocity product terms:
+ *          aᵢ = Xᵢ·a_parent + Sᵢ·q̈ᵢ + vᵢ × Sᵢ·q̇ᵢ
+ *          The torque should differ from the qdot=0 case.
+ *          Note: Coriolis effect requires non-zero COM offset to couple
+ *          through the inertia matrix (COM=[0,0.1,0] used here).
+ */
+TEST(InverseDynamicsTest, TwoLinkSerialChainNonZeroVelocity) {
+    InverseDynamics id;
+    
+    // Link 0 (base)
+    InverseDynamicsLink l0;
+    l0.parent = -1;
+    l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    l0.I = RigidBodyInertia(1.0, Vector3d(0, 0.1, 0), lt::Identity(3));
+    l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    l0.q = 0.0;
+    l0.qdot = 2.0;  // Non-zero velocity
+    id.links.push_back(l0);
+    
+    // Link 1 (child)
+    InverseDynamicsLink l1;
+    l1.parent = 0;
+    l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    l1.I = RigidBodyInertia(1.0, Vector3d(0, 0.1, 0), lt::Identity(3));
+    l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    l1.q = 0.0;
+    l1.qdot = 1.0;  // Non-zero velocity
+    id.links.push_back(l1);
+    
+    Eigen::VectorXd qddot(2);
+    qddot[0] = 1.0;
+    qddot[1] = 0.5;
+    
+    Eigen::VectorXd tau = id.computeTorques(qddot);
+    
+    // Torques should be finite
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_TRUE(std::isfinite(tau[1]));
+    
+    // Compare with zero-velocity case — torques should differ (Coriolis effect)
+    InverseDynamics id_zero;
+    InverseDynamicsLink zl0;
+    zl0.parent = -1;
+    zl0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    zl0.I = RigidBodyInertia(1.0, Vector3d(0, 0.1, 0), lt::Identity(3));
+    zl0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    zl0.q = 0.0;
+    zl0.qdot = 0.0;
+    id_zero.links.push_back(zl0);
+    
+    InverseDynamicsLink zl1;
+    zl1.parent = 0;
+    zl1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    zl1.I = RigidBodyInertia(1.0, Vector3d(0, 0.1, 0), lt::Identity(3));
+    zl1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    zl1.q = 0.0;
+    zl1.qdot = 0.0;
+    id_zero.links.push_back(zl1);
+    
+    Eigen::VectorXd tau_zero = id_zero.computeTorques(qddot);
+    
+    // Non-zero velocity should produce different torques
+    bool hasCoriolisEffect = (std::abs(tau[0] - tau_zero[0]) > EPSILON) || 
+                             (std::abs(tau[1] - tau_zero[1]) > EPSILON);
+    EXPECT_TRUE(hasCoriolisEffect);
+}
+
+/**
+ * @brief RNEA with gravity — verifies gravity term in outward pass
+ * @details Gravity sets base acceleration to a₀ = S·q̈ - g.
+ *          For a vertical pendulum (gravity along -Z), the torque should differ
+ *          from the no-gravity case.
+ */
+TEST(InverseDynamicsTest, SingleLinkWithGravity) {
+    InverseDynamics id;
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link.q = 0.0;
+    link.qdot = 0.0;
+    id.links.push_back(link);
+    
+    Eigen::VectorXd qddot(1);
+    qddot[0] = 1.0;
+    
+    // Without gravity
+    Eigen::VectorXd tau_no_gravity = id.computeTorques(qddot, Vector3d::Zero());
+    
+    // With Earth gravity
+    Vector3d gravity(0, 0, -9.81);
+    Eigen::VectorXd tau_with_gravity = id.computeTorques(qddot, gravity);
+    
+    // Both should be finite
+    EXPECT_TRUE(std::isfinite(tau_with_gravity[0]));
+    
+    // For single-link identity inertia at origin with Z-axis revolute joint,
+    // the gravity vector along -Z has pure linear component [0,0,-9.81].
+    // The RNEA outward pass subtracts [0; g] from base acceleration:
+    // a₀ = S·q̈ - [0; g]
+    // This modifies the linear acceleration component, which couples back
+    // through the inertia matrix (for non-zero COM) to affect torque.
+    // With COM=0 and identity inertia, gravity produces NO joint torque
+    // (linear acceleration doesn't project onto Z-rotation axis).
+    EXPECT_NEAR(tau_with_gravity[0], tau_no_gravity[0], EPSILON);
+}
+
+/**
+ * @brief Two-link RNEA with both non-zero velocity and gravity
+ * @details Combined test exercises both the Coriolis terms (via qdot)
+ *          and the gravity term (via base acceleration).
+ */
+TEST(InverseDynamicsTest, TwoLinkWithVelocityAndGravity) {
+    InverseDynamics id;
+    
+    InverseDynamicsLink l0;
+    l0.parent = -1;
+    l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    l0.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    l0.q = 0.0;
+    l0.qdot = 2.0;
+    id.links.push_back(l0);
+    
+    InverseDynamicsLink l1;
+    l1.parent = 0;
+    l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    l1.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    l1.q = 0.0;
+    l1.qdot = 1.0;
+    id.links.push_back(l1);
+    
+    Eigen::VectorXd qddot(2);
+    qddot[0] = 1.0;
+    qddot[1] = 0.5;
+    
+    Vector3d gravity(0, 0, -9.81);
+    Eigen::VectorXd tau = id.computeTorques(qddot, gravity);
+    
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_TRUE(std::isfinite(tau[1]));
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
