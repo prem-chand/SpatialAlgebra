@@ -6,7 +6,6 @@
  * @brief Class representing rigid body inertia properties
  */
 
-#include <array>
 #include <iostream>
 #include "SpatialVector.h"
 #include "ForceVector.h"
@@ -14,12 +13,11 @@
 #include "LowerTriangular.h"
 #include <Eigen/Geometry> // Include for RotationMatrix
 
-using Vector3d = Eigen::Matrix<double, 3, 1>;
+namespace SpatialAlgebra {
+
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 using lt = LowerTriangular;
 
-namespace SpatialAlgebra
-{
     /**
      * @brief Class representing the inertial properties of a rigid body
      *
@@ -61,9 +59,13 @@ namespace SpatialAlgebra
          */
         inline RigidBodyInertia operator+(const RigidBodyInertia &other) const
         {
-            // const double sumMass = mass + other.mass;
-            // const Vector3d sumCom = com + other.com;
-            return RigidBodyInertia(mass + other.mass, com + other.com, inertiaMatrixLT + other.inertiaMatrixLT);
+            double newMass = mass + other.mass;
+            // Mass-weighted center of mass: com = (m1*c1 + m2*c2) / (m1+m2)
+            Vector3d newCom = Vector3d::Zero();
+            if (newMass > 0.0) {
+                newCom = (mass * com + other.mass * other.com) / newMass;
+            }
+            return RigidBodyInertia(newMass, newCom, inertiaMatrixLT + other.inertiaMatrixLT);
         }
 
         /**
@@ -81,16 +83,24 @@ namespace SpatialAlgebra
          * @param mv Motion vector to apply
          * @return Resulting force vector
          * @details Implements: [Iω + com × v; m*v - com × ω]
+         *          where I is the symmetric rotational inertia tensor.
          */
         inline ForceVector apply(const MotionVector &mv) const
         {
+#ifndef NDEBUG
+            if (mv.getAngular().hasNaN() || mv.getLinear().hasNaN() ||
+                mv.getAngular().array().isInf().any() || mv.getLinear().array().isInf().any()) {
+                std::cerr << "WARNING: NaN or Inf detected in RigidBodyInertia::apply\n";
+            }
+#endif
             // rbi = [m, com, I_LT], mv = [ω, v]
             // rbi.apply(mv) = [Iω + com x v; m*v - com x ω]
             Vector3d omega = mv.getAngular();
             Vector3d v = mv.getLinear();
             Vector3d comCrossV = com.cross(v);
             Vector3d comCrossOmega = com.cross(omega);
-            Vector3d Iomega = inertiaMatrixLT * omega;
+            // Use symmetric multiplication for inertia tensor
+            Vector3d Iomega = inertiaMatrixLT.multiplySymmetric(omega);
             Vector3d force = mass * v - comCrossOmega;
             Vector3d torque = Iomega + comCrossV;
             return ForceVector(torque, force);

@@ -10,7 +10,15 @@ using namespace Eigen;
 SpatialVector::SpatialVector() : angular(Vector3d::Zero()), linear(Vector3d::Zero()) {}
 
 SpatialVector::SpatialVector(const Vector3d &a, const Vector3d &l)
-    : angular(a), linear(l) {}
+    : angular(a), linear(l)
+{
+#ifndef NDEBUG
+    if (a.hasNaN() || l.hasNaN() ||
+        a.array().isInf().any() || l.array().isInf().any()) {
+        std::cerr << "WARNING: NaN or Inf detected in SpatialVector constructor\n";
+    }
+#endif
+}
 
 SpatialVector::SpatialVector(const SpatialVector &other)
     : angular(other.angular), linear(other.linear) {}

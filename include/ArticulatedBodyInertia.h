@@ -47,15 +47,11 @@
  * @see Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7
  */
 
-#include <array>
 #include <iostream>
 #include "RigidBodyInertia.h"
 #include "SpatialUtils.h"
 #include "LowerTriangular.h"
 #include <Eigen/Geometry>
-
-using Vector6d = Eigen::Matrix<double, 6, 1>;
-using lt = LowerTriangular;
 
 namespace SpatialAlgebra
 {
@@ -153,9 +149,9 @@ namespace SpatialAlgebra
          */
         inline ArticulatedBodyInertia operator+(const RigidBodyInertia &other) const
         {
-            return ArticulatedBodyInertia(M + lt::Identity(3) * other.getMass(),
-                                        H + skew(other.getCom()),
-                                        Inertia + other.getInertiaMatrixLT());
+            return ArticulatedBodyInertia(Inertia + other.getInertiaMatrixLT(),
+                                        H + other.getMass() * skew(other.getCom()),
+                                        M + lt::Identity(3) * other.getMass());
         }
 
         /**
@@ -180,16 +176,24 @@ namespace SpatialAlgebra
          * @details Computes the force and torque resulting from the motion of
          *          the articulated body. The operation implements:
          *          f = Ia * v = [Iω + Hv; Hᵀω + Mv]
+         *          where I and M are symmetric matrices.
          */
         inline fv apply(const mv &motion) const
         {
+#ifndef NDEBUG
+            if (motion.getAngular().hasNaN() || motion.getLinear().hasNaN() ||
+                motion.getAngular().array().isInf().any() || motion.getLinear().array().isInf().any()) {
+                std::cerr << "WARNING: NaN or Inf detected in ArticulatedBodyInertia::apply\n";
+            }
+#endif
             // f = Ia * v = [Iω + Hv; Hᵀω + Mv]
             Vector3d omega = motion.getAngular();
             Vector3d v = motion.getLinear();
-            Vector3d Iomega = Inertia * omega;
+            // Use symmetric multiplication for inertia and mass matrices
+            Vector3d Iomega = Inertia.multiplySymmetric(omega);
             Vector3d Hv = H * v;
             Vector3d HTomega = H.transpose() * omega;
-            Vector3d Mv = M * v;
+            Vector3d Mv = M.multiplySymmetric(v);
             Vector3d torque = Iomega + Hv;
             Vector3d force = HTomega + Mv;
             return fv(torque, force);
