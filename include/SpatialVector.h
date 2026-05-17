@@ -41,10 +41,9 @@
 
 #include <Eigen/Dense>
 
-using Vector3d = Eigen::Matrix<double, 3, 1>;
-
 namespace SpatialAlgebra
 {
+using Vector3d = Eigen::Matrix<double, 3, 1>;
     /**
      * @brief Base class for spatial vectors in 6D space
      * @details The SpatialVector class implements the fundamental operations for 6D spatial
@@ -98,17 +97,17 @@ namespace SpatialAlgebra
 
         /**
          * @brief Get the angular component
-         * @return The angular 3D vector
+         * @return Const reference to the angular 3D vector
          * @details Returns the top 3D vector component (ω for motion, τ for force)
          */
-        Vector3d getAngular() const;
+        const Vector3d& getAngular() const;
 
         /**
          * @brief Get the linear component
-         * @return The linear 3D vector
+         * @return Const reference to the linear 3D vector
          * @details Returns the bottom 3D vector component (v for motion, f for force)
          */
-        Vector3d getLinear() const;
+        const Vector3d& getLinear() const;
 
         /**
          * @brief Add two spatial vectors
@@ -149,7 +148,7 @@ namespace SpatialAlgebra
          * @param other The spatial vector to cross with
          * @return The resulting spatial vector
          * @details Implements the force cross product operation:
-         *          [ω1×ω2 + v1×v2; ω1×v2]
+         *          [ω1×ω2 + v1×v2; ω1×v2 - ω2×v1]
          * @note This operation is specific to force vectors (wrenches)
          */
         SpatialVector crossForce(const SpatialVector &other) const;

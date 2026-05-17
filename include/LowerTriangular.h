@@ -1,8 +1,9 @@
-#pragma once
+#ifndef LOWER_TRIANGULAR_H
+#define LOWER_TRIANGULAR_H
 
 /**
  * @file LowerTriangular.h
- * @brief Memory-efficient implementation of lower triangular matrices
+ * @brief Memory-efficient lower triangular matrix implementation
  * @details This file provides a specialized implementation of lower triangular matrices
  *          optimized for both memory usage and computational efficiency. It uses a
  *          packed storage format that only stores the non-zero elements, making it
@@ -49,8 +50,7 @@
 #include <iostream>
 #include <iomanip>
 
-// Type aliases for convenience
-using Vector3d = Eigen::Matrix<double, 3, 1>;
+namespace SpatialAlgebra {
 
 /**
  * @brief Memory-efficient lower triangular matrix class
@@ -197,7 +197,6 @@ public:
             throw std::invalid_argument("Matrix size mismatch");
 
         LowerTriangular result(n);
-#pragma omp parallel for collapse(2)
         for (int i = 0; i < n; ++i)
         {
             for (int j = 0; j <= i; ++j)
@@ -300,8 +299,8 @@ public:
      * @param v 3D vector to multiply with
      * @return Result as Vector3d
      * @throws std::invalid_argument if matrix dimension is not 3
-     * @details Specialized overload for 3D vectors to avoid ambiguity
-     *          with MatrixXd operator*. Returns Vector3d for efficiency.
+     * @details Specialized overload for 3D vectors. Uses pure lower triangular
+     *          multiplication (upper triangle treated as zero).
      */
     Vector3d operator*(const Vector3d &v) const
     {
@@ -311,6 +310,58 @@ public:
         Vector3d result;
         result(0) = (*this)(0, 0) * v(0);
         result(1) = (*this)(1, 0) * v(0) + (*this)(1, 1) * v(1);
+        result(2) = (*this)(2, 0) * v(0) + (*this)(2, 1) * v(1) + (*this)(2, 2) * v(2);
+        return result;
+    }
+
+    /**
+     * @brief Symmetric matrix-vector multiplication (for inertia tensors)
+     * @param v Vector to multiply with
+     * @return Result as VectorXd
+     * @details For symmetric matrices stored in lower triangular form,
+     *          accounts for symmetry: L_sym*v where L_sym[i,j] = L[j,i] for i<j.
+     *          Use this for inertia tensor operations.
+     */
+    Eigen::VectorXd multiplySymmetric(const Eigen::VectorXd &v) const
+    {
+        if (n != v.size())
+            throw std::invalid_argument("Dimension mismatch in LowerTriangular::multiplySymmetric");
+        
+        Eigen::VectorXd result(n);
+        for (int i = 0; i < n; ++i)
+        {
+            result(i) = 0.0;
+            for (int j = 0; j < n; ++j)
+            {
+                if (i >= j)
+                {
+                    result(i) += (*this)(i, j) * v(j);
+                }
+                else
+                {
+                    result(i) += (*this)(j, i) * v(j);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @brief Symmetric matrix-vector multiplication for 3D vectors
+     * @param v 3D vector to multiply with
+     * @return Result as Vector3d
+     * @throws std::invalid_argument if matrix dimension is not 3
+     * @details Specialized symmetric multiplication for 3D vectors.
+     *          Use for inertia tensor * angular velocity operations.
+     */
+    Vector3d multiplySymmetric(const Vector3d &v) const
+    {
+        if (n != 3)
+            throw std::invalid_argument("LowerTriangular::multiplySymmetric requires 3x3 matrix");
+        
+        Vector3d result;
+        result(0) = (*this)(0, 0) * v(0) + (*this)(1, 0) * v(1) + (*this)(2, 0) * v(2);
+        result(1) = (*this)(1, 0) * v(0) + (*this)(1, 1) * v(1) + (*this)(2, 1) * v(2);
         result(2) = (*this)(2, 0) * v(0) + (*this)(2, 1) * v(1) + (*this)(2, 2) * v(2);
         return result;
     }
@@ -408,8 +459,8 @@ public:
      * @brief Convert to full matrix representation
      * @return Dense matrix containing all elements
      * @details Creates a full n×n Eigen::MatrixXd from the packed storage format.
-     *          The resulting matrix contains zeros in the upper triangular part
-     *          and the stored values in the lower triangular part.
+     *          Upper triangular elements are set to zero (pure lower triangular).
+     *          For symmetric matrix reconstruction, use getSymmetricMatrix() instead.
      *
      * Example usage:
      * @code{.cpp}
@@ -429,6 +480,39 @@ public:
             for (int j = 0; j <= i; ++j)
             {
                 fullMatrix(i, j) = (*this)(i, j);
+            }
+        }
+        return fullMatrix;
+    }
+
+    /**
+     * @brief Convert to full symmetric matrix representation
+     * @return Dense symmetric matrix
+     * @details Creates a full n×n symmetric Eigen::MatrixXd from the packed
+     *          lower triangular storage by copying lower triangle to upper.
+     *          Use this for symmetric matrices like inertia tensors.
+     *
+     * Example usage:
+     * @code{.cpp}
+     *     LowerTriangular L(3);  // stores symmetric inertia
+     *     L(1,0) = 2.0; L(2,0) = 3.0; L(2,1) = 4.0;
+     *     Eigen::MatrixXd sym = L.getSymmetricMatrix();
+     *     // sym = [0 2 3]
+     *     //       [2 0 4]
+     *     //       [3 4 0]
+     * @endcode
+     */
+    Eigen::MatrixXd getSymmetricMatrix() const
+    {
+        Eigen::MatrixXd fullMatrix = Eigen::MatrixXd::Zero(n, n);
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = 0; j <= i; ++j)
+            {
+                fullMatrix(i, j) = (*this)(i, j);
+                if (i != j) {
+                    fullMatrix(j, i) = (*this)(i, j);  // Symmetric reconstruction
+                }
             }
         }
         return fullMatrix;
@@ -476,3 +560,9 @@ public:
         return result;
     }
 };
+
+} // namespace SpatialAlgebra
+
+using SpatialAlgebra::LowerTriangular;
+
+#endif // LOWER_TRIANGULAR_H
