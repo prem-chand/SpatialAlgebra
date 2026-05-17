@@ -287,7 +287,7 @@ Plans:
 - [x] 13-04-PLAN.md — Multi-link ABA, RNEA non-zero velocity, gravity tests
 - [x] 13-05-PLAN.md — Namespace cleanup + CMake + CI + code quality
 - [ ] 13-06-PLAN.md — Mathematical conventions + independent gravity test oracles
-- [ ] 13-07-PLAN.md — Edge case coverage + API documentation updates
+- [ ] 13-07-PLAN.md — Edge case tests, release-mode stability, API docs
 
 ---
 
