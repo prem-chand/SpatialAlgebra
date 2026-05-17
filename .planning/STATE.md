@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: v1.1-bug-fixes
 status: completed
-last_updated: "2026-05-17T05:48:55.832Z"
+last_updated: "2026-05-17T06:27:49.268Z"
 progress:
   total_phases: 13
   completed_phases: 9
-  total_plans: 27
+  total_plans: 32
   completed_plans: 25
   percent: 69
 ---

@@ -27,195 +27,245 @@
 ## Phase Details
 
 ### Phase 1: Foundation Vectors
+
 **Goal**: Users can create and manipulate 6D spatial vectors (twists and wrenches)
 **Depends on**: Nothing
 **Requirements**: VEC-01, VEC-02, VEC-03, VEC-04
 **Success Criteria** (what must be TRUE):
+
   1. User can create SpatialVector with angular and linear components
   2. User can create MotionVector (twist) and access both components
   3. User can create ForceVector (wrench) and access both components
   4. User can add, subtract, and scale spatial vectors
+
 **Plans**: 4 plans
 
 Plans:
+
 - [x] 01-01-PLAN.md — GTest test scaffolding and comprehensive test suite
 - [ ] 01-02-PLAN.md — Fix MotionVector::crossMotion bug per Featherstone
 - [x] 01-03-PLAN.md — Complete ForceVector and SpatialVector::crossForce
 - [ ] 01-04-PLAN.md — Property-based tests and textbook examples
 
 ### Phase 2: Rotation & Math
+
 **Goal**: Users can perform rotation operations and convert between representations
 **Depends on**: Phase 1
 **Requirements**: ROT-01, ROT-02, ROT-03, ROT-04
 **Success Criteria** (what must be TRUE):
+
   1. User can multiply, transpose, and invert rotation matrices
   2. User can convert angle-axis representation to rotation matrix
   3. User can convert quaternion to rotation matrix
   4. Rotation matrices maintain orthogonality through operations
+
 **Plans**: 1 plan
 
 Plans:
+
 - [x] 02-01-PLAN.md — Comprehensive GTest test suite for Rotation class
 
 ### Phase 3: Packed Matrix
+
 **Goal**: Users can use memory-efficient lower triangular matrices
 **Depends on**: Phase 1
 **Requirements**: LTR-01, LTR-02, LTR-03, LTR-04
 **Success Criteria** (what must be TRUE):
+
   1. User can create LowerTriangular matrix with correct packed storage indexing
   2. User can multiply LowerTriangular with dense matrices
   3. User can multiply LowerTriangular with vectors
   4. User can compute transpose and inverse of LowerTriangular matrix
+
 **Plans**: 2 plans
 
 Plans:
+
 - [x] 03-01-PLAN.md — Implement missing LowerTriangular methods (operator*, inverse)
 - [x] 03-02-PLAN.md — Create GTest test suite for LowerTriangular class
 
 ### Phase 4: Spatial Utilities
+
 **Goal**: Users can compute cross products and dot products for spatial vectors
 **Depends on**: Phase 1
 **Requirements**: UTL-01, UTL-02, UTL-03, UTL-04
 **Success Criteria** (what must be TRUE):
+
   1. User can create 3x3 skew-symmetric matrix from Vector3d
   2. User can compute dot products for spatial vectors
   3. User can compute cross products for spatial vectors
   4. User can use SpatialOperations utility class for common operations
+
 **Plans**: 3 plans
 
 Plans:
+
 - [ ] 04-01-PLAN.md — Complete SpatialUtils.h free functions (skew, dot, cross)
 - [ ] 04-02-PLAN.md — Implement SpatialOperations static class methods
 - [ ] 04-03-PLAN.md — Create comprehensive GTest test suite
 
 ### Phase 5: Plücker Transforms
+
 **Goal**: Users can transform spatial vectors and inertias between coordinate frames
 **Depends on**: Phase 1, Phase 2, Phase 3
 **Requirements**: PLX-01, PLX-02, PLX-03, PLX-04, PLX-05, PLX-06
 **Success Criteria** (what must be TRUE):
+
   1. User can transform motion vectors between frames using `transformMotion()`
   2. User can transform force vectors between frames using `transformForce()`
   3. User can transform rigid body inertia using `tformRBI()`
   4. User can transform articulated body inertia using `tformABI()`
   5. User can compute inverse Plücker transform
   6. User can compute inverse articulated body inertia transform using `invtformABI()`
+
 **Plans**: 3 plans
 
 Plans:
+
 - [ ] 05-01-PLAN.md — Verify and test transformMotion/transformForce (PLX-01, PLX-02)
 - [ ] 05-02-PLAN.md — Verify and test tformRBI/invtformRBI/inverse (PLX-03, PLX-05)
 - [ ] 05-03-PLAN.md — Implement invtformABI and test tformABI (PLX-04, PLX-06)
 
 ### Phase 6: Inertia Properties
+
 **Goal**: Users can define and manipulate rigid body and articulated body inertias
 **Depends on**: Phase 1, Phase 3
 **Requirements**: INR-01, INR-02, INR-03, INR-04
 **Success Criteria** (what must be TRUE):
+
   1. User can create RigidBodyInertia with mass, COM, and inertia tensor
   2. User can apply MotionVector to RigidBodyInertia to get ForceVector
   3. User can create ArticulatedBodyInertia with full parameterization
   4. User can apply MotionVector to ArticulatedBodyInertia to get ForceVector
+
 **Plans**: 3 plans
 
 Plans:
+
 - [x] 06-01-PLAN.md — Implement ArticulatedBodyInertia::apply() and print() methods
 - [x] 06-02-PLAN.md — Create GTest test suite for RigidBodyInertia
 - [x] 06-03-PLAN.md — Create GTest test suite for ArticulatedBodyInertia
 
 ### Phase 7: Forward Dynamics
+
 **Goal**: Users can compute forward dynamics for articulated rigid body systems
 **Depends on**: Phase 5, Phase 6, Phase 4
 **Requirements**: ABA-01, ABA-02, ABA-03, ABA-04
 **Success Criteria** (what must be TRUE):
+
   1. User can run Articulated Body Algorithm for forward dynamics
   2. User can compute accelerations for serial kinematic chains
   3. User can compute accelerations for branching kinematic trees
   4. ABA correctly uses PluckerTransform operations for coordinate transformations
+
 **Plans**: 2 plans
 
 Plans:
+
 - [ ] 07-01-PLAN.md — Implement ABA algorithm (outward/inward pass, computeAccelerations)
 - [ ] 07-02-PLAN.md — Create comprehensive GTest test suite for ABA
 
 ### Phase 8: Test Infrastructure
+
 **Goal**: All core classes have comprehensive GTest test suites
 **Depends on**: Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6
 **Requirements**: TST-01, TST-02, TST-03, TST-04, TST-05, TST-06
 **Success Criteria** (what must be TRUE):
+
   1. All empty test stub files are implemented with GTest
   2. RigidBodyInertia has 100% test coverage for all operations
   3. ArticulatedBodyInertia has 100% test coverage for all operations
   4. SpatialOperations utilities have 100% test coverage
   5. LowerTriangular has 100% test coverage for all operations
   6. All PluckerTransform methods have tests
+
 **Plans**: 2 plans
 
 Plans:
+
 - [ ] 08-01-PLAN.md — Implement empty TestSpatialOperations.cpp with GTest tests (TST-01, TST-04)
 - [ ] 08-02-PLAN.md — Add missing tests for PluckerTransform methods (inverse, multiply, apply, print) (TST-06)
 
 ### Phase 9: Integration Tests
+
 **Goal**: Complete dynamics pipeline works end-to-end
 **Depends on**: Phase 7, Phase 8
 **Requirements**: TST-07
 **Success Criteria** (what must be TRUE):
+
   1. Integration tests verify complete dynamics pipeline (RNEA + ABA)
   2. Tests verify consistency between inverse and forward dynamics
   3. Tests pass for multi-body systems with multiple links
+
 **Plans**: 2 plans
 
 Plans:
+
 - [x] 09-01-PLAN.md — Implement InverseDynamics (RNEA) solver
 - [x] 09-02-PLAN.md — Create RNEA unit tests and RNEA↔ABA consistency integration tests
 
 ### Phase 10: Documentation
+
 **Goal**: Users can learn and use the library from documentation
 **Depends on**: Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7
 **Requirements**: DOC-01, DOC-02, DOC-03
 **Success Criteria** (what must be TRUE):
+
   1. README.md contains build instructions and basic usage examples
   2. Doxygen documentation is generated and up to date
   3. Usage examples demonstrate core operations (vectors, transforms, inertia, ABA)
+
 **Plans**: 3 plans
 
 Plans:
+
 - [ ] 10-01-PLAN.md — Comprehensive README.md with build instructions and usage examples
 - [ ] 10-02-PLAN.md — Generate Doxygen documentation and verify completeness
 - [ ] 10-03-PLAN.md — Create compilable examples demonstrating core operations
 
 ### Phase 11: ABI Transform Fixes
+
 **Goal**: Fix ArticulatedBodyInertia transform formulas to correctly implement Featherstone Eq 7.16
 **Depends on**: Phase 5
 **Requirements**: BF-01
 **Success Criteria** (what must be TRUE):
+
   1. tformABI() formula matches Featherstone Algorithm 7.3, Eq 7.16
   2. invtformABI() correctly implements inverse transform
   3. All 5 failing ABI transform tests pass
   4. Round-trip transform (forward then inverse) returns original ABI within floating point tolerance
+
 **Plans**: 1 plan
 
 Plans:
+
 - [ ] 11-01-PLAN.md — Derive correct formula, fix tformABI/invtformABI, verify all tests pass
 
 ### Phase 12: Dynamics Consistency Fixes
+
 **Goal:** Align RNEA↔ABA bias acceleration conventions, all consistency tests pass
 **Depends on**: Phase 9, Phase 11
 **Requirements**: BF-02
 **Success Criteria** (what must be TRUE):
+
   1. ConsistencyTest.ThreeLinkSerialChain passes
   2. ConsistencyTest.BranchingYConfiguration passes
   3. Bias acceleration propagates correctly in ABA outward pass
   4. 158/158 total tests passing (100%)
+
 **Plans**: 1 plan
 
 Plans:
+
 - [ ] 12-01-PLAN.md — Fix ABA bias acceleration propagation in outwardPass()
 
 ### Phase 13: Production Readiness
+
 **Goal:** Fix critical bugs, fill testing gaps, add gravity support and CI — library is safe for real robotics use
 **Depends on**: Phase 1, Phase 4, Phase 5, Phase 6, Phase 7, Phase 9, Phase 11, Phase 12
 **Requirements**: VEC-01, UTL-03, PLX-04, INR-01, ABA-01, ABA-02, TST-07
 **Success Criteria** (what must be TRUE):
+
   1. Force×force cross product is correct, consistent across all 3 implementations, and anti-commutative
   2. ArticulatedBodyInertia::operator+(RigidBodyInertia) passes correct arguments with mass multiplier
   3. ABA inward pass correctly accumulates child inertias — multi-link forward dynamics match known values
@@ -227,7 +277,20 @@ Plans:
   9. NaN/Inf guards exist on core spatial vector and inertia operations (at minimum in debug mode)
   10. CI pipeline runs all tests on push
   11. Eigen 5.x compatibility verified (version pin removed or dual-supported)
-**Plans**: 0 plans — to be created
+
+**Plans**: 5 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 13-01-PLAN.md — Unify cross-product, fix ABI+RBI operator+, fix Plücker auto-return
+- [ ] 13-02-PLAN.md — Add gravity support to ForwardDynamics (ABA) and InverseDynamics (RNEA)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 13-03-PLAN.md — Add NaN/Inf debug guards, fix test helpers, add cross-force mixed-input tests
+- [ ] 13-04-PLAN.md — Add multi-link ABA tests, non-zero velocity RNEA tests, gravity dynamics tests
+- [ ] 13-05-PLAN.md — Namespace cleanup, CMake fixes, remove OpenMP, create CI workflow
 
 ---
 
@@ -247,7 +310,7 @@ Plans:
 | 10. Documentation | 0/3 | Not started | - |
 | 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
 | 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
-| 13. Production Readiness | 0/0 | Not started | - |
+| 13. Production Readiness | 5/5 | Planned | - |
 
 ---
 
