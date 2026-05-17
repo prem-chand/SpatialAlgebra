@@ -6,7 +6,7 @@
  */
 
 #include "SpatialOperations.h"
-#include "SpatialVector.h"
+#include "SpatialUtils.h"
 #include "MotionVector.h"
 #include "ForceVector.h"
 #include "PluckerTransform.h"
@@ -182,9 +182,9 @@ TEST(TestCrossProductForce, Property_AntiCommutativity) {
     ForceVector a(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
     ForceVector b(Vector3d(0.5, -0.3, 1.2), Vector3d(-0.1, 0.8, -0.5));
     
-    // Act
-    SpatialVector ab = SpatialOperations::crossProductForce(a, b);
-    SpatialVector ba = SpatialOperations::crossProductForce(b, a);
+    // Act: use free function cross(ForceVector, ForceVector)
+    ForceVector ab = cross(a, b);
+    ForceVector ba = cross(b, a);
     
     // Assert: ab + ba should equal zero
     EXPECT_NEAR((ab.getAngular() + ba.getAngular()).norm(), 0.0, EPSILON);
@@ -204,17 +204,11 @@ protected:
     void TearDown() override {}
     
     LowerTriangular createIdentityInertia() {
-        // Packed storage for 3x3 identity: [1, 0, 1, 0, 0, 1]
-        std::vector<double> data = {1.0, 0.0, 1.0, 0.0, 0.0, 1.0};
-        LowerTriangular lt(3);
-        return lt;
+        return LowerTriangular::fromFullMatrix(Eigen::Matrix3d::Identity());
     }
     
     LowerTriangular createDiagonalInertia(double value) {
-        // Packed storage for diagonal matrix
-        std::vector<double> data = {value, 0.0, value, 0.0, 0.0, value};
-        LowerTriangular lt(3);
-        return lt;
+        return LowerTriangular::fromFullMatrix(Eigen::Matrix3d::Identity() * value);
     }
 };
 
@@ -233,6 +227,10 @@ TEST(TestTransformInertia, IdentityTransform) {
     // Assert: identity transform preserves all properties
     EXPECT_NEAR(result.getMass(), 1.0, EPSILON);
     EXPECT_NEAR(result.getCom().norm(), 0.0, EPSILON);
+    // Verify inertia matrix remains identity
+    Eigen::MatrixXd expectedInertia = Eigen::Matrix3d::Identity();
+    Eigen::MatrixXd actualInertia = result.getInertiaMatrixLT().getFullMatrix();
+    EXPECT_NEAR((expectedInertia - actualInertia).norm(), 0.0, EPSILON);
 }
 
 /**
@@ -254,6 +252,11 @@ TEST(TestTransformInertia, RotationTransform) {
     EXPECT_NEAR(result.getCom()[0], 0.0, EPSILON);
     EXPECT_NEAR(result.getCom()[1], 1.0, EPSILON);
     EXPECT_NEAR(result.getCom()[2], 0.0, EPSILON);
+    // Verify inertia matrix is rotated: I' = R * I * R^T
+    // For identity inertia: I' should also be identity (I = R*I*R^T for R orthogonal)
+    Eigen::MatrixXd expectedInertia = Eigen::Matrix3d::Identity();
+    Eigen::MatrixXd actualInertia = result.getInertiaMatrixLT().getSymmetricMatrix();
+    EXPECT_NEAR((expectedInertia - actualInertia).norm(), 0.0, EPSILON);
 }
 
 /**
@@ -276,6 +279,10 @@ TEST(TestTransformInertia, TranslationTransform) {
     EXPECT_NEAR(result.getCom()[0], -1.0, EPSILON);
     EXPECT_NEAR(result.getCom()[1], 0.0, EPSILON);
     EXPECT_NEAR(result.getCom()[2], 0.0, EPSILON);
+    // Verify inertia matrix is non-zero after translation
+    Eigen::MatrixXd inertiaMatrix = result.getInertiaMatrixLT().getSymmetricMatrix();
+    EXPECT_GT(inertiaMatrix.norm(), 0.0);
+    EXPECT_TRUE(std::isfinite(inertiaMatrix.norm()));
 }
 
 /**
@@ -313,6 +320,97 @@ TEST(TestTransformInertia, Property_MassConservation) {
     
     // Assert: mass must be conserved
     EXPECT_NEAR(result.getMass(), 2.5, EPSILON);
+    // Verify inertia matrix is symmetric (property of valid inertia)
+    Eigen::MatrixXd inertiaMatrix = result.getInertiaMatrixLT().getSymmetricMatrix();
+    EXPECT_NEAR((inertiaMatrix - inertiaMatrix.transpose()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test cross-force with mixed torque+force inputs
+ * @details Mixed inputs exercise all 3 terms of the force×force formula:
+ *          angular = τ1×τ2 + f1×f2, linear = τ1×f2 - τ2×f1
+ *          Pure torque or pure force inputs only exercise 1-2 terms,
+ *          masking the bugs that existed in the previous implementations.
+ */
+TEST(TestCrossProductForce, MixedTorqueForceInputs) {
+    // τ=(1,0,0), f=(0,1,0) — mixed torque-force input
+    ForceVector a(Vector3d(1, 0, 0), Vector3d(0, 1, 0));
+    ForceVector b(Vector3d(0, 1, 0), Vector3d(0, 0, 1));
+    
+    ForceVector result = cross(a, b);
+    
+    // Verify angular component: τ1×τ2 + f1×f2
+    // τ1×τ2 = (1,0,0)×(0,1,0) = (0,0,1)
+    // f1×f2 = (0,1,0)×(0,0,1) = (1,0,0)
+    // angular = (1,0,1)
+    EXPECT_NEAR(result.getAngular()[0], 1.0, EPSILON);
+    EXPECT_NEAR(result.getAngular()[1], 0.0, EPSILON);
+    EXPECT_NEAR(result.getAngular()[2], 1.0, EPSILON);
+    
+    // Verify linear component: τ1×f2 - τ2×f1
+    // τ1×f2 = (1,0,0)×(0,0,1) = (0,-1,0)
+    // τ2×f1 = (0,1,0)×(0,1,0) = (0,0,0)
+    // linear = (0,-1,0)
+    EXPECT_NEAR(result.getLinear()[0], 0.0, EPSILON);
+    EXPECT_NEAR(result.getLinear()[1], -1.0, EPSILON);
+    EXPECT_NEAR(result.getLinear()[2], 0.0, EPSILON);
+}
+
+/**
+ * @brief Verify anti-commutativity with mixed torque+force inputs
+ * @details a×b = -(b×a) must hold for all force vector inputs
+ */
+TEST(TestCrossProductForce, AntiCommutativityMixedInputs) {
+    ForceVector a(Vector3d(1, 2, 3), Vector3d(4, 5, 6));
+    ForceVector b(Vector3d(0.5, -0.3, 1.2), Vector3d(-0.1, 0.8, -0.5));
+    
+    ForceVector ab = cross(a, b);
+    ForceVector ba = cross(b, a);
+    ForceVector neg_ba = ba * -1.0;
+    
+    EXPECT_NEAR((ab.getAngular() - neg_ba.getAngular()).norm(), 0.0, EPSILON);
+    EXPECT_NEAR((ab.getLinear() - neg_ba.getLinear()).norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test cross product with all-zero force vectors
+ * @details Verifies: cross(zero, zero) = zero. Edge case where
+ *          zero input produces zero output (structural invariant).
+ */
+TEST(TestCrossProductForce, CrossForceZeroVectors) {
+    // Arrange: all-zero force vectors
+    ForceVector zero(Vector3d::Zero(), Vector3d::Zero());
+    
+    // Act
+    ForceVector result = cross(zero, zero);
+    
+    // Assert: both angular and linear components must be zero
+    EXPECT_NEAR(result.getAngular().norm(), 0.0, EPSILON);
+    EXPECT_NEAR(result.getLinear().norm(), 0.0, EPSILON);
+}
+
+/**
+ * @brief Test cross product with pure torque vectors (zero linear component)
+ * @details Tests cross(ForceVector, ForceVector) where both operands have
+ *          zero linear component (pure torques). For pure torques:
+ *          angular = τ₁×τ₂, linear = τ₁×0 - τ₂×0 = zero.
+ *          This is a structural invariant: zero linear input guarantees
+ *          zero linear output in the force×force formula.
+ */
+TEST(TestCrossProductForce, CrossForceZeroLinear) {
+    // Arrange: pure torque vectors (f=0)
+    ForceVector a(Vector3d(1, 0, 0), Vector3d::Zero());  // pure torque about X
+    ForceVector b(Vector3d(0, 1, 0), Vector3d::Zero());  // pure torque about Y
+    
+    // Act
+    ForceVector result = cross(a, b);
+    
+    // Assert: angular = τ₁×τ₂ = (1,0,0)×(0,1,0) = (0,0,1)
+    //         linear = τ₁×0 - τ₂×0 = zero
+    EXPECT_NEAR(result.getAngular()[0], 0.0, EPSILON);
+    EXPECT_NEAR(result.getAngular()[1], 0.0, EPSILON);
+    EXPECT_NEAR(result.getAngular()[2], 1.0, EPSILON);
+    EXPECT_NEAR(result.getLinear().norm(), 0.0, EPSILON);
 }
 
 // ============================================================================

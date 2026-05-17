@@ -529,6 +529,43 @@ TEST(ForwardDynamicsTest, GravityProportionalityInvariant) {
     EXPECT_NEAR(diff_g1 / diff_g2, 2.0, 1e-10);
 }
 
+/**
+ * @brief Edge case: zero-mass single link
+ * @details Tests ABA with a degenerate inertia (mass=0, COM=zero,
+ *          inertia tensor=zero). The solver must not crash on this
+ *          degenerate input. Either finite output or a graceful
+ *          exception is acceptable.
+ */
+TEST(ForwardDynamicsTest, ZeroMassEdgeCase) {
+    ForwardDynamics fd;
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(0.0, Vector3d::Zero(), LowerTriangular(3));
+    link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link.q = 0.0;
+    link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+    
+    Eigen::VectorXd tau(1);
+    tau[0] = 0.0;
+    
+    // Zero-mass produces degenerate articulated inertia (zero Ia).
+    // The solver must not crash — either finite qddot or exception is acceptable.
+    bool threw = false;
+    try {
+        fd.computeAccelerations(tau);
+    } catch (const std::exception&) {
+        threw = true;
+    }
+    if (!threw) {
+        EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    }
+    // If an exception was thrown, the test passes (no crash on degenerate input).
+    EXPECT_TRUE(threw || std::isfinite(fd.links[0].qddot));
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

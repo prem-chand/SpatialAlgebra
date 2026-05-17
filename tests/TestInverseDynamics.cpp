@@ -480,6 +480,34 @@ TEST(InverseDynamicsTest, GravityFiniteValidResults) {
     EXPECT_FALSE(std::isnan(tau[1]));
 }
 
+/**
+ * @brief Edge case: zero-mass single link
+ * @details Tests RNEA with a degenerate inertia (mass=0, COM=zero,
+ *          inertia tensor=zero). For zero acceleration, the torques
+ *          should be near zero and finite. Validates the solver handles
+ *          degenerate masses without producing NaN or crashing.
+ */
+TEST(InverseDynamicsTest, ZeroMassEdgeCase) {
+    InverseDynamics id;
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(0.0, Vector3d::Zero(), LowerTriangular(3));
+    link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link.q = 0.0;
+    link.qdot = 0.0;
+    id.links.push_back(link);
+    
+    Eigen::VectorXd qddot(1);
+    qddot[0] = 0.0;
+    
+    Eigen::VectorXd tau = id.computeTorques(qddot);
+    
+    // With zero mass and zero acceleration, torques should be near zero
+    EXPECT_NEAR(tau[0], 0.0, 1e-10);
+    EXPECT_TRUE(std::isfinite(tau[0]));
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
