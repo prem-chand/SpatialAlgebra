@@ -281,16 +281,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-**Wave 1**
-
-- [ ] 13-01-PLAN.md — Unify cross-product, fix ABI+RBI operator+, fix Plücker auto-return
-- [ ] 13-02-PLAN.md — Add gravity support to ForwardDynamics (ABA) and InverseDynamics (RNEA)
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [ ] 13-03-PLAN.md — Add NaN/Inf debug guards, fix test helpers, add cross-force mixed-input tests
-- [ ] 13-04-PLAN.md — Add multi-link ABA tests, non-zero velocity RNEA tests, gravity dynamics tests
-- [ ] 13-05-PLAN.md — Namespace cleanup, CMake fixes, remove OpenMP, create CI workflow
+- [x] 13-01-PLAN.md — Cross-product unification + ABI fix + Plücker cleanup
+- [x] 13-02-PLAN.md — Gravity support for ABA and RNEA
+- [x] 13-03-PLAN.md — NaN/Inf guards + test helper fix + cross-force tests
+- [x] 13-04-PLAN.md — Multi-link ABA, RNEA non-zero velocity, gravity tests
+- [x] 13-05-PLAN.md — Namespace cleanup + CMake + CI + code quality
 
 ---
 
@@ -310,7 +305,7 @@ Plans:
 | 10. Documentation | 0/3 | Not started | - |
 | 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
 | 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
-| 13. Production Readiness | 5/5 | Planned | - |
+| 13. Production Readiness | 5/5 | Executed | - |
 
 ---
 
