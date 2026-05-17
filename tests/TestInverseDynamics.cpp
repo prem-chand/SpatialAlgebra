@@ -335,6 +335,151 @@ TEST(InverseDynamicsTest, TwoLinkWithVelocityAndGravity) {
     EXPECT_TRUE(std::isfinite(tau[1]));
 }
 
+/**
+ * @brief Gravity invariant: static torque proportional to g for point mass on lever arm
+ * @details For a single X-axis revolute joint with COM offset along Y and gravity
+ *          along -Z, the gravitational torque is τ = m·g·L where L = |COM_y|.
+ *          This is an independent structural invariant: |tau[0]| / (g · L) = m.
+ *          Testing at g = {0, 5, 10} verifies proportionality to g, not self-consistency.
+ * 
+ *          Physical derivation:
+ *          - Joint axis: X (S=[1,0,0;0,0,0]), COM=(0,0.5,0), gravity=(0,0,-g)
+ *          - Gravitational force on COM: F = (0, 0, -m·g)
+ *          - Torque about origin: τ = COM × F = (-0.5·m·g, 0, 0)
+ *          - Project onto X-axis joint: tau[0] = -0.5·m·g
+ *          - Expected invariant: |tau[0]| / (g · 0.5) = m = 1.0
+ */
+TEST(InverseDynamicsTest, SingleLinkStaticGravityProportionality) {
+    // Single X-axis revolute joint with COM offset along Y
+    InverseDynamics id;
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    link.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    link.q = 0.0;
+    link.qdot = 0.0;
+    id.links.push_back(link);
+    
+    Eigen::VectorXd qddot(1);
+    qddot[0] = 0.0;  // Static case
+    
+    // Test at three gravity levels: g = 0, 5, 10
+    const double g_values[] = {0.0, 5.0, 10.0};
+    bool ratio_initialized = false;
+    double prev_ratio = 0.0;
+    
+    for (int i = 0; i < 3; i++) {
+        double g = g_values[i];
+        Vector3d gravity(0, 0, -g);
+        Eigen::VectorXd tau = id.computeTorques(qddot, gravity);
+        
+        EXPECT_TRUE(std::isfinite(tau[0]));
+        
+        if (g > 0) {
+            // Invariant: |tau[0]| / (g * 0.5) = m = 1.0
+            double ratio = std::abs(tau[0]) / (g * 0.5);
+            EXPECT_NEAR(ratio, 1.0, 1e-10);
+            
+            // Consistency check: ratio should be the same across g levels
+            if (ratio_initialized) {
+                EXPECT_NEAR(ratio, prev_ratio, 1e-10);
+            }
+            prev_ratio = ratio;
+            ratio_initialized = true;
+        } else {
+            // Zero gravity should produce zero torque
+            EXPECT_NEAR(tau[0], 0.0, 1e-10);
+        }
+    }
+    
+    // Verify proportionality directly: tau(g=10) / tau(g=5) = 2.0
+    Eigen::VectorXd tau5 = id.computeTorques(qddot, Vector3d(0, 0, -5.0));
+    Eigen::VectorXd tau10 = id.computeTorques(qddot, Vector3d(0, 0, -10.0));
+    EXPECT_NEAR(tau10[0] / tau5[0], 2.0, 1e-10);
+}
+
+/**
+ * @brief Gravity produces zero torque when COM and gravity are collinear
+ * @details For an X-axis revolute joint with COM=(0,0.5,0), if gravity is
+ *          applied along the same direction as the COM offset (Y-axis),
+ *          the gravitational force passes through the joint axis, producing
+ *          zero torque. This is an independent geometric invariant.
+ * 
+ *          Physical derivation:
+ *          - COM=(0,0.5,0), gravity=(0,-g,0) (collinear with COM offset)
+ *          - Gravitational force: F = (0, -m·g, 0)
+ *          - Torque about origin: τ = COM × F = (0,0.5,0) × (0,-mg,0)
+ *          - Parallel vectors: cross product is zero
+ *          - Expected: tau[0] ≈ 0
+ */
+TEST(InverseDynamicsTest, GravityTorqueZeroAtVertical) {
+    InverseDynamics id;
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    link.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    link.q = 0.0;
+    link.qdot = 0.0;
+    id.links.push_back(link);
+    
+    Eigen::VectorXd qddot(1);
+    qddot[0] = 0.0;
+    
+    // Gravity along Y (same direction as COM offset) — collinear, zero torque
+    Vector3d gravity(0, -9.81, 0);
+    Eigen::VectorXd tau = id.computeTorques(qddot, gravity);
+    
+    // Zero torque because gravity force line passes through joint
+    EXPECT_NEAR(tau[0], 0.0, 1e-10);
+}
+
+/**
+ * @brief Multi-link gravity produces finite non-NaN torques
+ * @details A 2-link chain with non-zero velocity, non-zero acceleration,
+ *          and gravity. Verifies that the combined effects of Coriolis,
+ *          centrifugal, and gravity forces produce valid numerical results.
+ *          This is a sanity check that the gravity propagation through
+ *          a kinematic chain does not produce infinite or NaN values.
+ */
+TEST(InverseDynamicsTest, GravityFiniteValidResults) {
+    InverseDynamics id;
+    
+    // Link 0 (base) — X-axis revolute
+    InverseDynamicsLink l0;
+    l0.parent = -1;
+    l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    l0.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    l0.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    l0.q = 0.0;
+    l0.qdot = 2.0;
+    id.links.push_back(l0);
+    
+    // Link 1 (child of link 0, offset along X)
+    InverseDynamicsLink l1;
+    l1.parent = 0;
+    l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    l1.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    l1.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    l1.q = 0.0;
+    l1.qdot = 1.0;
+    id.links.push_back(l1);
+    
+    Eigen::VectorXd qddot(2);
+    qddot[0] = 1.0;
+    qddot[1] = 0.5;
+    
+    Vector3d gravity(0, 0, -9.81);
+    Eigen::VectorXd tau = id.computeTorques(qddot, gravity);
+    
+    // Both torques should be finite and non-NaN
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_TRUE(std::isfinite(tau[1]));
+    EXPECT_FALSE(std::isnan(tau[0]));
+    EXPECT_FALSE(std::isnan(tau[1]));
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
