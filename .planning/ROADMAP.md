@@ -278,7 +278,7 @@ Plans:
   10. CI pipeline runs all tests on push
   11. Eigen 5.x compatibility verified (version pin removed or dual-supported)
 
-**Plans**: 5 plans
+**Plans**: 7 plans
 
 Plans:
 - [x] 13-01-PLAN.md — Cross-product unification + ABI fix + Plücker cleanup
@@ -286,6 +286,8 @@ Plans:
 - [x] 13-03-PLAN.md — NaN/Inf guards + test helper fix + cross-force tests
 - [x] 13-04-PLAN.md — Multi-link ABA, RNEA non-zero velocity, gravity tests
 - [x] 13-05-PLAN.md — Namespace cleanup + CMake + CI + code quality
+- [ ] 13-06-PLAN.md — Mathematical conventions + independent gravity test oracles
+- [ ] 13-07-PLAN.md — Edge case coverage + API documentation updates
 
 ---
 
@@ -305,7 +307,7 @@ Plans:
 | 10. Documentation | 0/3 | Not started | - |
 | 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
 | 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
-| 13. Production Readiness | 5/5 | Executed | - |
+| 13. Production Readiness | 5/7 | In Progress (Review) | - |
 
 ---
 

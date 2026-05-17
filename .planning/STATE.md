@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: v1.1-bug-fixes
 status: completed
-last_updated: "2026-05-17T06:27:49.268Z"
+last_updated: "2026-05-17T07:11:37.210Z"
 progress:
   total_phases: 13
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 32
-  completed_plans: 25
-  percent: 69
+  completed_plans: 30
+  percent: 77
 ---
 
 # SpatialAlgebra State
