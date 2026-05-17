@@ -50,6 +50,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include "SpatialVector.h"
+
 namespace SpatialAlgebra {
 
 /**

@@ -3,8 +3,7 @@ project(SpatialAlgebra)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#  set gcc compiler
-set(CMAKE_CXX_COMPILER "g++")
+#  Use system default compiler (removed hardcoded g++)
 
 # Include directories
 include_directories(include)
@@ -12,17 +11,39 @@ include_directories(include)
 # Find Eigen3
 find_package(Eigen3 REQUIRED NO_MODULE)
 
-# Find GTest
-find_package(GTest REQUIRED)
+# Find GTest with FetchContent fallback
+find_package(GTest QUIET)
+if(NOT GTest_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/release-1.12.1.zip
+    )
+    FetchContent_MakeAvailable(googletest)
+    include_directories(${googletest_SOURCE_DIR}/googletest/include)
+endif()
 
 # Source files
 file(GLOB SOURCES "src/*.cpp")
+
+# Remove empty stub files from compilation
+list(REMOVE_ITEM SOURCES
+    "${CMAKE_SOURCE_DIR}/src/RigidBodyInertia.cpp"
+    "${CMAKE_SOURCE_DIR}/src/ArticulatedBodyInertia.cpp"
+)
 
 # Build library
 add_library(SpatialAlgebra ${SOURCES})
 
 # Link Eigen3
 target_link_libraries(SpatialAlgebra Eigen3::Eigen)
+
+# Enable code coverage (gcov)
+option(ENABLE_COVERAGE "Enable coverage flags for CI" OFF)
+if(ENABLE_COVERAGE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+endif()
 
 # Build tests
 enable_testing()
@@ -131,3 +152,6 @@ target_link_libraries(TestDynamicsConsistency
 )
 
 add_test(NAME TestDynamicsConsistency COMMAND TestDynamicsConsistency)
+
+# Build examples
+add_subdirectory(examples)
