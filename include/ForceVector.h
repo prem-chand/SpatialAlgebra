@@ -96,18 +96,6 @@ namespace SpatialAlgebra
         ForceVector(const SpatialVector &other);
 
         /**
-         * @brief Get the torque/moment component
-         * @return 3D torque vector (N⋅m)
-         */
-        Vector3d getAngular() const;
-
-        /**
-         * @brief Get the force component
-         * @return 3D force vector (N)
-         */
-        Vector3d getLinear() const;
-
-        /**
          * @brief Add two force vectors
          * @param other Force vector to add
          * @return Combined force vector
@@ -133,21 +121,12 @@ namespace SpatialAlgebra
         ForceVector operator*(double scalar) const;
 
         /**
-         * @brief Compute the motion cross product (crm operation)
-         * @param other Force vector to cross with
-         * @return Resulting force vector
-         * @details This operation is used in the transformation of forces when
-         *          changing reference points or coordinate frames.
-         */
-        ForceVector crossMotion(const ForceVector &other) const;
-
-        /**
          * @brief Compute the force cross product (crf operation)
          * @param other Force vector to cross with
          * @return Resulting force vector
          * @details This operation represents how one force affects another force
          *          through the rigid body kinematics.
-         *          The result follows the formula: [τ1×τ2 + f1×f2; τ1×f2]
+         *          The result follows the formula: [τ1×τ2 + f1×f2; τ1×f2 - τ2×f1]
          */
         ForceVector crossForce(const ForceVector &other) const;
 

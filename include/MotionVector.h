@@ -40,7 +40,6 @@
  * @see Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2.
  */
 
-#include <array>
 #include <iostream>
 #include "SpatialVector.h"
 
@@ -95,18 +94,6 @@ namespace SpatialAlgebra
         MotionVector(const SpatialVector &other);
 
         /**
-         * @brief Get the angular velocity component
-         * @return 3D angular velocity vector (rad/s)
-         */
-        Vector3d getAngular() const;
-
-        /**
-         * @brief Get the linear velocity component
-         * @return 3D linear velocity vector (m/s)
-         */
-        Vector3d getLinear() const;
-
-        /**
          * @brief Add two motion vectors
          * @param other Motion vector to add
          * @return Combined motion vector
@@ -140,15 +127,6 @@ namespace SpatialAlgebra
          *          The result follows the formula: [ω1×ω2; ω1×v2 + v1×ω2]
          */
         MotionVector crossMotion(const MotionVector &other) const;
-
-        /**
-         * @brief Compute the force cross product (crf operation)
-         * @param other Motion vector to cross with
-         * @return Resulting motion vector
-         * @details This operation is the transpose of the adjoint map and is used
-         *          in force transformation calculations.
-         */
-        MotionVector crossForce(const MotionVector &other) const;
 
         /**
          * @brief Compute dot product with another motion vector

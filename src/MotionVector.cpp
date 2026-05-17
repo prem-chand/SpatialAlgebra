@@ -12,17 +12,6 @@ namespace SpatialAlgebra
     MotionVector::MotionVector(const SpatialVector &other)
         : SpatialVector(other) {}
 
-    // Accessors
-    Vector3d MotionVector::getAngular() const
-    {
-        return angular;
-    }
-
-    Vector3d MotionVector::getLinear() const
-    {
-        return linear;
-    }
-
     // Basic operations
     MotionVector MotionVector::operator+(const MotionVector &other) const
     {
@@ -44,11 +33,6 @@ namespace SpatialAlgebra
     {
         // Correct formula: [ω1×ω2; ω1×v2 + v1×ω2]
         return MotionVector(angular.cross(other.angular), angular.cross(other.linear) + linear.cross(other.angular));
-    }
-
-    MotionVector MotionVector::crossForce(const MotionVector &other) const
-    {
-        return MotionVector(angular.cross(other.linear), linear.cross(other.angular));
     }
 
     // dot product

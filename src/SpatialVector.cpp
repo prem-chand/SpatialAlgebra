@@ -1,4 +1,5 @@
 #include "SpatialVector.h"
+#include "SpatialUtils.h"
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -9,19 +10,19 @@ using namespace Eigen;
 SpatialVector::SpatialVector() : angular(Vector3d::Zero()), linear(Vector3d::Zero()) {}
 
 SpatialVector::SpatialVector(const Vector3d &a, const Vector3d &l)
-    : angular(Vector3d(a.data())), linear(Vector3d(l.data())) {}
+    : angular(a), linear(l) {}
 
 SpatialVector::SpatialVector(const SpatialVector &other)
     : angular(other.angular), linear(other.linear) {}
 
-Vector3d SpatialVector::getAngular() const
+const Vector3d& SpatialVector::getAngular() const
 {
-    return {angular[0], angular[1], angular[2]};
+    return angular;
 }
 
-Vector3d SpatialVector::getLinear() const
+const Vector3d& SpatialVector::getLinear() const
 {
-    return {linear[0], linear[1], linear[2]};
+    return linear;
 }
 
 SpatialVector SpatialVector::operator+(const SpatialVector &other) const
@@ -47,11 +48,7 @@ SpatialVector SpatialAlgebra::SpatialVector::crossMotion(const SpatialVector &ot
 
 SpatialVector SpatialAlgebra::SpatialVector::crossForce(const SpatialVector &other) const
 {
-    // Force cross product: [τ1×τ2 + f1×f2; τ1×f2] per Featherstone
-    return SpatialVector(
-        angular.cross(other.angular) + linear.cross(other.linear),
-        angular.cross(other.linear)
-    );
+    return ForceVector(cross(ForceVector(*this), ForceVector(other)));
 }
 
 double SpatialVector::dot(const SpatialVector &other) const
