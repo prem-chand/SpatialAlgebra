@@ -29,23 +29,23 @@ namespace SpatialAlgebra
                 // v₀ = S₀·q̇₀
                 links[i].v = links[i].S * links[i].qdot;
                 
-                // a₀ = S₀·q̈₀ (no parent acceleration or velocity products)
-                links[i].a = links[i].S * links[i].qddot;
+                // a₀ = S₀·q̈₀ − g (Featherstone D-08: gravity subtracts from base acceleration)
+                links[i].a = links[i].S * links[i].qddot
+                           - MotionVector(Vector3d::Zero(), gravity);
             }
             else
             {
-                // Propagate velocity from parent
-                // vᵢ = Xᵢ⁻¹·v_parent + Sᵢ·q̇ᵢ
+                // Propagate velocity from parent (X transforms parent→child)
+                // vᵢ = Xᵢ·v_parent + Sᵢ·q̇ᵢ
                 MotionVector vParent = links[parent].v;
-                links[i].v = links[i].X.inverseTransformMotion(vParent) + 
+                links[i].v = links[i].X.transformMotion(vParent) + 
                              links[i].S * links[i].qdot;
                 
                 // Propagate acceleration from parent
-                // aᵢ = Xᵢ⁻¹·a_parent + Sᵢ·q̈ᵢ + vᵢ × Sᵢ·q̇ᵢ
-                // The cross product term is the Coriolis/centrifugal acceleration
+                // aᵢ = Xᵢ·a_parent + Sᵢ·q̈ᵢ + vᵢ × Sᵢ·q̇ᵢ
                 MotionVector aParent = links[parent].a;
                 MotionVector coriolis = cross(links[i].v, links[i].S) * links[i].qdot;
-                links[i].a = links[i].X.inverseTransformMotion(aParent) + 
+                links[i].a = links[i].X.transformMotion(aParent) + 
                              links[i].S * links[i].qddot + 
                              coriolis;
             }
@@ -82,9 +82,9 @@ namespace SpatialAlgebra
             {
                 if (links[j].parent == i)
                 {
-                    // Child j: transform its force to parent frame and add
-                    // fᵢ += Xⱼ·fⱼ (transform force from child to parent)
-                    ForceVector fChildTransformed = links[j].X.transformForce(f[j]);
+                    // Child j: transform its force from child to parent frame
+                    // fᵢ += Xⱼ⁻ᵀ·fⱼ (inverse force transform: child→parent)
+                    ForceVector fChildTransformed = links[j].X.inverseTransformForce(f[j]);
                     f[i] = ForceVector(
                         f[i].getAngular() + fChildTransformed.getAngular(),
                         f[i].getLinear() + fChildTransformed.getLinear()
@@ -101,7 +101,7 @@ namespace SpatialAlgebra
         return tau;
     }
 
-    Eigen::VectorXd InverseDynamics::computeTorques(const Eigen::VectorXd& qddot)
+    Eigen::VectorXd InverseDynamics::computeTorques(const Eigen::VectorXd& qddot, const Vector3d& gravity)
     {
         // Validate input dimensions
         if (qddot.size() != static_cast<int>(links.size()))
@@ -130,6 +130,9 @@ namespace SpatialAlgebra
         {
             links[i].qddot = qddot[i];
         }
+        
+        // Store gravity for use in outward pass
+        this->gravity = gravity;
         
         // Phase 1: Outward pass - propagate velocities and accelerations
         outwardPass();

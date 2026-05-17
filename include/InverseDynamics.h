@@ -56,10 +56,6 @@
 #include "PluckerTransform.h"
 #include "RigidBodyInertia.h"
 
-using Vector3d = Eigen::Matrix<double, 3, 1>;
-using Matrix3d = Eigen::Matrix<double, 3, 3>;
-using lt = LowerTriangular;
-
 namespace SpatialAlgebra
 {
     /**
@@ -141,12 +137,15 @@ namespace SpatialAlgebra
          *          Inward:  fᵢ = Iᵢ·aᵢ + vᵢ × Iᵢ·vᵢ
          *                   τᵢ = fᵢ·Sᵢ
          * 
+         * @param gravity Gravity vector (default zero) for gravity-aware dynamics
          * @throws std::invalid_argument if qddot.size() != links.size()
          * @throws std::invalid_argument if qddot contains NaN or Inf values
          */
-        Eigen::VectorXd computeTorques(const Eigen::VectorXd& qddot);
+        Eigen::VectorXd computeTorques(const Eigen::VectorXd& qddot, const Vector3d& gravity = Vector3d::Zero());
 
     private:
+        Vector3d gravity;  ///< Gravity vector (default zero, set by computeTorques)
+
         /**
          * @brief Outward pass: propagate velocities and accelerations
          * @details Iterates from base (index 0) to tip (index n-1).
