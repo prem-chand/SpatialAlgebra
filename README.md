@@ -20,11 +20,14 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - **Dynamics Algorithms**:
   - `ForwardDynamics` — Articulated Body Algorithm (ABA) for computing accelerations
   - `InverseDynamics` — Recursive Newton-Euler Algorithm (RNEA) for computing torques
+  - **Gravity Support** — Optional gravity parameter on `computeAccelerations()` and `computeTorques()` using Featherstone base acceleration formulation (`a₀ = -g`). Defaults to zero for backward compatibility.
 
 - **Utilities**:
   - `LowerTriangular` — Packed-storage lower-triangular matrix
   - `SpatialOperations` — Static utility functions
   - `SpatialUtils` — Free functions: `skew()`, `dot()`, `cross()`
+
+- **Single Header**: Include `SpatialAlgebra.h` to bring in all library headers at once.
 
 ## Requirements
 
@@ -53,8 +56,9 @@ The library builds to `build/libSpatialAlgebra.a`.
 ### Creating Motion and Force Vectors
 
 ```cpp
-#include "SpatialAlgebra/MotionVector.h"
-#include "SpatialAlgebra/ForceVector.h"
+#include "MotionVector.h"
+#include "ForceVector.h"
+#include "SpatialUtils.h"
 #include <iostream>
 
 using namespace SpatialAlgebra;
@@ -70,8 +74,10 @@ int main() {
     MotionVector twist2 = twist * 2.0;
     ForceVector total = wrench + wrench;
     
-    // Cross products
-    ForceVector result = twist.crossForce(wrench);
+    // Cross products (free functions from SpatialUtils.h)
+    ForceVector result = cross(twist, wrench);   // Motion × Force → Force
+    MotionVector motion_cross = cross(twist, twist);  // Motion × Motion → Motion
+    ForceVector force_cross = cross(wrench, wrench);  // Force × Force → Force
     
     twist.print();
     wrench.print();
@@ -83,8 +89,8 @@ int main() {
 ### Creating and Using Plücker Transforms
 
 ```cpp
-#include "SpatialAlgebra/PluckerTransform.h"
-#include "SpatialAlgebra/Rotation.h"
+#include "PluckerTransform.h"
+#include "Rotation.h"
 #include <iostream>
 
 using namespace SpatialAlgebra;
@@ -123,8 +129,10 @@ int main() {
 ### Working with Rigid Body Inertia
 
 ```cpp
-#include "SpatialAlgebra/RigidBodyInertia.h"
-#include "SpatialAlgebra/ArticulatedBodyInertia.h"
+#include "RigidBodyInertia.h"
+#include "ArticulatedBodyInertia.h"
+#include "PluckerTransform.h"
+#include "Rotation.h"
 #include <iostream>
 
 using namespace SpatialAlgebra;
@@ -161,44 +169,53 @@ int main() {
 ### Forward Dynamics with Articulated Body Algorithm
 
 ```cpp
-#include "SpatialAlgebra/ForwardDynamics.h"
-#include "SpatialAlgebra/RigidBodyInertia.h"
-#include "SpatialAlgebra/PluckerTransform.h"
+#include "ForwardDynamics.h"
+#include "RigidBodyInertia.h"
+#include "PluckerTransform.h"
+#include "Rotation.h"
 #include <iostream>
+#include <Eigen/Dense>
 
 using namespace SpatialAlgebra;
+using lt = LowerTriangular;
 
 int main() {
-    // Create a 2-link chain
-    ForwardDynamics fd(2);
+    // Create a 2-link chain using Link structures
+    ForwardDynamics fd;
     
-    // Link 1: inertia, transform to parent, joint axis
-    RigidBodyInertia I1(1.0, Vector3d(0, 0, 0.5), Matrix3d::Identity() * 0.1);
-    Rotation R1;
-    R1.setIdentity();
-    PluckerTransform X1(R1, Vector3d(0, 0, 0.5));
-    Vector3d S1(0, 0, 1); // Rotation about Z axis
+    // Link 0 (base): identity transform, Z-axis revolute joint
+    Link link0;
+    link0.parent = -1;
+    link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link0.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link0.q = 0.0;
+    link0.qdot = 0.0;
+    fd.links.push_back(link0);
     
-    fd.setLink(0, I1, X1, S1);
-    
-    // Link 2: same properties
-    RigidBodyInertia I2(1.0, Vector3d(0, 0, 0.5), Matrix3d::Identity() * 0.1);
-    Rotation R2;
-    R2.setIdentity();
-    PluckerTransform X2(R2, Vector3d(0, 0, 0.5));
-    Vector3d S2(0, 0, 1);
-    
-    fd.setLink(1, I2, X2, S2);
+    // Link 1 (child of link 0, offset along X)
+    Link link1;
+    link1.parent = 0;
+    link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    link1.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    link1.q = 0.0;
+    link1.qdot = 0.0;
+    fd.links.push_back(link1);
     
     // Joint torques
-    VectorXd tau(2);
-    tau << 1.0, 0.5;
+    Eigen::VectorXd tau(2);
+    tau[0] = 1.0;
+    tau[1] = 0.5;
     
-    // Compute joint accelerations using ABA
-    VectorXd qdd = fd.computeAccelerations(tau);
+    // Compute joint accelerations using ABA (with optional gravity)
+    fd.computeAccelerations(tau);
+    // With gravity: fd.computeAccelerations(tau, Vector3d(0, 0, -9.81));
     
+    // Results stored in link.qddot
     std::cout << "Joint accelerations:" << std::endl;
-    std::cout << qdd.transpose() << std::endl;
+    std::cout << "  Joint 1: " << fd.links[0].qddot << " rad/s²" << std::endl;
+    std::cout << "  Joint 2: " << fd.links[1].qddot << " rad/s²" << std::endl;
     
     return 0;
 }
@@ -256,6 +273,7 @@ Documentation is generated in:
 ```
 SpatialAlgebra/
 ├── include/              # Header files
+│   ├── SpatialAlgebra.h  # Umbrella header (includes all public headers)
 │   ├── SpatialVector.h
 │   ├── MotionVector.h
 │   ├── ForceVector.h
@@ -297,6 +315,27 @@ The library follows Featherstone's spatial vector algebra notation:
 - Force vectors (wrenches): `[τ; f]` where τ is torque, f is force
 - Plücker transform: `X = [R, 0; -R[t]×, R]` where R is rotation, t is translation
 - Cross products: `×` denotes spatial cross product (different from 3D cross product)
+
+## API Changes in v1.1
+
+The following changes were introduced in version 1.1:
+
+- **Gravity parameter**: `ForwardDynamics::computeAccelerations()` and `InverseDynamics::computeTorques()` now accept an optional `Vector3d gravity` parameter (default `Vector3d::Zero()`) implementing Featherstone's base acceleration formulation (`a₀ = -g`). This enables gravity-aware dynamics without breaking existing code that omits the parameter.
+
+- **Removed cross product overloads**: `MotionVector::crossForce()` and `ForceVector::crossMotion()` member functions have been removed. Use the free functions from `SpatialUtils.h` instead:
+  - `cross(MotionVector, ForceVector)` → `ForceVector`
+  - `cross(MotionVector, MotionVector)` → `MotionVector`
+  - `cross(ForceVector, ForceVector)` → `ForceVector`
+
+- **Namespace change**: `Vector3d` moved from global scope into the `SpatialAlgebra` namespace. Existing code using `Vector3d` without namespace qualification may need `using SpatialAlgebra::Vector3d;` or `using namespace SpatialAlgebra;`.
+
+- **Umbrella header**: New `#include "SpatialAlgebra.h"` includes all public library headers in dependency order, providing a single include point for convenience.
+
+- **Empty stub files removed**: Source stubs (`src/RigidBodyInertia.cpp`, `src/ArticulatedBodyInertia.cpp`, `src/SpatialOperations.cpp`) have been removed. These classes are now fully header-inline or implemented in existing source files.
+
+- **OpenMP dependency removed**: `LowerTriangular` operations no longer require OpenMP. The library builds without special compiler flags for parallel execution.
+
+- **GTest FetchContent**: CMakeLists.txt includes a FetchContent fallback for Google Test when it is not installed system-wide, improving CI and cross-platform build compatibility.
 
 ## License
 
