@@ -29,137 +29,133 @@ namespace SpatialAlgebra
                 // v₀ = S₀·q̇₀
                 links[i].v = links[i].S * links[i].qdot;
                 
-                // Bias acceleration is zero for base
-                // c₀ = 0
-                links[i].c = MotionVector(Vector3d::Zero(), Vector3d::Zero());
+                // Bias acceleration includes gravity for base
+                // c₀ = -g (Featherstone D-07: base link bias acceleration = -gravity)
+                links[i].c = MotionVector(Vector3d::Zero(), -this->gravity);
             }
             else
             {
-                // Propagate velocity from parent
-                // vᵢ = Xᵢ⁻¹·v_parent + Sᵢ·q̇ᵢ
+                // Propagate velocity from parent (X transforms parent→child)
+                // vᵢ = Xᵢ·v_parent + Sᵢ·q̇ᵢ
                 MotionVector vParent = links[parent].v;
-                links[i].v = links[i].X.inverseTransformMotion(vParent) + 
+                links[i].v = links[i].X.transformMotion(vParent) + 
                              links[i].S * links[i].qdot;
                 
                 // Compute bias acceleration (Coriolis/centrifugal terms)
-                // cᵢ = vᵢ × Sᵢ · q̇ᵢ
-                // Using spatial cross product: cross(v, S)
-                links[i].c = cross(links[i].v, links[i].S) * links[i].qdot;
+                // cᵢ = Xᵢ·c_parent + vᵢ × Sᵢ · q̇ᵢ (Featherstone Algorithm 7.3)
+                MotionVector cParent = links[parent].c;
+                links[i].c = links[i].X.transformMotion(cParent) + 
+                             cross(links[i].v, links[i].S) * links[i].qdot;
             }
         }
     }
 
-    void ForwardDynamics::inwardPass(const Eigen::VectorXd& tau)
+void ForwardDynamics::inwardPass(const Eigen::VectorXd& tau)
+{
+    // Phase 1: Initialize Ia and pa for all links from rigid body inertia
+    for (int i = 0; i < static_cast<int>(links.size()); i++)
     {
-        // Iterate from tip (n-1) to base (0)
-        // This ensures children are processed before their parent
-        for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
+        double mass = links[i].I.getMass();
+        Vector3d com = links[i].I.getCom();
+        links[i].Ia = ArticulatedBodyInertia(
+            links[i].I.getInertiaMatrixLT(),
+            skew(com) * mass,
+            lt::Identity(3) * mass
+        );
+
+        MotionVector IaV = links[i].Ia.apply(links[i].v);
+        links[i].pa = links[i].Ia.apply(links[i].c) + cross(links[i].v, IaV);
+
+        links[i].pa = ForceVector(
+            links[i].pa.getAngular() + links[i].f.getAngular(),
+            links[i].pa.getLinear() + links[i].f.getLinear()
+        );
+    }
+    
+    // Phase 2: Accumulate child contributions from tip to base
+    // This must NOT re-initialize Ia/pa so child contributions are preserved
+    for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
+    {
+        int parent = links[i].parent;
+        if (parent != -1)
         {
-            // Initialize articulated inertia with rigid body inertia
-            // Iₐᵢ = Iᵢ (before adding child contributions)
-            // RigidBodyInertia converts to ArticulatedBodyInertia as:
-            // Ia.M = m*I (mass times identity), Ia.H = skew(com), Ia.Inertia = I_LT
-            links[i].Ia = ArticulatedBodyInertia(
-                links[i].I.getInertiaMatrixLT(),  // Rotational inertia
-                skew(links[i].I.getCom()),         // Coupling matrix from COM
-                lt::Identity(3) * links[i].I.getMass()  // Mass matrix
+            // Transform child ABI from child to parent frame: X^{-1} * Ia * X^{-T}
+            ArticulatedBodyInertia IaTransformed = links[i].X.invtformABI(links[i].Ia);
+            links[parent].Ia = links[parent].Ia + IaTransformed;
+
+            // Transform child bias force from child to parent: X^{-T} * pa
+            ForceVector paTransformed = links[i].X.inverseTransformForce(links[i].pa);
+            links[parent].pa = ForceVector(
+                links[parent].pa.getAngular() + paTransformed.getAngular(),
+                links[parent].pa.getLinear() + paTransformed.getLinear()
             );
-            
-            // Initialize bias force
-            // pₐᵢ = Iₐᵢ·cᵢ (bias force from acceleration)
-            links[i].pa = links[i].Ia.apply(links[i].c);
-            
-            // Add external forces if present
-            // pₐᵢ = pₐᵢ + fᵢ
-            links[i].pa = ForceVector(
-                links[i].pa.getAngular() + links[i].f.getAngular(),
-                links[i].pa.getLinear() + links[i].f.getLinear()
-            );
-            
-            // Propagate to parent
-            int parent = links[i].parent;
-            if (parent != -1)
-            {
-                // Transform articulated inertia to parent frame
-                // Iₐ_parent += Xᵢ·Iₐᵢ (where Xᵢ transforms from parent to child)
-                // Note: tformABI transforms inertia from child to parent coordinates
-                ArticulatedBodyInertia IaTransformed = links[i].X.tformABI(links[i].Ia);
-                
-                // Add to parent's articulated inertia
-                links[parent].Ia = links[parent].Ia + IaTransformed;
-                
-                // Transform bias force to parent frame
-                // pₐ_parent += Xᵢ·pₐᵢ
-                ForceVector paTransformed = links[i].X.transformForce(links[i].pa);
-                links[parent].pa = ForceVector(
-                    links[parent].pa.getAngular() + paTransformed.getAngular(),
-                    links[parent].pa.getLinear() + paTransformed.getLinear()
-                );
-            }
-        }
-        
-        // Solve for joint accelerations
-        // q̈ᵢ = (τᵢ - Sᵢᵀ·pₐᵢ) / (Sᵢᵀ·Iₐᵢ·Sᵢ)
-        constexpr double EPSILON = 1e-10;
-        
-        for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
-        {
-            // Compute Iₐᵢ·Sᵢ
-            MotionVector IaS = links[i].Ia.apply(links[i].S);
-            
-            // Compute denominator: Sᵢᵀ·Iₐᵢ·Sᵢ
-            // Dot product in 6D: angular·angular + linear·linear
-            double denom = links[i].S.getAngular().dot(IaS.getAngular()) + 
-                          links[i].S.getLinear().dot(IaS.getLinear());
-            
-            // Check for singular configuration
-            if (std::abs(denom) < EPSILON)
-            {
-                throw std::runtime_error(
-                    "ForwardDynamics::inwardPass: Near-zero inertia at joint " + 
-                    std::to_string(i) + " (denom=" + std::to_string(denom) + ")"
-                );
-            }
-            
-            // Compute numerator: τᵢ - Sᵢᵀ·pₐᵢ
-            double numer = tau[i] - (
-                links[i].S.getAngular().dot(links[i].pa.getAngular()) + 
-                links[i].S.getLinear().dot(links[i].pa.getLinear())
-            );
-            
-            // Solve for acceleration
-            links[i].qddot = numer / denom;
         }
     }
-
-    void ForwardDynamics::computeAccelerations(const Eigen::VectorXd& tau)
+    
+    // Phase 3: Solve for joint accelerations
+    constexpr double EPSILON = 1e-10;
+    
+    for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
     {
-        // Validate input dimensions
-        if (tau.size() != static_cast<int>(links.size()))
+        // Compute Iₐᵢ·Sᵢ
+        MotionVector IaS = links[i].Ia.apply(links[i].S);
+        
+        // Compute denominator: Sᵢᵀ·Iₐᵢ·Sᵢ
+        // Dot product in 6D: angular·angular + linear·linear
+        double denom = links[i].S.getAngular().dot(IaS.getAngular()) + 
+                      links[i].S.getLinear().dot(IaS.getLinear());
+        
+        // Check for singular configuration
+        if (std::abs(denom) < EPSILON)
+        {
+            throw std::runtime_error(
+                "ForwardDynamics::inwardPass: Near-zero inertia at joint " + 
+                std::to_string(i) + " (denom=" + std::to_string(denom) + ")"
+            );
+        }
+        
+        // Compute numerator: τᵢ - Sᵢᵀ·pₐᵢ
+        double numer = tau[i] - (
+            links[i].S.getAngular().dot(links[i].pa.getAngular()) + 
+            links[i].S.getLinear().dot(links[i].pa.getLinear())
+        );
+        
+        // Solve for acceleration
+        links[i].qddot = numer / denom;
+    }
+}
+
+void ForwardDynamics::computeAccelerations(const Eigen::VectorXd& tau, const Vector3d& gravity)
+{
+    // Validate input dimensions
+    if (tau.size() != static_cast<int>(links.size()))
+    {
+        throw std::invalid_argument(
+            "ForwardDynamics::computeAccelerations: tau size (" + 
+            std::to_string(tau.size()) + ") does not match link count (" + 
+            std::to_string(links.size()) + ")"
+        );
+    }
+    
+    // Validate for NaN/Inf in input
+    for (int i = 0; i < tau.size(); i++)
+    {
+        if (std::isnan(tau[i]) || std::isinf(tau[i]))
         {
             throw std::invalid_argument(
-                "ForwardDynamics::computeAccelerations: tau size (" + 
-                std::to_string(tau.size()) + ") does not match link count (" + 
-                std::to_string(links.size()) + ")"
+                "ForwardDynamics::computeAccelerations: Invalid torque at joint " + 
+                std::to_string(i)
             );
         }
-        
-        // Validate for NaN/Inf in input
-        for (int i = 0; i < tau.size(); i++)
-        {
-            if (std::isnan(tau[i]) || std::isinf(tau[i]))
-            {
-                throw std::invalid_argument(
-                    "ForwardDynamics::computeAccelerations: Invalid torque at joint " + 
-                    std::to_string(i)
-                );
-            }
-        }
-        
-        // Phase 1: Outward pass - propagate velocities, compute bias accelerations
-        outwardPass();
-        
-        // Phase 2: Inward pass - accumulate articulated inertias, solve for accelerations
-        inwardPass(tau);
     }
+    
+    // Store gravity for use in outward pass
+    this->gravity = gravity;
+    
+    // Phase 1: Outward pass - propagate velocities, compute bias accelerations
+    outwardPass();
+    
+    // Phase 2: Inward pass - accumulate articulated inertias, solve for accelerations
+    inwardPass(tau);
+}
 }

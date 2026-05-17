@@ -60,10 +60,6 @@
 #include "RigidBodyInertia.h"
 #include "ArticulatedBodyInertia.h"
 
-using Vector3d = Eigen::Matrix<double, 3, 1>;
-using Matrix3d = Eigen::Matrix<double, 3, 3>;
-using lt = LowerTriangular;
-
 namespace SpatialAlgebra
 {
     /**
@@ -153,12 +149,15 @@ namespace SpatialAlgebra
          *          q̈ = (τ - Sᵀ·pₐ) / (Sᵀ·Iₐ·S)
          *          where Iₐ is articulated inertia and pₐ is bias force
          * 
+         * @param gravity Gravity vector (default zero) for gravity-aware dynamics
          * @throws std::invalid_argument if tau.size() != links.size()
          * @throws std::runtime_error if denominator is near zero (singular configuration)
          */
-        void computeAccelerations(const Eigen::VectorXd& tau);
+        void computeAccelerations(const Eigen::VectorXd& tau, const Vector3d& gravity = Vector3d::Zero());
 
     private:
+        Vector3d gravity;  ///< Gravity vector (default zero, set by computeAccelerations)
+
         /**
          * @brief Outward pass: propagate velocities and compute bias accelerations
          * @details Iterates from base (index 0) to tip (index n-1).
