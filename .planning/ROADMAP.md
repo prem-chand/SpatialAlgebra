@@ -20,6 +20,7 @@
 - [ ] **Phase 10: Documentation** - README, examples, Doxygen
 - [x] **Phase 11: ABI Transform Fixes** - Fix tformABI/invtformABI formulas (Featherstone Eq 7.16) (completed 2026-05-16)
 - [ ] **Phase 12: Dynamics Consistency Fixes** - Fix RNEA↔ABA bias acceleration alignment (BF-02)
+- [ ] **Phase 13: Production Readiness** - Fix critical bugs, fill testing gaps, add gravity and CI
 
 ---
 
@@ -210,6 +211,24 @@ Plans:
 Plans:
 - [ ] 12-01-PLAN.md — Fix ABA bias acceleration propagation in outwardPass()
 
+### Phase 13: Production Readiness
+**Goal:** Fix critical bugs, fill testing gaps, add gravity support and CI — library is safe for real robotics use
+**Depends on**: Phase 1, Phase 4, Phase 5, Phase 6, Phase 7, Phase 9, Phase 11, Phase 12
+**Requirements**: VEC-01, UTL-03, PLX-04, INR-01, ABA-01, ABA-02, TST-07
+**Success Criteria** (what must be TRUE):
+  1. Force×force cross product is correct, consistent across all 3 implementations, and anti-commutative
+  2. ArticulatedBodyInertia::operator+(RigidBodyInertia) passes correct arguments with mass multiplier
+  3. ABA inward pass correctly accumulates child inertias — multi-link forward dynamics match known values
+  4. Gravity acceleration propagates through both RNEA and ABA outward passes
+  5. All 8 known test failures are fixed and pass
+  6. Test helper functions return correct identity/diagonal matrices, not zeros
+  7. Multi-link correctness tests validate numerical acceleration values (not just "positive and finite")
+  8. RNEA tests include non-zero velocity cases exercising Coriolis terms
+  9. NaN/Inf guards exist on core spatial vector and inertia operations (at minimum in debug mode)
+  10. CI pipeline runs all tests on push
+  11. Eigen 5.x compatibility verified (version pin removed or dual-supported)
+**Plans**: 0 plans — to be created
+
 ---
 
 ## Progress
@@ -228,6 +247,7 @@ Plans:
 | 10. Documentation | 0/3 | Not started | - |
 | 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
 | 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
+| 13. Production Readiness | 0/0 | Not started | - |
 
 ---
 
