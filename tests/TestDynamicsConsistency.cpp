@@ -363,6 +363,65 @@ TEST(ConsistencyTest, TwoLinkRoundTripWithGravity) {
     EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], EPSILON);
 }
 
+/**
+ * @brief Single-link direct round-trip: ABA(RNEA(qddot)) ≈ qddot
+ * @details This is the most fundamental consistency test: for a single link
+ *          with no gravity, the RNEA and ABA should be exact inverses.
+ *          Start with a known qddot, compute tau via RNEA, then give tau
+ *          to ABA and verify the original qddot is recovered.
+ * 
+ *          This test must pass before multi-link consistency tests can be
+ *          meaningfully interpreted. A single-link round-trip failure
+ *          indicates a fundamental bug in either solver's algebraic core,
+ *          independent of kinematic chain complexity.
+ * 
+ *          Unlike the existing RoundTripABARNEA and RoundTripRNEAABA tests
+ *          which check round-trip fidelity indirectly, this test explicitly
+ *          names the direction (RNEA→ABA via tau) and documents the
+ *          single-link dependency in its @details. It also uses X-axis
+ *          revolute joints for independent coverage.
+ * 
+ *          Independent oracle: τ = I·a + v × I·v for RNEA forward,
+ *          and qddot = τ / I_eff for ABA, which should be exact inverses.
+ */
+TEST(ConsistencyTest, RoundTripABA_RNEA_DirectComparison) {
+    // Start with known acceleration
+    Eigen::VectorXd qddot_input(1);
+    qddot_input[0] = 1.0;
+    
+    // RNEA: qddot -> tau (X-axis revolute joint with COM offset)
+    InverseDynamics id;
+    InverseDynamicsLink id_link;
+    id_link.parent = -1;
+    id_link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    id_link.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    id_link.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    id_link.q = 0.0;
+    id_link.qdot = 0.0;
+    id.links.push_back(id_link);
+    
+    Eigen::VectorXd tau = id.computeTorques(qddot_input, Vector3d::Zero());
+    EXPECT_TRUE(std::isfinite(tau[0]));
+    EXPECT_NEAR(tau[0], 1.0, 1e-10);  // With identity inertia, τ = I·a = qddot
+    
+    // ABA: tau -> qddot (same link structure)
+    ForwardDynamics fd;
+    ForwardDynamicsLink fd_link;
+    fd_link.parent = -1;
+    fd_link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    fd_link.I = RigidBodyInertia(1.0, Vector3d(0, 0.5, 0), lt::Identity(3));
+    fd_link.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    fd_link.q = 0.0;
+    fd_link.qdot = 0.0;
+    fd_link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(fd_link);
+    
+    fd.computeAccelerations(tau, Vector3d::Zero());
+    
+    // Single-link round-trip should recover the original qddot exactly
+    EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], 1e-10);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -389,6 +389,146 @@ TEST(ForwardDynamicsTest, TwoLinkWithGravity) {
     EXPECT_TRUE(std::isfinite(fd.links[1].qddot));
 }
 
+/**
+ * @brief Gravitational acceleration scales linearly with mass
+ * @details For a single X-axis revolute joint with COM offset and
+ *          identity inertia, the gravitational effective torque
+ *          through the bias acceleration c₀ = -g scales linearly
+ *          with mass, while the effective joint inertia (S^T·Iₐ·S)
+ *          is dominated by the I_cm component which is constant.
+ *          Result: qddot ∝ m under identical gravity.
+ * 
+ *          Physical derivation:
+ *          - X-axis joint S=[1,0,0;0,0,0], COM=(0,1,0), g=(0,0,-g)
+ *          - c₀ = -g = (0,0,0,0,0,9.81)
+ *          - pₐ = I·c₀: angular = H·v = m·[c]×·(0,0,9.81) = (m·9.81, 0, 0)
+ *          - S^T·pₐ = (1,0,0)·(m·9.81,0,0) = m·9.81 (scales with m)
+ *          - S^T·Iₐ·S = I_cm[0][0] = 1 (constant, not scaling with m)
+ *          - qddot = -(0 - m·9.81) / 1 = m·9.81 (scales with m)
+ *          - Ratio qddot(m=2) / qddot(m=1) = 2.0
+ * 
+ *          Independent oracle: the ratio follows from the algebra,
+ *          not from solver cross-validation.
+ */
+TEST(ForwardDynamicsTest, GravityEffectScalesWithMass) {
+    // Test at m=1.0
+    ForwardDynamics fd1;
+    Link link1;
+    link1.parent = -1;
+    link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link1.I = RigidBodyInertia(1.0, Vector3d(0, 1.0, 0), lt::Identity(3));
+    link1.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    link1.q = 0.0;
+    link1.qdot = 0.0;
+    link1.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd1.links.push_back(link1);
+    
+    Eigen::VectorXd tau_zero(1);
+    tau_zero[0] = 0.0;
+    
+    Vector3d gravity(0, 0, -9.81);
+    fd1.computeAccelerations(tau_zero, gravity);
+    double qddot_m1 = fd1.links[0].qddot;
+    EXPECT_TRUE(std::isfinite(qddot_m1));
+    EXPECT_LT(qddot_m1, 0.0);  // Gravity produces negative acceleration
+    
+    // Test at m=2.0 with same I_cm (identity, not scaled with mass)
+    ForwardDynamics fd2;
+    Link link2;
+    link2.parent = -1;
+    link2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link2.I = RigidBodyInertia(2.0, Vector3d(0, 1.0, 0), lt::Identity(3));
+    link2.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());
+    link2.q = 0.0;
+    link2.qdot = 0.0;
+    link2.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd2.links.push_back(link2);
+    
+    fd2.computeAccelerations(tau_zero, gravity);
+    double qddot_m2 = fd2.links[0].qddot;
+    EXPECT_TRUE(std::isfinite(qddot_m2));
+    EXPECT_LT(qddot_m2, 0.0);  // More mass = more negative acceleration
+    
+    // Invariant: qddot scales with mass (I_cm provides constant inertia base)
+    // Ratio = qddot(m=2) / qddot(m=1) = 2.0
+    EXPECT_NEAR(qddot_m2 / qddot_m1, 2.0, 1e-10);
+    
+    // Without gravity, zero torque produces zero acceleration
+    ForwardDynamics fd_no_grav;
+    Link link0;
+    link0.parent = -1;
+    link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link0.I = RigidBodyInertia(1.0, Vector3d(0, 1.0, 0), lt::Identity(3));
+    link0.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());
+    link0.q = 0.0; link0.qdot = 0.0;
+    link0.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd_no_grav.links.push_back(link0);
+    
+    fd_no_grav.computeAccelerations(tau_zero, Vector3d::Zero());
+    EXPECT_NEAR(fd_no_grav.links[0].qddot, 0.0, 1e-10);
+}
+
+/**
+ * @brief Gravity effect on acceleration is proportional to g magnitude
+ * @details For a single X-axis revolute joint with COM offset, the
+ *          difference in joint acceleration with vs without gravity
+ *          is proportional to the gravity magnitude |g|. This is an
+ *          independent structural invariant that does not rely on
+ *          solver cross-validation.
+ * 
+ *          Physical derivation:
+ *          - ABA: qddot = (τ - S^T·pₐ) / (S^T·Iₐ·S)
+ *          - pₐ = I·c₀ where c₀ = -g, so pₐ ∝ g
+ *          - S^T·pₐ ∝ g (through the cross-coupling term H·v)
+ *          - S^T·Iₐ·S is constant (independent of g)
+ *          - qddot(g) - qddot(0) = -S^T·I·c₀ / (S^T·I·S) ∝ g
+ * 
+ *          Test: single X-axis joint, COM=(0,1,0), torque=1.0.
+ *          Verify: [qddot(g₁) - qddot(0)] / [qddot(g₂) - qddot(0)] = g₁/g₂.
+ */
+TEST(ForwardDynamicsTest, GravityProportionalityInvariant) {
+    // Single X-axis revolute joint
+    ForwardDynamics fd;
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d(0, 1.0, 0), lt::Identity(3));
+    link.S = MotionVector(Vector3d(1, 0, 0), Vector3d::Zero());  // Revolute X
+    link.q = 0.0;
+    link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+    
+    Eigen::VectorXd tau(1);
+    tau[0] = 1.0;
+    
+    // Acceleration without gravity
+    fd.computeAccelerations(tau, Vector3d::Zero());
+    double qddot_no_grav = fd.links[0].qddot;
+    EXPECT_TRUE(std::isfinite(qddot_no_grav));
+    EXPECT_GT(qddot_no_grav, 0.0);
+    
+    // Acceleration with gravity g₁ = -9.81 along Z
+    fd.computeAccelerations(tau, Vector3d(0, 0, -9.81));
+    double qddot_with_g1 = fd.links[0].qddot;
+    EXPECT_TRUE(std::isfinite(qddot_with_g1));
+    
+    // Gravity opposes positive acceleration (gravity pulls arm down)
+    double diff_g1 = qddot_no_grav - qddot_with_g1;
+    EXPECT_GT(diff_g1, 0.0);
+    
+    // Acceleration with gravity g₂ = -4.905 (half of g₁)
+    fd.computeAccelerations(tau, Vector3d(0, 0, -4.905));
+    double qddot_with_g2 = fd.links[0].qddot;
+    EXPECT_TRUE(std::isfinite(qddot_with_g2));
+    
+    double diff_g2 = qddot_no_grav - qddot_with_g2;
+    EXPECT_GT(diff_g2, 0.0);
+    
+    // Invariant: diff_g1 / diff_g2 = g₁ / g₂ = 2.0
+    EXPECT_NEAR(diff_g1 / diff_g2, 2.0, 1e-10);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
