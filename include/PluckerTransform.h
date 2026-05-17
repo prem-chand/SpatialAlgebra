@@ -51,8 +51,6 @@
 #include "ArticulatedBodyInertia.h"
 #include <Eigen/Geometry>
 
-using Vector3d = Eigen::Matrix<double, 3, 1>;
-
 namespace SpatialAlgebra
 {
     /**
@@ -171,14 +169,14 @@ namespace SpatialAlgebra
          * @return Combined transform
          * @details Computes the sequential application of transforms: this * X
          */
-        auto multiply(const PluckerTransform &X) const;
+        PluckerTransform multiply(const PluckerTransform &X) const;
 
         /**
          * @brief Apply transform to a force vector
          * @param v Input force vector
          * @return Transformed force vector
          */
-        auto apply(const fv& v) const {
+        ForceVector apply(const fv& v) const {
             return transformForce(v);
         }
 
@@ -187,7 +185,7 @@ namespace SpatialAlgebra
          * @param v Input motion vector
          * @return Transformed motion vector
          */
-        auto apply(const mv& v) const {
+        MotionVector apply(const mv& v) const {
             return transformMotion(v);
         }
 
