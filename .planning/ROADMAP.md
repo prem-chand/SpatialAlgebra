@@ -1,364 +1,109 @@
 # SpatialAlgebra Roadmap
 
-**Version:** 1.0  
-**Last Updated:** 2026-05-15  
+**Last Updated:** 2026-05-27  
 **Granularity:** Fine
 
 ---
 
+## Milestones
+
+- ✅ **v1.0 MVP / Core Library** — Phases 1-10 (shipped 2026-05-16)
+- 🚧 **v1.1 Bug Fixes & Stability** — Phases 11-13 (in progress)
+
 ## Phases
 
-- [ ] **Phase 1: Foundation Vectors** - SpatialVector base class and motion/force vectors
-- [x] **Phase 2: Rotation & Math** - Rotation matrix operations and conversions (completed 2026-05-15)
-- [x] **Phase 3: Packed Matrix** - LowerTriangular matrix with packed storage (completed 2026-05-15)
-- [ ] **Phase 4: Spatial Utilities** - Cross product, dot product, skew operators
-- [ ] **Phase 5: Plücker Transforms** - 6D coordinate transformations
-- [x] **Phase 6: Inertia Properties** - RigidBodyInertia and ArticulatedBodyInertia (completed 2026-05-16)
-- [ ] **Phase 7: Forward Dynamics** - Articulated Body Algorithm implementation
-- [ ] **Phase 8: Test Infrastructure** - Complete GTest coverage for all classes
-- [x] **Phase 9: Integration Tests** - End-to-end dynamics pipeline verification (completed 2026-05-16)
-- [ ] **Phase 10: Documentation** - README, examples, Doxygen
-- [x] **Phase 11: ABI Transform Fixes** - Fix tformABI/invtformABI formulas (Featherstone Eq 7.16) (completed 2026-05-16)
-- [ ] **Phase 12: Dynamics Consistency Fixes** - Fix RNEA↔ABA bias acceleration alignment (BF-02)
-- [ ] **Phase 13: Production Readiness** - Fix critical bugs, fill testing gaps, add gravity and CI
-
----
-
-## Phase Details
-
-### Phase 1: Foundation Vectors
-
-**Goal**: Users can create and manipulate 6D spatial vectors (twists and wrenches)
-**Depends on**: Nothing
-**Requirements**: VEC-01, VEC-02, VEC-03, VEC-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can create SpatialVector with angular and linear components
-  2. User can create MotionVector (twist) and access both components
-  3. User can create ForceVector (wrench) and access both components
-  4. User can add, subtract, and scale spatial vectors
-
-**Plans**: 4 plans
-
-Plans:
-
-- [x] 01-01-PLAN.md — GTest test scaffolding and comprehensive test suite
-- [ ] 01-02-PLAN.md — Fix MotionVector::crossMotion bug per Featherstone
-- [x] 01-03-PLAN.md — Complete ForceVector and SpatialVector::crossForce
-- [ ] 01-04-PLAN.md — Property-based tests and textbook examples
-
-### Phase 2: Rotation & Math
-
-**Goal**: Users can perform rotation operations and convert between representations
-**Depends on**: Phase 1
-**Requirements**: ROT-01, ROT-02, ROT-03, ROT-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can multiply, transpose, and invert rotation matrices
-  2. User can convert angle-axis representation to rotation matrix
-  3. User can convert quaternion to rotation matrix
-  4. Rotation matrices maintain orthogonality through operations
-
-**Plans**: 1 plan
-
-Plans:
-
-- [x] 02-01-PLAN.md — Comprehensive GTest test suite for Rotation class
-
-### Phase 3: Packed Matrix
-
-**Goal**: Users can use memory-efficient lower triangular matrices
-**Depends on**: Phase 1
-**Requirements**: LTR-01, LTR-02, LTR-03, LTR-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can create LowerTriangular matrix with correct packed storage indexing
-  2. User can multiply LowerTriangular with dense matrices
-  3. User can multiply LowerTriangular with vectors
-  4. User can compute transpose and inverse of LowerTriangular matrix
-
-**Plans**: 2 plans
-
-Plans:
-
-- [x] 03-01-PLAN.md — Implement missing LowerTriangular methods (operator*, inverse)
-- [x] 03-02-PLAN.md — Create GTest test suite for LowerTriangular class
-
-### Phase 4: Spatial Utilities
-
-**Goal**: Users can compute cross products and dot products for spatial vectors
-**Depends on**: Phase 1
-**Requirements**: UTL-01, UTL-02, UTL-03, UTL-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can create 3x3 skew-symmetric matrix from Vector3d
-  2. User can compute dot products for spatial vectors
-  3. User can compute cross products for spatial vectors
-  4. User can use SpatialOperations utility class for common operations
-
-**Plans**: 3 plans
-
-Plans:
-
-- [ ] 04-01-PLAN.md — Complete SpatialUtils.h free functions (skew, dot, cross)
-- [ ] 04-02-PLAN.md — Implement SpatialOperations static class methods
-- [ ] 04-03-PLAN.md — Create comprehensive GTest test suite
-
-### Phase 5: Plücker Transforms
-
-**Goal**: Users can transform spatial vectors and inertias between coordinate frames
-**Depends on**: Phase 1, Phase 2, Phase 3
-**Requirements**: PLX-01, PLX-02, PLX-03, PLX-04, PLX-05, PLX-06
-**Success Criteria** (what must be TRUE):
-
-  1. User can transform motion vectors between frames using `transformMotion()`
-  2. User can transform force vectors between frames using `transformForce()`
-  3. User can transform rigid body inertia using `tformRBI()`
-  4. User can transform articulated body inertia using `tformABI()`
-  5. User can compute inverse Plücker transform
-  6. User can compute inverse articulated body inertia transform using `invtformABI()`
-
-**Plans**: 3 plans
-
-Plans:
-
-- [ ] 05-01-PLAN.md — Verify and test transformMotion/transformForce (PLX-01, PLX-02)
-- [ ] 05-02-PLAN.md — Verify and test tformRBI/invtformRBI/inverse (PLX-03, PLX-05)
-- [ ] 05-03-PLAN.md — Implement invtformABI and test tformABI (PLX-04, PLX-06)
-
-### Phase 6: Inertia Properties
-
-**Goal**: Users can define and manipulate rigid body and articulated body inertias
-**Depends on**: Phase 1, Phase 3
-**Requirements**: INR-01, INR-02, INR-03, INR-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can create RigidBodyInertia with mass, COM, and inertia tensor
-  2. User can apply MotionVector to RigidBodyInertia to get ForceVector
-  3. User can create ArticulatedBodyInertia with full parameterization
-  4. User can apply MotionVector to ArticulatedBodyInertia to get ForceVector
-
-**Plans**: 3 plans
-
-Plans:
-
-- [x] 06-01-PLAN.md — Implement ArticulatedBodyInertia::apply() and print() methods
-- [x] 06-02-PLAN.md — Create GTest test suite for RigidBodyInertia
-- [x] 06-03-PLAN.md — Create GTest test suite for ArticulatedBodyInertia
-
-### Phase 7: Forward Dynamics
-
-**Goal**: Users can compute forward dynamics for articulated rigid body systems
-**Depends on**: Phase 5, Phase 6, Phase 4
-**Requirements**: ABA-01, ABA-02, ABA-03, ABA-04
-**Success Criteria** (what must be TRUE):
-
-  1. User can run Articulated Body Algorithm for forward dynamics
-  2. User can compute accelerations for serial kinematic chains
-  3. User can compute accelerations for branching kinematic trees
-  4. ABA correctly uses PluckerTransform operations for coordinate transformations
-
-**Plans**: 2 plans
-
-Plans:
-
-- [ ] 07-01-PLAN.md — Implement ABA algorithm (outward/inward pass, computeAccelerations)
-- [ ] 07-02-PLAN.md — Create comprehensive GTest test suite for ABA
-
-### Phase 8: Test Infrastructure
-
-**Goal**: All core classes have comprehensive GTest test suites
-**Depends on**: Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6
-**Requirements**: TST-01, TST-02, TST-03, TST-04, TST-05, TST-06
-**Success Criteria** (what must be TRUE):
-
-  1. All empty test stub files are implemented with GTest
-  2. RigidBodyInertia has 100% test coverage for all operations
-  3. ArticulatedBodyInertia has 100% test coverage for all operations
-  4. SpatialOperations utilities have 100% test coverage
-  5. LowerTriangular has 100% test coverage for all operations
-  6. All PluckerTransform methods have tests
-
-**Plans**: 2 plans
-
-Plans:
-
-- [ ] 08-01-PLAN.md — Implement empty TestSpatialOperations.cpp with GTest tests (TST-01, TST-04)
-- [ ] 08-02-PLAN.md — Add missing tests for PluckerTransform methods (inverse, multiply, apply, print) (TST-06)
-
-### Phase 9: Integration Tests
-
-**Goal**: Complete dynamics pipeline works end-to-end
-**Depends on**: Phase 7, Phase 8
-**Requirements**: TST-07
-**Success Criteria** (what must be TRUE):
-
-  1. Integration tests verify complete dynamics pipeline (RNEA + ABA)
-  2. Tests verify consistency between inverse and forward dynamics
-  3. Tests pass for multi-body systems with multiple links
-
-**Plans**: 2 plans
-
-Plans:
-
-- [x] 09-01-PLAN.md — Implement InverseDynamics (RNEA) solver
-- [x] 09-02-PLAN.md — Create RNEA unit tests and RNEA↔ABA consistency integration tests
-
-### Phase 10: Documentation
-
-**Goal**: Users can learn and use the library from documentation
-**Depends on**: Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7
-**Requirements**: DOC-01, DOC-02, DOC-03
-**Success Criteria** (what must be TRUE):
-
-  1. README.md contains build instructions and basic usage examples
-  2. Doxygen documentation is generated and up to date
-  3. Usage examples demonstrate core operations (vectors, transforms, inertia, ABA)
-
-**Plans**: 3 plans
-
-Plans:
-
-- [ ] 10-01-PLAN.md — Comprehensive README.md with build instructions and usage examples
-- [ ] 10-02-PLAN.md — Generate Doxygen documentation and verify completeness
-- [ ] 10-03-PLAN.md — Create compilable examples demonstrating core operations
-
-### Phase 11: ABI Transform Fixes
-
-**Goal**: Fix ArticulatedBodyInertia transform formulas to correctly implement Featherstone Eq 7.16
-**Depends on**: Phase 5
-**Requirements**: BF-01
-**Success Criteria** (what must be TRUE):
-
-  1. tformABI() formula matches Featherstone Algorithm 7.3, Eq 7.16
-  2. invtformABI() correctly implements inverse transform
-  3. All 5 failing ABI transform tests pass
-  4. Round-trip transform (forward then inverse) returns original ABI within floating point tolerance
-
-**Plans**: 1 plan
-
-Plans:
-
-- [ ] 11-01-PLAN.md — Derive correct formula, fix tformABI/invtformABI, verify all tests pass
-
-### Phase 12: Dynamics Consistency Fixes
-
-**Goal:** Align RNEA↔ABA bias acceleration conventions, all consistency tests pass
-**Depends on**: Phase 9, Phase 11
-**Requirements**: BF-02
-**Success Criteria** (what must be TRUE):
-
-  1. ConsistencyTest.ThreeLinkSerialChain passes
-  2. ConsistencyTest.BranchingYConfiguration passes
-  3. Bias acceleration propagates correctly in ABA outward pass
-  4. 158/158 total tests passing (100%)
-
-**Plans**: 1 plan
-
-Plans:
-
-- [ ] 12-01-PLAN.md — Fix ABA bias acceleration propagation in outwardPass()
-
-### Phase 13: Production Readiness
-
-**Goal:** Fix critical bugs, fill testing gaps, add gravity support and CI — library is safe for real robotics use
-**Depends on**: Phase 1, Phase 4, Phase 5, Phase 6, Phase 7, Phase 9, Phase 11, Phase 12
-**Requirements**: VEC-01, UTL-03, PLX-04, INR-01, ABA-01, ABA-02, TST-07
-**Success Criteria** (what must be TRUE):
-
-  1. Force×force cross product is correct, consistent across all 3 implementations, and anti-commutative
-  2. ArticulatedBodyInertia::operator+(RigidBodyInertia) passes correct arguments with mass multiplier
-  3. ABA inward pass correctly accumulates child inertias — multi-link forward dynamics match known values
-  4. Gravity acceleration propagates through both RNEA and ABA outward passes
-  5. All 8 known test failures are fixed and pass
-  6. Test helper functions return correct identity/diagonal matrices, not zeros
-  7. Multi-link correctness tests validate numerical acceleration values (not just "positive and finite")
-  8. RNEA tests include non-zero velocity cases exercising Coriolis terms
-  9. NaN/Inf guards exist on core spatial vector and inertia operations (at minimum in debug mode)
-  10. CI pipeline runs all tests on push
-  11. Eigen 5.x compatibility verified (version pin removed or dual-supported)
-
-**Plans**: 7 plans
-
-Plans:
-- [x] 13-01-PLAN.md — Cross-product unification + ABI fix + Plücker cleanup
-- [x] 13-02-PLAN.md — Gravity support for ABA and RNEA
-- [x] 13-03-PLAN.md — NaN/Inf guards + test helper fix + cross-force tests
-- [x] 13-04-PLAN.md — Multi-link ABA, RNEA non-zero velocity, gravity tests
-- [x] 13-05-PLAN.md — Namespace cleanup + CMake + CI + code quality
-- [ ] 13-06-PLAN.md — Mathematical conventions + independent gravity test oracles
-- [ ] 13-07-PLAN.md — Edge case tests, release-mode stability, API docs
+<details>
+<summary>✅ v1.0 MVP / Core Library (Phases 1-10) — SHIPPED 2026-05-16</summary>
+
+- [x] Phase 1: Foundation Vectors (4/4 plans) — completed 2026-05-15
+- [x] Phase 2: Rotation & Math (1/1 plan) — completed 2026-05-15
+- [x] Phase 3: Packed Matrix (2/2 plans) — completed 2026-05-15
+- [x] Phase 4: Spatial Utilities (3/3 plans) — completed 2026-05-16
+- [x] Phase 5: Plücker Transforms (3/3 plans) — completed 2026-05-16
+- [x] Phase 6: Inertia Properties (3/3 plans) — completed 2026-05-16
+- [x] Phase 7: Forward Dynamics (2/2 plans) — completed 2026-05-16
+- [x] Phase 8: Test Infrastructure (2/2 plans) — completed 2026-05-16
+- [x] Phase 9: Integration Tests (2/2 plans) — completed 2026-05-16
+- [x] Phase 10: Documentation (3/3 plans) — completed 2026-05-16
+
+</details>
+
+### 🚧 v1.1 Bug Fixes & Stability (In Progress)
+
+- [x] Phase 11: ABI Transform Fixes (1/1 plan) — completed 2026-05-16
+- [x] Phase 12: Dynamics Consistency Fixes (1/1 plan) — completed 2026-05-16 (partial)
+- [x] Phase 13: Production Readiness (7/7 plans) — completed 2026-05-17
 
 ---
 
 ## Progress
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation Vectors | 1/4 | In Progress|  |
-| 2. Rotation & Math | 1/1 | Complete   | 2026-05-15 |
-| 3. Packed Matrix | 0/4 | Not started | - |
-| 4. Spatial Utilities | 0/4 | Not started | - |
-| 5. Plücker Transforms | 0/6 | Not started | - |
-| 6. Inertia Properties | 0/4 | Not started | - |
-| 7. Forward Dynamics | 0/4 | Not started | - |
-| 8. Test Infrastructure | 0/6 | Not started | - |
-| 9. Integration Tests | 2/2 | Complete   | 2026-05-16 |
-| 10. Documentation | 0/3 | Not started | - |
-| 11. ABI Transform Fixes | 1/1 | Complete   | 2026-05-16 |
-| 12. Dynamics Consistency Fixes | 0/1 | Not started | - |
-| 13. Production Readiness | 5/7 | In Progress (Review) | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|---------------|--------|-----------|
+| 1. Foundation Vectors | v1.0 | 4/4 | Complete | 2026-05-15 |
+| 2. Rotation & Math | v1.0 | 1/1 | Complete | 2026-05-15 |
+| 3. Packed Matrix | v1.0 | 2/2 | Complete | 2026-05-15 |
+| 4. Spatial Utilities | v1.0 | 3/3 | Complete | 2026-05-16 |
+| 5. Plücker Transforms | v1.0 | 3/3 | Complete | 2026-05-16 |
+| 6. Inertia Properties | v1.0 | 3/3 | Complete | 2026-05-16 |
+| 7. Forward Dynamics | v1.0 | 2/2 | Complete | 2026-05-16 |
+| 8. Test Infrastructure | v1.0 | 2/2 | Complete | 2026-05-16 |
+| 9. Integration Tests | v1.0 | 2/2 | Complete | 2026-05-16 |
+| 10. Documentation | v1.0 | 3/3 | Complete | 2026-05-16 |
+| 11. ABI Transform Fixes | v1.1 | 1/1 | Complete | 2026-05-16 |
+| 12. Dynamics Consistency | v1.1 | 1/1 | Partial | 2026-05-16 |
+| 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
 
 ---
 
 ## Requirement Coverage
 
-**Total v1 requirements:** 37  
-**Mapped:** 37/37 ✓
+**Total v1 requirements:** 41  
+**Mapped:** 41/41 ✓
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VEC-01 | Phase 1 | Pending |
-| VEC-02 | Phase 1 | Pending |
-| VEC-03 | Phase 1 | Pending |
-| VEC-04 | Phase 1 | Pending |
-| ROT-01 | Phase 2 | Pending |
-| ROT-02 | Phase 2 | Pending |
-| ROT-03 | Phase 2 | Pending |
-| ROT-04 | Phase 2 | Pending |
-| LTR-01 | Phase 3 | Pending |
-| LTR-02 | Phase 3 | Pending |
-| LTR-03 | Phase 3 | Pending |
-| LTR-04 | Phase 3 | Pending |
-| UTL-01 | Phase 4 | Pending |
-| UTL-02 | Phase 4 | Pending |
-| UTL-03 | Phase 4 | Pending |
-| UTL-04 | Phase 4 | Pending |
-| PLX-01 | Phase 5 | Pending |
-| PLX-02 | Phase 5 | Pending |
-| PLX-03 | Phase 5 | Pending |
-| PLX-04 | Phase 5 | Pending |
-| PLX-05 | Phase 5 | Pending |
-| PLX-06 | Phase 5 | Pending |
-| INR-01 | Phase 6 | Pending |
-| INR-02 | Phase 6 | Pending |
-| INR-03 | Phase 6 | Pending |
-| INR-04 | Phase 6 | Pending |
-| ABA-01 | Phase 7 | Pending |
-| ABA-02 | Phase 7 | Pending |
-| ABA-03 | Phase 7 | Pending |
-| ABA-04 | Phase 7 | Pending |
-| TST-01 | Phase 8 | Pending |
-| TST-02 | Phase 8 | Pending |
-| TST-03 | Phase 8 | Pending |
-| TST-04 | Phase 8 | Pending |
-| TST-05 | Phase 8 | Pending |
-| TST-06 | Phase 8 | Pending |
-| TST-07 | Phase 9 | Pending |
-| DOC-01 | Phase 10 | Pending |
-| DOC-02 | Phase 10 | Pending |
-| DOC-03 | Phase 10 | Pending |
+| VEC-01 | Phase 1 | Complete |
+| VEC-02 | Phase 1 | Complete |
+| VEC-03 | Phase 1 | Complete |
+| VEC-04 | Phase 1 | Complete |
+| ROT-01 | Phase 2 | Complete |
+| ROT-02 | Phase 2 | Complete |
+| ROT-03 | Phase 2 | Complete |
+| ROT-04 | Phase 2 | Complete |
+| LTR-01 | Phase 3 | Complete |
+| LTR-02 | Phase 3 | Complete |
+| LTR-03 | Phase 3 | Complete |
+| LTR-04 | Phase 3 | Complete |
+| UTL-01 | Phase 4 | Complete |
+| UTL-02 | Phase 4 | Complete |
+| UTL-03 | Phase 4 | Complete |
+| UTL-04 | Phase 4 | Complete |
+| PLX-01 | Phase 5 | Complete |
+| PLX-02 | Phase 5 | Complete |
+| PLX-03 | Phase 5 | Complete |
+| PLX-04 | Phase 5 | Deferred (v1.1) |
+| PLX-05 | Phase 5 | Complete |
+| PLX-06 | Phase 5 | Deferred (v1.1) |
+| INR-01 | Phase 6 | Complete |
+| INR-02 | Phase 6 | Complete |
+| INR-03 | Phase 6 | Complete |
+| INR-04 | Phase 6 | Complete |
+| ABA-01 | Phase 7 | Complete |
+| ABA-02 | Phase 7 | Complete |
+| ABA-03 | Phase 7 | Complete |
+| ABA-04 | Phase 7 | Complete |
+| TST-01 | Phase 8 | Complete |
+| TST-02 | Phase 6 | Complete |
+| TST-03 | Phase 6 | Complete |
+| TST-04 | Phase 8 | Complete |
+| TST-05 | Phase 3 | Complete |
+| TST-06 | Phase 8 | Complete |
+| TST-07 | Phase 9 | Complete |
+| DOC-01 | Phase 10 | Complete |
+| DOC-02 | Phase 10 | Complete |
+| DOC-03 | Phase 10 | Complete |
 
 ---
 
-*Roadmap created: 2026-05-15*
+*See `.planning/milestones/v1.0-ROADMAP.md` for full milestone details.*
