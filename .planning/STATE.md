@@ -1,48 +1,63 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: v1.1-bug-fixes
+milestone: v1.0
+milestone_name: v1.0-mvp-core-library
 status: completed
-last_updated: "2026-05-17T07:11:37.210Z"
+last_updated: "2026-05-27T13:30:00.000Z"
 progress:
-  total_phases: 13
+  total_phases: 10
   completed_phases: 10
-  total_plans: 32
-  completed_plans: 30
-  percent: 77
+  total_plans: 25
+  completed_plans: 25
+  percent: 100
 ---
 
 # SpatialAlgebra State
 
-**Last Updated:** 2026-05-16  
-**Current Milestone:** v1.1 ✅ COMPLETE
+**Last Updated:** 2026-05-27  
+**Current Milestone:** v1.0 ✅ ARCHIVED
 
 ---
 
-## v1.1 Summary
+## v1.0 Summary
 
-**Test Results:** 156/158 passing (98.7%)
+**Shipped:** 2026-05-16 | **Archived:** 2026-05-27
 
-**Fixed:**
+**Delivered:**
+- Complete 6D spatial vector algebra (SpatialVector, MotionVector, ForceVector)
+- Rotation matrix operations with angle-axis/quaternion conversions
+- LowerTriangular packed matrix storage with full arithmetic
+- Spatial utilities (skew, dot, cross) and SpatialOperations class
+- Plücker coordinate transforms (motion/force/RBI)
+- RigidBodyInertia and ArticulatedBodyInertia
+- Forward dynamics (ABA) with gravity support
+- Inverse dynamics (RNEA) with gravity support
+- 186+ GTest tests across 13 test executables
+- Documentation: README, Doxygen, 4 compilable examples
 
-- ✅ LowerTriangular::getFullMatrix() — Symmetric reconstruction
-- ✅ PluckerTransform::inverse() — Correct translation formula
-- ✅ PluckerTransform::tformABI/invtformABI — 6x6 matrix formulation
-- ✅ ForwardDynamics::outwardPass() — Bias acceleration propagation
-
-**Remaining (v1.2):**
-
-- ⚠️ RNEA↔ABA consistency for 3+ link chains (2 tests)
-
----
-
-## Next Action
-
-**Option 1:** Ship v1.1 (98.7% tests passing, production-ready for serial chains)  
-**Option 2:** Start v1.2 to fix multi-link consistency
-
-**Recommendation:** Ship v1.1 — core functionality complete, remaining issue affects only multi-link dynamics cross-validation.
+**Known Gaps (deferred to next milestone):**
+- Multi-link RNEA↔ABA consistency (3 failing tests)
+- GitHub Actions CI pipeline
+- Performance benchmarks
 
 ---
 
-*v1.1 milestone completed: 2026-05-16*
+## Project Reference
+
+**See:** .planning/PROJECT.md (updated 2026-05-27)
+
+**Core value:** Complete, well-tested spatial algebra library — achieved in v1.0
+**Current focus:** Planning next milestone
+
+---
+
+## Archived Artifacts
+
+- `.planning/milestones/v1.0-ROADMAP.md` — Full milestone phase details
+- `.planning/milestones/v1.0-REQUIREMENTS.md` — Requirements with outcomes
+- `.planning/ROADMAP.md` — Updated with milestone grouping (v1.0 collapsed)
+- `.planning/PROJECT.md` — Current state with Validated requirements
+
+---
+
+*Milestone v1.0 archived: 2026-05-27*
