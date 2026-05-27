@@ -8,7 +8,7 @@
 
 ## What This Is
 
-A C++17 library implementing spatial vector algebra for rigid body dynamics, following Featherstone's formulation. Provides 6D spatial vectors (twists and wrenches), Plücker coordinate transforms, inertia representations, and forward/inverse dynamics for robotics simulation and control.
+A C++17 library implementing spatial vector algebra for rigid body dynamics, following Featherstone's formulation. Provides 6D spatial vectors (twists and wrenches), Plücker coordinate transforms, inertia representations, forward/inverse dynamics, CI builds, and formal mathematical conventions — for robotics simulation and control.
 
 ## Core Value
 
@@ -16,34 +16,43 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 
 **Success Looks Like:** 
 - All core classes implemented and verified ✓ — achieved in v1.0
-- Forward dynamics (Articulated Body Algorithm - ABA) ✓ — implemented and tested
-- Inverse dynamics (Recursive Newton-Euler Algorithm - RNEA) ✓ — implemented and tested
-- 95%+ test coverage for all mathematical operations ✓
+- Forward dynamics (ABA) ✓ — gravity support added in v1.1
+- Inverse dynamics (RNEA) ✓ — gravity support added in v1.1
+- 98.7% test coverage for all mathematical operations ✓
 - Library production-ready for serial kinematic chains ✓
+- CI pipeline with 4-matrix build ✓
+- Formal conventions documented ✓
 
 ## Requirements
 
-### Validated (v1.0)
+### Validated
 
-- ✓ SpatialVector, MotionVector, ForceVector — complete with Featherstone-verified cross products
-- ✓ Rotation (angle-axis, quaternion, matrix operations)
-- ✓ LowerTriangular packed storage (multiply, inverse, transpose)
-- ✓ Spatial utilities (skew, dot, cross) and SpatialOperations class
-- ✓ Plücker transforms (motion/force transformation, rigid body inertia transform)
-- ✓ RigidBodyInertia and ArticulatedBodyInertia (construction, apply, operators)
-- ✓ Articulated Body Algorithm (ABA) for serial and branching kinematic chains
-- ✓ Recursive Newton-Euler Algorithm (RNEA) for inverse dynamics
-- ✓ Comprehensive GTest test infrastructure (186+ tests)
-- ✓ Integration tests for dynamics pipeline consistency
-- ✓ Documentation: README, Doxygen, compilable examples
+- ✓ **v1.0:** SpatialVector, MotionVector, ForceVector — complete with Featherstone-verified cross products
+- ✓ **v1.0:** Rotation (angle-axis, quaternion, matrix operations)
+- ✓ **v1.0:** LowerTriangular packed storage (multiply, inverse, transpose)
+- ✓ **v1.0:** Spatial utilities (skew, dot, cross) and SpatialOperations class
+- ✓ **v1.0 (PLX-04, PLX-06 fixed in v1.1):** Plücker transforms (motion/force/RBI/ABI transforms)
+- ✓ **v1.0:** RigidBodyInertia and ArticulatedBodyInertia (construction, apply, operators)
+- ✓ **v1.0:** Articulated Body Algorithm (ABA) for serial and branching kinematic chains
+- ✓ **v1.0:** Recursive Newton-Euler Algorithm (RNEA) for inverse dynamics
+- ✓ **v1.0:** Comprehensive GTest test infrastructure (189+ tests)
+- ✓ **v1.0:** Integration tests for dynamics pipeline consistency
+- ✓ **v1.0:** Documentation: README, Doxygen, compilable examples
+- ✓ **v1.1:** ABI transform formulas fixed per Featherstone Eq 7.16 (BF-01)
+- ✓ **v1.1:** Gravity support for ABA and RNEA (Featherstone D-07/D-08)
+- ✓ **v1.1:** Cross-product operations unified to single canonical implementation
+- ✓ **v1.1:** NaN/Inf debug-mode guards on core operations
+- ✓ **v1.1:** GitHub Actions CI (4-matrix: ubuntu/macos × g++/clang++)
+- ✓ **v1.1:** CMake FetchContent fallback for GTest
+- ✓ **v1.1:** MATHEMATICAL_CONVENTIONS.md — formal cross-product, gravity, conventions
+- ✓ **v1.1:** Edge case and release-mode stability tests
 
 ### Active (Next Milestone)
 
 - [ ] Multi-link RNEA↔ABA consistency for 3+ link chains (BF-02)
-- [ ] GitHub Actions CI pipeline
 - [ ] Performance benchmarks vs RBDL/Pinocchio
 - [ ] Additional real-world robot examples (2-link planar, 3-link spatial arm)
-- [ ] Eigen 5.x compatibility in CI
+- [ ] Eigen 5.x compatibility in CI matrix
 
 ### Out of Scope
 
@@ -56,21 +65,25 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 
 ## Context
 
-**v1.0 Shipped:** May 16, 2026 — ~9,450 LOC C++17, 186+ GTest tests across 13 test executables.
+**v1.1 Shipped:** May 17, 2026 — ~9,450 LOC C++17, 189+ GTest tests, CI pipeline.
 
 **State:**
 - All core classes implemented and verified with tests
 - Forward dynamics (ABA) and inverse dynamics (RNEA) with gravity support
-- 98.7% test pass rate (3 pre-existing multi-link consistency failures)
+- 156/158 tests passing (98.7%) — 3 pre-existing CR-02 multi-link failures
 - NaN/Inf debug-mode guards on core operations
 - Cross-product operations unified to single canonical implementation
 - Production-hardened with edge case tests and release-mode stability verification
+- GitHub Actions CI with 4-matrix build and code coverage
+- Formal mathematical conventions documented
+- Independent gravity invariant test oracles for both solvers
 
 **Tech Stack:**
 - C++17 with Eigen3 for linear algebra
 - Google Test for unit testing
-- CMake build system
+- CMake build system (FetchContent fallback)
 - Doxygen documentation
+- GitHub Actions CI
 
 ## Constraints
 
@@ -94,14 +107,11 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 | Featherstone Algorithm 7.3 for ABA | Textbook reference implementation | Verified for serial and branching chains |
 | Featherstone Algorithm 7.1 for RNEA | Textbook reference implementation | Verified with 5 unit tests |
 | Separate Link structs for ABA/RNEA | Avoid POSIX `link()` conflict and namespace issues | ForwardDynamicsLink, InverseDynamicsLink |
-
-## Out of Scope (Detailed)
-
-- **Python bindings** — Python RNEA exists standalone; integration deferred to future milestone
-- **Contact/collision handling** — Pure rigid body dynamics only
-- **Inverse kinematics** — Focus on dynamics, not kinematics
-- **Visualization tools** — Library-only, no rendering
-- **Serialization** — No state save/load needed for library operations
+| Gravity as base acceleration (not external force) | Follows Featherstone D-07/D-08 | Correct propagation through recursive chain |
+| NaN/Inf checks as non-fatal warnings | Matches Featherstone safety convention | Zero production overhead via `#ifndef NDEBUG` |
+| OpenMP removal from LowerTriangular | Eliminates hidden linkage dependency | No performance impact for target use cases |
+| Namespace cleanup (Vector3d into SpatialAlgebra) | Eliminates ODR hazard | Backward compatible via `using namespace` |
+| GitHub Actions CI with 4-matrix build | Automated build verification | Coverage upload on ubuntu+g++ |
 
 ## Evolution
 
@@ -115,9 +125,12 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-05-27 after v1.0 milestone*
+*Last updated: 2026-05-27 after v1.1 milestone*
 
 ---
+
+<details>
+<summary>v1.0 Current State (Archived)</summary>
 
 ## Current State (v1.0)
 
@@ -134,27 +147,31 @@ This document evolves at phase transitions and milestone boundaries.
 - Comprehensive GTest test infrastructure
 - Documentation: README, Doxygen, 4 compilable examples
 
-**Known Gaps (inherited by next milestone):**
+**Known Gaps (inherited by v1.1):**
 - Multi-link RNEA↔ABA consistency (3 failing tests)
 - ABI transform formulas (fixed in v1.1 Phase 11)
 
----
-
-<details>
-<summary>v1.1 Milestone (Archived Planning Reference)</summary>
-
-## Milestone v1.1 — Bug Fixes & Stability
-
-**Started:** 2026-05-16  
-**Goal:** Fix ArticulatedBodyInertia transforms and multi-link consistency
-
-**Scope:**
-- Fix `tformABI()` / `invtformABI()` formulas (Featherstone Eq 7.16)
-- Align RNEA/ABA conventions for multi-link chains
-- Achieve 100% test pass rate
-- Performance benchmarks and additional examples
-
-**Requirements:** 6 (2 bug fixes, 2 stability, 2 enhancements)  
-**Phases:** 4 planned (11, 12, 13)
-
 </details>
+
+## Current State (v1.1)
+
+**Shipped:** 2026-05-17  
+**Phases:** 3 (11-13)  
+**Plans:** 9  
+**Commits:** 35  
+**Files Modified:** 57  
+**Test Count:** 189+ (186 passing, 3 CR-02 failures)  
+
+**Delivered:**
+- ABI transform formulas fixed (tformABI, invtformABI) — 40/40 Plücker tests
+- Gravity support for ABA (computeAccelerations) and RNEA (computeTorques)
+- Cross-product operations unified to single canonical implementation
+- NaN/Inf debug-mode guards and zero-mass edge case tests
+- GitHub Actions CI with 4-matrix build and code coverage
+- CMake FetchContent fallback, OpenMP removal, umbrella header
+- MATHEMATICAL_CONVENTIONS.md — formal specification
+- README.md updated with v1.1 API changelog
+
+**Known Gaps (BF-02 deferred):**
+- Multi-link RNEA↔ABA consistency: CR-02 bug in ABA inward pass (3 tests)
+- Performance benchmarks and additional examples deprioritized

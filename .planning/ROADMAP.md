@@ -8,7 +8,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP / Core Library** — Phases 1-10 (shipped 2026-05-16)
-- 🚧 **v1.1 Bug Fixes & Stability** — Phases 11-13 (in progress)
+- ✅ **v1.1 Bug Fixes & Stability** — Phases 11-13 (shipped 2026-05-17)
 
 ## Phases
 
@@ -28,11 +28,14 @@
 
 </details>
 
-### 🚧 v1.1 Bug Fixes & Stability (In Progress)
+<details>
+<summary>✅ v1.1 Bug Fixes & Stability (Phases 11-13) — SHIPPED 2026-05-17</summary>
 
 - [x] Phase 11: ABI Transform Fixes (1/1 plan) — completed 2026-05-16
 - [x] Phase 12: Dynamics Consistency Fixes (1/1 plan) — completed 2026-05-16 (partial)
 - [x] Phase 13: Production Readiness (7/7 plans) — completed 2026-05-17
+
+</details>
 
 ---
 
@@ -82,9 +85,9 @@
 | PLX-01 | Phase 5 | Complete |
 | PLX-02 | Phase 5 | Complete |
 | PLX-03 | Phase 5 | Complete |
-| PLX-04 | Phase 5 | Deferred (v1.1) |
+| PLX-04 | Phase 5 | Complete |
 | PLX-05 | Phase 5 | Complete |
-| PLX-06 | Phase 5 | Deferred (v1.1) |
+| PLX-06 | Phase 5 | Complete |
 | INR-01 | Phase 6 | Complete |
 | INR-02 | Phase 6 | Complete |
 | INR-03 | Phase 6 | Complete |
@@ -106,4 +109,5 @@
 
 ---
 
-*See `.planning/milestones/v1.0-ROADMAP.md` for full milestone details.*
+*See `.planning/milestones/v1.0-ROADMAP.md` for v1.0 details.*
+*See `.planning/milestones/v1.1-ROADMAP.md` for v1.1 details.*
