@@ -66,25 +66,25 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BFIX-01 | — | Pending |
-| CI-01 | — | Pending |
-| CI-02 | — | Pending |
-| BINF-01 | — | Pending |
-| BINF-02 | — | Pending |
-| BINF-03 | — | Pending |
-| BENCH-01 | — | Pending |
-| BENCH-02 | — | Pending |
-| BENCH-03 | — | Pending |
-| EX-01 | — | Pending |
-| EX-02 | — | Pending |
-| RBDL-01 | — | Pending |
-| RBDL-02 | — | Pending |
-| RBDL-03 | — | Pending |
+| BFIX-01 | Phase 14 | Pending |
+| CI-01 | Phase 15 | Pending |
+| CI-02 | Phase 15 | Pending |
+| BINF-01 | Phase 16 | Pending |
+| BINF-02 | Phase 16 | Pending |
+| BINF-03 | Phase 16 | Pending |
+| BENCH-01 | Phase 17 | Pending |
+| BENCH-02 | Phase 17 | Pending |
+| BENCH-03 | Phase 17 | Pending |
+| EX-01 | Phase 18 | Pending |
+| EX-02 | Phase 18 | Pending |
+| RBDL-01 | Phase 19 | Pending |
+| RBDL-02 | Phase 19 | Pending |
+| RBDL-03 | Phase 19 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-30*
