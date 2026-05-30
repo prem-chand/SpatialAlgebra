@@ -2,7 +2,7 @@
 
 **Project Code:** SA  
 **Project Title:** Spatial Vector Algebra Library for Robotics  
-**Last Updated:** 2026-05-27
+**Last Updated:** 2026-05-30
 
 ---
 
@@ -22,6 +22,16 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - Library production-ready for serial kinematic chains ✓
 - CI pipeline with 4-matrix build ✓
 - Formal conventions documented ✓
+
+## Current Milestone: v1.2 Production Quality
+
+**Goal:** Close all remaining gaps — fix multi-link dynamics consistency (BF-02), establish performance benchmarks vs RBDL/Pinocchio, add Eigen 5.x to CI matrix, and provide real-world robot examples.
+
+**Target features:**
+- Fix CR-02 bug in ABA inward pass — make all 4 multi-link consistency tests pass
+- Performance benchmarks vs RBDL/Pinocchio (3+ link serial chains)
+- Eigen 5.x compatibility in CI matrix
+- Real-world robot examples (2-link planar, 3-link spatial arm)
 
 ## Requirements
 
@@ -125,7 +135,7 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-05-27 after v1.1 milestone*
+*Last updated: 2026-05-30 before v1.2 milestone*
 
 ---
 
