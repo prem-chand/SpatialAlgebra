@@ -73,11 +73,14 @@
 **Depends on**: Phase 13 (previous milestone; independent of Phase 15)
 **Requirements**: BFIX-01
 **Success Criteria** (what must be TRUE):
-  1. All 4 multi-link consistency tests pass: ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTrip, ThreeLinkNumericalValidation
-  2. ABA forward dynamics produces bitwise-consistent results with RNEA∘Inverse round-trip for 3+ link chains
-  3. All 156 existing tests continue to pass (no regressions)
-  4. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
-**Plans**: TBD
+   1. All 4 multi-link consistency tests pass: ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTrip, ThreeLinkNumericalValidation
+   2. ABA forward dynamics produces bitwise-consistent results with RNEA∘Inverse round-trip for 3+ link chains
+   3. All 156 existing tests continue to pass (no regressions)
+   4. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
+**Plans**: 1 plan
+
+Plans:
+- [ ] 14-01-PLAN.md — Restructure ABA inward pass with condensation, update tests
 
 ### Phase 15: Eigen 5.x CI
 **Goal**: Library builds and tests pass under Eigen 5.x in CI matrix
@@ -152,7 +155,7 @@
 | 11. ABI Transform Fixes | v1.1 | 1/1 | Complete | 2026-05-16 |
 | 12. Dynamics Consistency | v1.1 | 1/1 | Partial | 2026-05-16 |
 | 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
-| 14. CR-02 Bug Fix | v1.2 | 0/0 | Not started | - |
+| 14. CR-02 Bug Fix | v1.2 | 0/1 | Not started | - |
 | 15. Eigen 5.x CI | v1.2 | 0/0 | Not started | - |
 | 16. Benchmark Infrastructure | v1.2 | 0/0 | Not started | - |
 | 17. Benchmark Implementation | v1.2 | 0/0 | Not started | - |
