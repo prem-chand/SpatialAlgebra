@@ -54,50 +54,42 @@ namespace SpatialAlgebra
 
     Eigen::VectorXd InverseDynamics::inwardPass()
     {
-        // Vector to store joint torques
         Eigen::VectorXd tau = Eigen::VectorXd::Zero(links.size());
-        
-        // Vector to store spatial forces (initialized to zero)
-        std::vector<ForceVector> f(links.size(), 
+
+        // Accumulate forces tip-to-base in O(n): each link's force is computed
+        // from its own inertia/acceleration, then immediately propagated to its
+        // parent. Because links are in topological order (parent index < child
+        // index), all children of link i have already propagated into f[i] by
+        // the time we reach i in the reverse iteration.
+        std::vector<ForceVector> f(links.size(),
             ForceVector(Vector3d::Zero(), Vector3d::Zero()));
-        
-        // Iterate from tip (n-1) to base (0)
-        // This ensures children are processed before their parent
+
         for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
         {
-            // Compute spatial force at link i
-            // fᵢ = Iᵢ·aᵢ + vᵢ × Iᵢ·vᵢ
-            // First term: inertial force from acceleration
-            // Second term: Coriolis/centrifugal force from velocity
+            // fᵢ += Iᵢ·aᵢ + vᵢ × Iᵢ·vᵢ  (Featherstone Algorithm 5.1)
             ForceVector inertialForce = links[i].I.apply(links[i].a);
             ForceVector coriolisForce = cross(links[i].v, links[i].I.apply(links[i].v));
             f[i] = ForceVector(
-                inertialForce.getAngular() + coriolisForce.getAngular(),
-                inertialForce.getLinear() + coriolisForce.getLinear()
+                f[i].getAngular() + inertialForce.getAngular() + coriolisForce.getAngular(),
+                f[i].getLinear()  + inertialForce.getLinear()  + coriolisForce.getLinear()
             );
-            
-            // Add transformed forces from children
-            // Find all children of this link and add their transformed forces
-            for (int j = 0; j < static_cast<int>(links.size()); j++)
-            {
-                if (links[j].parent == i)
-                {
-                    // Child j: transform its force from child to parent frame
-                    // fᵢ += Xⱼ⁻ᵀ·fⱼ (inverse force transform: child→parent)
-                    ForceVector fChildTransformed = links[j].X.inverseTransformForce(f[j]);
-                    f[i] = ForceVector(
-                        f[i].getAngular() + fChildTransformed.getAngular(),
-                        f[i].getLinear() + fChildTransformed.getLinear()
-                    );
-                }
-            }
-            
-            // Compute joint torque by projecting force onto joint axis
-            // τᵢ = fᵢ·Sᵢ (dot product in 6D)
-            tau[i] = f[i].getAngular().dot(links[i].S.getAngular()) + 
+
+            // τᵢ = Sᵢ · fᵢ
+            tau[i] = f[i].getAngular().dot(links[i].S.getAngular()) +
                      f[i].getLinear().dot(links[i].S.getLinear());
+
+            // Propagate to parent: fᵢ_parent += Xᵢ⁻ᵀ · fᵢ
+            int parent = links[i].parent;
+            if (parent != -1)
+            {
+                ForceVector fTransformed = links[i].X.inverseTransformForce(f[i]);
+                f[parent] = ForceVector(
+                    f[parent].getAngular() + fTransformed.getAngular(),
+                    f[parent].getLinear()  + fTransformed.getLinear()
+                );
+            }
         }
-        
+
         return tau;
     }
 

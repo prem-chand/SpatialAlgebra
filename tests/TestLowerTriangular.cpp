@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 using namespace Eigen;
+using namespace SpatialAlgebra;
 
 // Tolerance for floating point comparisons
 const double TOLERANCE = 1e-10;
@@ -420,8 +421,8 @@ TEST(LowerTriangularTest, Associativity)
 }
 
 /**
- * @brief Test comparison with full matrix operations
- * @details Verifies LowerTriangular matches Eigen::MatrixXd
+ * @brief Test comparison with full symmetric matrix operations
+ * @details Verifies LowerTriangular symmetric multiplication matches Eigen::MatrixXd
  */
 TEST(LowerTriangularTest, ComparisonWithFullMatrix)
 {
@@ -430,11 +431,13 @@ TEST(LowerTriangularTest, ComparisonWithFullMatrix)
     L(1,0) = 1.0; L(1,1) = 3.0;
     L(2,0) = 4.0; L(2,1) = 5.0; L(2,2) = 6.0;
     
-    Eigen::MatrixXd full = L.getFullMatrix();
+    // Use symmetric matrix reconstruction for inertia-like matrices
+    Eigen::MatrixXd full = L.getSymmetricMatrix();
     Eigen::VectorXd v(3);
     v << 1.0, 2.0, 3.0;
     
-    Eigen::VectorXd result1 = L * v;
+    // Use symmetric multiplication to match full symmetric matrix
+    Eigen::VectorXd result1 = L.multiplySymmetric(v);
     Eigen::VectorXd result2 = full * v;
     
     // Results should match within tolerance

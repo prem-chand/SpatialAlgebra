@@ -5,8 +5,8 @@
 #include <Eigen/Dense>
 #include <cmath>
 
-using namespace SpatialAlgebra;
 using namespace Eigen;
+using namespace SpatialAlgebra;
 
 // Tolerance for floating point comparisons
 const double TOLERANCE = 1e-10;

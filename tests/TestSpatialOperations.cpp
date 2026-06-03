@@ -151,25 +151,25 @@ TEST(TestCrossProductForce, SimpleForceTorqueVectors) {
 
 /**
  * @brief Test cross product with combined motion and force vectors
- * @details Tests full formula: [ω×τ; ω×f + v×τ] for motion×force
+ * @details Tests crf formula: [ω×τ + v×f; ω×f] (Featherstone §2.9)
  */
 TEST(TestCrossProductForce, CombinedForceVectors) {
-    // Arrange: Use MotionVector and ForceVector as the API expects
-    MotionVector mv(Vector3d(1, 0, 0), Vector3d(0, 1, 0));  // ω=(1,0,0), v=(0,1,0)
-    ForceVector fv(Vector3d(0, 1, 0), Vector3d(1, 0, 0));   // τ=(0,1,0), f=(1,0,0)
-    
+    // Arrange
+    MotionVector mv(Vector3d(0, 0, 1), Vector3d(1, 0, 0));  // ω=(0,0,1), v=(1,0,0)
+    ForceVector fv(Vector3d(1, 0, 0), Vector3d(0, 1, 0));   // τ=(1,0,0), f=(0,1,0)
+
     // Act
     SpatialVector result = SpatialOperations::crossProductForce(mv, fv);
-    
-    // Assert: Formula is [ω×τ; ω×f + v×τ]
-    // ω×τ = (1,0,0)×(0,1,0) = (0,0,1)
-    // ω×f = (1,0,0)×(1,0,0) = (0,0,0)
-    // v×τ = (0,1,0)×(0,1,0) = (0,0,0)
-    // linear = (0,0,0) + (0,0,0) = (0,0,0)
+
+    // Assert: crf = [ω×τ + v×f; ω×f]
+    // ω×τ = (0,0,1)×(1,0,0) = (0,1,0)
+    // v×f = (1,0,0)×(0,1,0) = (0,0,1)
+    // angular = (0,1,1)
+    // ω×f = (0,0,1)×(0,1,0) = (-1,0,0)
     EXPECT_NEAR(result.getAngular()[0], 0.0, EPSILON);
-    EXPECT_NEAR(result.getAngular()[1], 0.0, EPSILON);
+    EXPECT_NEAR(result.getAngular()[1], 1.0, EPSILON);
     EXPECT_NEAR(result.getAngular()[2], 1.0, EPSILON);
-    EXPECT_NEAR(result.getLinear()[0], 0.0, EPSILON);
+    EXPECT_NEAR(result.getLinear()[0], -1.0, EPSILON);
     EXPECT_NEAR(result.getLinear()[1], 0.0, EPSILON);
     EXPECT_NEAR(result.getLinear()[2], 0.0, EPSILON);
 }

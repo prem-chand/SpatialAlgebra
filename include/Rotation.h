@@ -36,6 +36,8 @@
 
 #include <Eigen/Dense>
 
+namespace SpatialAlgebra {
+
 /**
  * @brief Class for handling 3D rotations with multiple representations
  * @details The Rotation class extends Eigen::Matrix3d to provide a robust interface
@@ -167,5 +169,7 @@ public:
      */
     friend Eigen::Matrix3d operator*(const Eigen::Matrix3d &matrix, const Rotation &rotation);
 };
+
+} // namespace SpatialAlgebra
 
 #endif // ROTATION_H

@@ -71,7 +71,9 @@ using Vector3d = Eigen::Matrix<double, 3, 1>;
         Vector3d linear;  ///< Linear component (v for motion vectors, f for force vectors)
 
     public:
-        /** 
+        virtual ~SpatialVector() = default;
+
+        /**
          * @brief Default constructor creating a zero spatial vector
          * @details Initializes both angular and linear components to zero vectors
          */

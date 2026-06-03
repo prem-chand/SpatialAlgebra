@@ -565,6 +565,4 @@ public:
 
 } // namespace SpatialAlgebra
 
-using SpatialAlgebra::LowerTriangular;
-
 #endif // LOWER_TRIANGULAR_H

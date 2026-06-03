@@ -72,19 +72,20 @@ inline double dot(const MotionVector& v1, const ForceVector& v2) noexcept {
  * @param v1 Motion vector
  * @param v2 Force vector
  * @return Resulting force vector
- * @details Implements: crf(v1, v2) = [w1×f1 + v1×f2, w1×f1]
+ * @details Implements crf: [ω₁; v₁] × [τ₂; f₂] = [ω₁×τ₂ + v₁×f₂; ω₁×f₂]
+ *          Featherstone (2008) §2.9: crf(v) = -crm(v)^T
  */
 inline ForceVector cross(const MotionVector& v1, const ForceVector& v2) noexcept {
     const Vector3d& w1 = v1.getAngular();
     const Vector3d& v1_lin = v1.getLinear();
     const Vector3d& f1 = v2.getAngular();
     const Vector3d& f2 = v2.getLinear();
-    
+
     return ForceVector(
-        w1.cross(f1), 
-        w1.cross(f2) + v1_lin.cross(f1)
+        w1.cross(f1) + v1_lin.cross(f2),
+        w1.cross(f2)
     );
-};
+}
 
 /**
  * @brief Computes the cross product between two motion vectors
@@ -110,7 +111,7 @@ inline MotionVector cross(const MotionVector& v1, const MotionVector& v2) noexce
  * @param v1 First force vector
  * @param v2 Second force vector
  * @return Resulting force vector
- * @details Implements: [τ1×τ2 + f1×f2; τ1×f2] following Featherstone formulation
+ * @details Implements: [τ1×τ2 + f1×f2; τ1×f2 - τ2×f1] ensuring anti-commutativity
  */
 inline ForceVector cross(const ForceVector& v1, const ForceVector& v2) noexcept {
     const Vector3d& t1 = v1.getAngular();
@@ -120,7 +121,7 @@ inline ForceVector cross(const ForceVector& v1, const ForceVector& v2) noexcept 
     
     return ForceVector(
         t1.cross(t2) + f1.cross(f2),
-        t1.cross(f2)
+        t1.cross(f2) - t2.cross(f1)
     );
 }
 

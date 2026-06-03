@@ -56,7 +56,11 @@ SpatialVector SpatialAlgebra::SpatialVector::crossMotion(const SpatialVector &ot
 
 SpatialVector SpatialAlgebra::SpatialVector::crossForce(const SpatialVector &other) const
 {
-    return ForceVector(cross(ForceVector(*this), ForceVector(other)));
+    // Force×Force cross product: [τ1×τ2 + f1×f2; τ1×f2 - τ2×f1]
+    return SpatialVector(
+        angular.cross(other.angular) + linear.cross(other.linear),
+        angular.cross(other.linear) - other.angular.cross(linear)
+    );
 }
 
 double SpatialVector::dot(const SpatialVector &other) const
