@@ -190,12 +190,11 @@ TEST(TransformForceTest, PureTranslation)
     // Transform
     ForceVector output = transform.transformForce(input);
     
-    // Expected:
+    // Expected: τ' = R*(τ - r×f) = I*(0 - [1,0,0]×[0,1,0]) = -[0,0,1] = [0,0,-1]
     // f' = f = [0,1,0]
-    // τ' = r × f = [1,0,0] × [0,1,0] = [0,0,1]
     EXPECT_NEAR(output.getAngular()[0], 0.0, EPSILON);
     EXPECT_NEAR(output.getAngular()[1], 0.0, EPSILON);
-    EXPECT_NEAR(output.getAngular()[2], 1.0, EPSILON);  // r × f
+    EXPECT_NEAR(output.getAngular()[2], -1.0, EPSILON);  // -r × f
     EXPECT_NEAR(output.getLinear()[0], 0.0, EPSILON);
     EXPECT_NEAR(output.getLinear()[1], 1.0, EPSILON);
     EXPECT_NEAR(output.getLinear()[2], 0.0, EPSILON);
@@ -215,11 +214,11 @@ TEST(TransformForceTest, CombinedTransform)
     
     // Expected:
     // f' = R*f = R*[0,1,0] = [-1,0,0]
-    // τ' = R*(τ + r×f) = R*([1,0,0] + [1,0,0]×[0,1,0]) = R*([1,0,0] + [0,0,1]) = R*[1,0,1]
-    // R*[1,0,1] = [0,1,1] (90° rotation)
+    // τ' = R*(τ - r×f) = R*([1,0,0] - [1,0,0]×[0,1,0]) = R*([1,0,0] - [0,0,1]) = R*[1,0,-1]
+    // R*[1,0,-1] = [0,1,-1] (90° Z rotation)
     EXPECT_NEAR(output.getAngular()[0], 0.0, EPSILON);
     EXPECT_NEAR(output.getAngular()[1], 1.0, EPSILON);
-    EXPECT_NEAR(output.getAngular()[2], 1.0, EPSILON);
+    EXPECT_NEAR(output.getAngular()[2], -1.0, EPSILON);
     EXPECT_NEAR(output.getLinear()[0], -1.0, EPSILON);
     EXPECT_NEAR(output.getLinear()[1], 0.0, EPSILON);
     EXPECT_NEAR(output.getLinear()[2], 0.0, EPSILON);
@@ -325,15 +324,10 @@ TEST(InverseTransformForceTest, InverseFormula)
     // Inverse transform
     ForceVector output = transform.inverseTransformForce(input);
     
-    // Expected: τ' = R^T*(τ - t×f), f' = R^T*f
-    // R^T*[1,0,0] = [0,1,0]
-    // R^T*[0,1,0] = [-1,0,0]
-    // t×f_out = [1,0,0]×[-1,0,0] = [0,0,0]
-    // τ' = R^T*tau - t×f_out = [0,1,0] - [0,0,0] = [0,1,0]
-    // But formula is: tau_out = R^T*tau - skew_t*f_out
-    // = [0,1,0] - [0,0,0] = [0,1,0]... wait let me recalc
-    // Actually: tau_out = R^T*tau - skew_t*f_out = [0,1,0] - [0,0,0] = [0,1,0]
-    // But debug shows: tau_out = [0,-1,0], f_out = [1,0,0]
+    // X^T * f:  τ' = R^T*τ + t×(R^T*f), f' = R^T*f
+    // R^T*[1,0,0] = [0,-1,0], R^T*[0,1,0] = [1,0,0]
+    // t×(R^T*f) = [1,0,0]×[1,0,0] = [0,0,0]
+    // τ' = [0,-1,0] + [0,0,0] = [0,-1,0], f' = [1,0,0]
     EXPECT_NEAR(output.getAngular()[0], 0.0, EPSILON);
     EXPECT_NEAR(output.getAngular()[1], -1.0, EPSILON);
     EXPECT_NEAR(output.getAngular()[2], 0.0, EPSILON);
@@ -431,7 +425,7 @@ TEST(TransformRBITest, Property_PositiveDefinite)
     RigidBodyInertia output = transform.tformRBI(input);
     
     // Convert to full matrix and check eigenvalues are positive
-    Matrix3d I_full = output.getInertiaMatrixLT().getFullMatrix();
+    Matrix3d I_full = output.getInertiaMatrixLT().getSymmetricMatrix();
     EigenSolver<Matrix3d> solver(I_full);
     for (int i = 0; i < 3; i++) {
         EXPECT_GT(solver.eigenvalues()[i].real(), 0.0);
@@ -534,7 +528,7 @@ TEST(TransformABITest, IdentityTransform)
     
     // Expected: unchanged
     EXPECT_NEAR(output.getH()(0, 0), 1.0, EPSILON);
-    EXPECT_NEAR(output.getM().getFullMatrix()(0, 0), 1.0, EPSILON);
+    EXPECT_NEAR(output.getM().getSymmetricMatrix()(0, 0), 1.0, EPSILON);
 }
 
 TEST(TransformABITest, PureRotation)
@@ -589,8 +583,8 @@ TEST(TransformABITest, Property_Symmetric)
     ArticulatedBodyInertia output = transform.tformABI(input);
     
     // Verify symmetry of I and M (H is coupling matrix, not necessarily symmetric)
-    Matrix3d I_out = output.getInertia().getFullMatrix();
-    Matrix3d M_out = output.getM().getFullMatrix();
+    Matrix3d I_out = output.getInertia().getSymmetricMatrix();
+    Matrix3d M_out = output.getM().getSymmetricMatrix();
     
     EXPECT_NEAR((I_out - I_out.transpose()).norm(), 0.0, EPSILON);
     EXPECT_NEAR((M_out - M_out.transpose()).norm(), 0.0, EPSILON);
@@ -610,7 +604,7 @@ TEST(TransformABITest, Property_PositiveDefinite)
     ArticulatedBodyInertia output = transform.tformABI(input);
     
     // Check eigenvalues of I are positive
-    Matrix3d I_out = output.getInertia().getFullMatrix();
+    Matrix3d I_out = output.getInertia().getSymmetricMatrix();
     EigenSolver<Matrix3d> solver(I_out);
     for (int i = 0; i < 3; i++) {
         EXPECT_GT(solver.eigenvalues()[i].real(), 0.0);
@@ -636,9 +630,9 @@ TEST(InverseTransformABITest, InverseIsIdentity)
     ArticulatedBodyInertia restored = transform.invtformABI(transformed);
     
     // Expected: returns original ABI (within epsilon for floating point)
-    EXPECT_NEAR((restored.getInertia().getFullMatrix() - input.getInertia().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getInertia().getSymmetricMatrix() - input.getInertia().getSymmetricMatrix()).norm(), 0.0, 1e-8);
     EXPECT_NEAR((restored.getH() - input.getH()).norm(), 0.0, 1e-8);
-    EXPECT_NEAR((restored.getM().getFullMatrix() - input.getM().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getM().getSymmetricMatrix() - input.getM().getSymmetricMatrix()).norm(), 0.0, 1e-8);
 }
 
 TEST(InverseTransformABITest, InverseFormula)
@@ -673,8 +667,8 @@ TEST(InverseTransformABITest, Property_Symmetric)
     ArticulatedBodyInertia output = transform.invtformABI(input);
     
     // Verify symmetry of I and M
-    Matrix3d I_out = output.getInertia().getFullMatrix();
-    Matrix3d M_out = output.getM().getFullMatrix();
+    Matrix3d I_out = output.getInertia().getSymmetricMatrix();
+    Matrix3d M_out = output.getM().getSymmetricMatrix();
     
     EXPECT_NEAR((I_out - I_out.transpose()).norm(), 0.0, EPSILON);
     EXPECT_NEAR((M_out - M_out.transpose()).norm(), 0.0, EPSILON);
@@ -694,9 +688,9 @@ TEST(InverseTransformABITest, RoundTrip)
     ArticulatedBodyInertia restored = transform.invtformABI(transformed);
     
     // Verify returns original (within floating point tolerance)
-    EXPECT_NEAR((restored.getInertia().getFullMatrix() - original.getInertia().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getInertia().getSymmetricMatrix() - original.getInertia().getSymmetricMatrix()).norm(), 0.0, 1e-8);
     EXPECT_NEAR((restored.getH() - original.getH()).norm(), 0.0, 1e-8);
-    EXPECT_NEAR((restored.getM().getFullMatrix() - original.getM().getFullMatrix()).norm(), 0.0, 1e-8);
+    EXPECT_NEAR((restored.getM().getSymmetricMatrix() - original.getM().getSymmetricMatrix()).norm(), 0.0, 1e-8);
 }
 
 // ============================================================================
