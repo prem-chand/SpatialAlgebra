@@ -29,11 +29,13 @@ SpatialVector PluckerTransform::transformForce(const SpatialVector &vec) const
 {
     // vec = [τ, f]
     // X = [R, 0; -R[t]x, R]
-    // return X^{-T} * vec = [R(τ + [t]xf), Rf]
-    // Featherstone (2008) Eq 2.44: τ' = R*(τ + r×f), f' = R*f
+    // X^{-T} = [R, -R*[t]x; 0, R]
+    // return X^{-T} * vec = [R*(τ - r×f), R*f]
+    // Featherstone (2008) Eq 2.44
 
-    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * (vec.getAngular() + skew(translation) * vec.getLinear());
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation) * vec.getLinear();
+    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * 
+        (vec.getAngular() - skew(translation) * vec.getLinear());
     return SpatialVector(transformedAngular, transformedLinear);
 }
 
@@ -51,12 +53,12 @@ SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformMotion(const Spa
 SpatialVector SpatialAlgebra::PluckerTransform::inverseTransformForce(const SpatialVector &vec) const
 {
     // vec = [τ, f]
-    // X^{-T} = [R^T, -skew(t)*R^T; 0, R^T]
-    // return X^{T} * vec = [R^T*τ - skew(t)*R^T*f, R^T*f]
-    //                    = [R^T*(τ - t×f), R^T*f]
-    // Featherstone (2008) Eq 2.46
+    // X = [R, 0; -R*r̂, R]
+    // X^T = [R^T, r̂*R^T; 0, R^T] where r̂ = skew(translation)
+    // return X^T * vec = [R^T*τ + r̂*R^T*f, R^T*f]
+    //           = [R^T*τ + t×(R^T*f), R^T*f]
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getLinear();
-    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getAngular() - skew(translation) * transformedLinear;
+    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * vec.getAngular() + skew(translation) * transformedLinear;
 
     return SpatialVector(transformedAngular, transformedLinear);
 }
@@ -124,12 +126,9 @@ ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::tformABI(const Articula
     
     // Build 6x6 articulated body inertia matrix
     // I and M are symmetric, so we need to reconstruct the full symmetric matrix
-    // from LowerTriangular storage (copy lower triangle to upper)
-    Matrix3d I_full = Inertia.getFullMatrix();
-    I_full = 0.5 * (I_full + I_full.transpose());  // Symmetrize
-    
-    Matrix3d M_full = M.getFullMatrix();
-    M_full = 0.5 * (M_full + M_full.transpose());  // Symmetrize
+    // from LowerTriangular storage
+    Matrix3d I_full = Inertia.getSymmetricMatrix();
+    Matrix3d M_full = M.getSymmetricMatrix();
     
     // Order: [angular; linear] so Ia = [I, H; H^T, M]
     MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
@@ -138,11 +137,12 @@ ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::tformABI(const Articula
     Ia_6x6.block<3,3>(3,0) = H.transpose();
     Ia_6x6.block<3,3>(3,3) = M_full;
     
-    // Build 6x6 spatial transform X = [R, 0; -R*r̂, R]
+    // Build 6x6 spatial motion transform X = [R, 0; -R*r̂, R]
+    // Featherstone (2008) Eq 2.43: I' = X * Ia * X^T
     MatrixXd X_6x6 = MatrixXd::Zero(6, 6);
     X_6x6.block<3,3>(0,0) = R;
     X_6x6.block<3,3>(0,3) = Matrix3d::Zero();
-    X_6x6.block<3,3>(3,0) = -R * r_skew;
+    X_6x6.block<3,3>(3,0) = -R * r_skew;  // -R*r̂ (motion transform)
     X_6x6.block<3,3>(3,3) = R;
     
     // Compute I'a = X * Ia * X^T
@@ -179,12 +179,9 @@ ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::invtformABI(const Artic
     const Matrix3d& R = static_cast<const Eigen::Matrix3d &>(rotation);
     Matrix3d r_skew = skew(translation);  // r̂ = skew(t)
     
-    // Symmetrize I and M from LowerTriangular storage
-    Matrix3d I_full = Inertia.getFullMatrix();
-    I_full = 0.5 * (I_full + I_full.transpose());
-    
-    Matrix3d M_full = M.getFullMatrix();
-    M_full = 0.5 * (M_full + M_full.transpose());
+    // Get symmetric matrices from LowerTriangular storage
+    Matrix3d I_full = Inertia.getSymmetricMatrix();
+    Matrix3d M_full = M.getSymmetricMatrix();
     
     // Build 6x6 articulated body inertia matrix
     MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
@@ -197,7 +194,7 @@ ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::invtformABI(const Artic
     MatrixXd X_inv_6x6 = MatrixXd::Zero(6, 6);
     X_inv_6x6.block<3,3>(0,0) = R.transpose();
     X_inv_6x6.block<3,3>(0,3) = Matrix3d::Zero();
-    X_inv_6x6.block<3,3>(3,0) = r_skew * R.transpose();
+    X_inv_6x6.block<3,3>(3,0) = r_skew * R.transpose();  // r̂*R^T
     X_inv_6x6.block<3,3>(3,3) = R.transpose();
     
     // Compute I' = X^{-1} * Ia * X^{-T}
@@ -220,18 +217,21 @@ ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::invtformABI(const Artic
 PluckerTransform PluckerTransform::inverse() const
 {
     // X = [R, 0; -R[t]x, R]
-    // return X^-1 = plux([R^T, -Rx])
-
+    // X^{-1} = [R^T, 0; [t]x*R^T, R^T] = [R^T, 0; -R^T*[-R*t]x, R^T]
+    // So the inverse has: R_inv = R^T, t_inv = -R*t (not -R^T*t!)
+    
+    const Matrix3d& R = static_cast<const Matrix3d &>(rotation);
     Rotation invRotation = rotation.transpose();
-    Vector3d invTranslation = -invRotation * translation;
+    Vector3d invTranslation = -R * translation;  // -R*t, not -R^T*t
     return PluckerTransform(invRotation, invTranslation);
 }
 
-auto PluckerTransform::multiply(const PluckerTransform &X) const
+PluckerTransform PluckerTransform::multiply(const PluckerTransform &X) const
 {
     // X1 = [R1, 0; -R1[t1]x, R1]
     // X2 = [R2, 0; -R2[t2]x, R2]
-    // X1 * X2 = [R1R2, 0; -R1R2[t2]x + R1[t1]x, R1R2]
+    // X1 * X2 (apply X2 then X1): R = R1*R2, t = t2 + R2^T*t1
+    // This ensures: (X1*X2)*v = X1*(X2*v)
 
     // TODO: how to ensure product to 2 rotation matrices is still a rotation matrix upto finite precision?
     Rotation newRotation = rotation * X.rotation;
