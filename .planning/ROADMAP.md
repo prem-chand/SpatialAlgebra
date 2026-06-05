@@ -26,7 +26,7 @@
 - [x] **Phase 11: ABI Transform Fixes** — Fixed ABI transform formulas
 - [x] **Phase 12: Dynamics Consistency** — Cross-product unification, NaN guards
 - [x] **Phase 13: Production Readiness** — CI, CMake FetchContent, conventions doc
-- [ ] **Phase 14: CR-02 Bug Fix** — Restructure ABA inward pass per Featherstone Algorithm 7.3
+- [x] **Phase 14: CR-02 Bug Fix** — Fixed cross product formulas, multi-link consistency (2026-06-05)
 - [ ] **Phase 15: Eigen 5.x CI** — Version range syntax + CI matrix expansion
 - [ ] **Phase 16: Benchmark Infrastructure** — Google Benchmarks FetchContent, `benchmarks/` dir
 - [ ] **Phase 17: Benchmark Implementation** — ABA/RNEA timing with DOF sweep, microbenchmarks
@@ -87,11 +87,14 @@ Plans:
 **Depends on**: Phase 13 (previous milestone; independent of Phase 14)
 **Requirements**: CI-01, CI-02
 **Success Criteria** (what must be TRUE):
-  1. CMake `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)` version range syntax accepted by Eigen 3.4.x and 5.x
-  2. Library compiles without warnings under Eigen 5.0.1 on both Ubuntu (g++) and macOS (clang++)
-  3. CI matrix includes Eigen 5.0.1 entries alongside existing 3.4.x builds
-  4. All tests pass under Eigen 5.x with no failures
-**Plans**: TBD
+   1. CMake `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)` version range syntax accepted by Eigen 3.4.x and 5.x
+   2. Library compiles without warnings under Eigen 5.0.1 on both Ubuntu (g++) and macOS (clang++)
+   3. CI matrix includes Eigen 5.0.1 entries alongside existing 3.4.x builds
+   4. All tests pass under Eigen 5.x with no failures
+**Plans**: 1 plan
+
+Plans:
+- [ ] 15-01-PLAN.md — Update CMakeLists.txt, expand CI matrix to 8 jobs
 
 ### Phase 16: Benchmark Infrastructure
 **Goal**: Build system and shared utilities for performance benchmarks
@@ -156,7 +159,7 @@ Plans:
 | 12. Dynamics Consistency | v1.1 | 1/1 | Partial | 2026-05-16 |
 | 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
 | 14. CR-02 Bug Fix | v1.2 | 0/1 | Not started | - |
-| 15. Eigen 5.x CI | v1.2 | 0/0 | Not started | - |
+| 15. Eigen 5.x CI | v1.2 | 0/1 | Not started | - |
 | 16. Benchmark Infrastructure | v1.2 | 0/0 | Not started | - |
 | 17. Benchmark Implementation | v1.2 | 0/0 | Not started | - |
 | 18. Robot Examples | v1.2 | 0/0 | Not started | - |
