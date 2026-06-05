@@ -31,9 +31,20 @@ add_subdirectory(core)
 # Each subdirectory CMakeLists.txt sets a PARENT_SCOPE variable
 set(BENCH_SOURCES ${ABA_SOURCES} ${RNEA_SOURCES} ${CORE_SOURCES})
 
+# CMake 4.x requires at least one source per target. If no sources exist yet
+# (Plans 02-03 add them later), use a placeholder to satisfy CMake.
+if(NOT BENCH_SOURCES)
+    set(BENCH_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/_init.cpp)
+endif()
+
 # Unified benchmark executable
 # bench_all.cpp is created in Plan 03 (Wave 2) and added via target_sources()
 add_executable(bench_all ${BENCH_SOURCES})
+
+# bench_all.cpp is excluded from Plan 01's BENCH_SOURCES because the file doesn't
+# exist until Plan 03. Adding it there would cause CMake 4.x "Cannot find source file"
+# errors. Instead, append it via target_sources() after the file exists.
+target_sources(bench_all PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bench_all.cpp)
 
 # Add include path so subdirectory stubs can resolve #include "common/model_factory.h"
 target_include_directories(bench_all PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
