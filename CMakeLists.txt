@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 project(SpatialAlgebra)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 
 # Find Eigen3
-find_package(Eigen3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)
 
 # Find GTest with FetchContent fallback
 find_package(GTest QUIET)

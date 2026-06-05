@@ -9,12 +9,9 @@ cmake --build build
 
 C++17, requires **Eigen3** (`brew install eigen`) and **Google Test** (`brew install googletest`). The library builds to `build/libSpatialAlgebra.a`.
 
-### Eigen version mismatch
+### Eigen version compatibility
 
-Eigen 5.0.1 installed via Homebrew may fail CMake's `find_package(Eigen3 3.3 REQUIRED)` because Eigen 5.x changed its CMake version-compatibility range. Either:
-
-- Remove the version pin: change `find_package(Eigen3 3.3 REQUIRED NO_MODULE)` → `find_package(Eigen3 REQUIRED NO_MODULE)` in `CMakeLists.txt:13`
-- Or set `-DEigen3_DIR=$(brew --prefix eigen)/share/eigen3/cmake`
+CMakeLists.txt uses `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)` which accepts Eigen 3.4.x through 5.x. Requires CMake 3.19+.
 
 ## Run tests
 
