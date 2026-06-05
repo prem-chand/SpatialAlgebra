@@ -45,6 +45,12 @@ if(ENABLE_COVERAGE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif()
 
+# Build benchmarks (opt-in, default OFF)
+option(SA_BUILD_BENCHMARKS "Build performance benchmarks" OFF)
+if(SA_BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
+endif()
+
 # Build tests
 enable_testing()
 
