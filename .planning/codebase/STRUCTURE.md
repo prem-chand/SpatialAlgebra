@@ -1,270 +1,243 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## Directory Layout
 
 ```
 SpatialAlgebra/
-├── include/               # Public header files (library interface)
+├── include/               # Public headers (13 files)
+│   ├── SpatialAlgebra.h   # Umbrella header (includes all, in order)
 │   ├── SpatialVector.h    # 6D spatial vector base class
-│   ├── MotionVector.h     # Twist type (covariant transforms)
-│   ├── ForceVector.h      # Wrench type (contravariant transforms)
-│   ├── Rotation.h         # 3D rotation (extends Eigen::Matrix3d)
-│   ├── PluckerTransform.h # 6×6 Plücker coordinate transform
-│   ├── RigidBodyInertia.h # Rigid body mass properties (all inline)
-│   ├── ArticulatedBodyInertia.h # Composite inertia for ABA (all inline)
-│   ├── LowerTriangular.h  # Packed lower-triangular matrix storage
+│   ├── MotionVector.h     # Twist (motion) vector
+│   ├── ForceVector.h       # Wrench (force) vector
+│   ├── Rotation.h         # 3D rotation matrix extending Eigen::Matrix3d
+│   ├── LowerTriangular.h  # Packed-storage lower triangular matrix
 │   ├── SpatialUtils.h     # Free functions: skew(), dot(), cross()
-│   ├── SpatialOperations.h # Static utility class wrapper
-│   ├── ForwardDynamics.h  # ABA forward dynamics solver + Link struct
-│   └── InverseDynamics.h  # RNEA inverse dynamics solver + InverseDynamicsLink struct
-│
-├── src/                   # Library source files
+│   ├── SpatialOperations.h # Static utility wrappers
+│   ├── PluckerTransform.h # 6x6 Plücker coordinate transform
+│   ├── RigidBodyInertia.h # Body mass properties
+│   ├── ArticulatedBodyInertia.h # Articulated body inertia [I,H;H^T,M]
+│   ├── ForwardDynamics.h  # Articulated Body Algorithm (ABA)
+│   └── InverseDynamics.h  # Recursive Newton-Euler Algorithm (RNEA)
+├── src/                   # Implementation files (10 files)
 │   ├── SpatialVector.cpp
 │   ├── MotionVector.cpp
 │   ├── ForceVector.cpp
 │   ├── Rotation.cpp
-│   ├── PluckerTransform.cpp
-│   ├── RigidBodyInertia.cpp      # [Stub] All inline in header
-│   ├── ArticulatedBodyInertia.cpp # [Stub] All inline in header
 │   ├── LowerTriangular.cpp
+│   ├── PluckerTransform.cpp
 │   ├── SpatialOperations.cpp
 │   ├── ForwardDynamics.cpp
 │   ├── InverseDynamics.cpp
-│   └── main.cpp                  # Minimal library demo
-│
-├── tests/                 # Test files (GTest + bare assert)
-│   ├── TestSpatialVector.cpp          # 609 lines — SpatialVector, MotionVector, ForceVector
-│   ├── TestPluckerTransform.cpp       # 946 lines — PluckerTransform + RBI + ABI
-│   ├── TestRotation.cpp               # Rotation class
-│   ├── TestLowerTriangular.cpp        # LowerTriangular matrix
-│   ├── TestSpatialUtils.cpp           # Spatial utility functions
-│   ├── TestRigidBodyInertia.cpp       # Rigid body inertia
-│   ├── TestArticulatedBodyInertia.cpp # Articulated body inertia
-│   ├── TestForwardDynamics.cpp        # ABA forward dynamics
-│   ├── TestInverseDynamics.cpp        # RNEA inverse dynamics
-│   ├── TestDynamicsConsistency.cpp    # RNEA↔ABA cross-validation
-│   └── TestInterfaceContracts.md      # Interface documentation (markdown, not compiled)
-│
-├── examples/             # Usage demonstration executables
-│   ├── CMakeLists.txt    # Builds 4 example executables
-│   ├── basic_vectors.cpp # Motion/force vector operations demo
-│   ├── transforms.cpp    # Plücker transform demo
-│   ├── inertia.cpp       # Rigid body inertia demo
-│   └── dynamics.cpp      # Forward dynamics (ABA) demo
-│
-├── robot_dynamics/       # Standalone Python implementation
-│   └── rnea.py           # RNEA using NumPy (not integrated with C++)
-│
-├── build/                # CMake build output (gitignored)
-│   ├── libSpatialAlgebra.a   # Static library
-│   ├── TestSpatialVector     # Test executables
-│   ├── TestPluckerTransform
-│   ├── ...                   # Other test executables
-│   └── example_*             # Example executables
-│
-├── docs/                 # Generated Doxygen documentation
-│   ├── html/             # HTML documentation
-│   └── latex/            # LaTeX documentation
-│
-├── .planning/            # GSD project planning artifacts
-│   ├── codebase/         # Codebase analysis documents (this directory)
-│   ├── phases/           # Phase artifacts
-│   ├── research/         # Research artifacts
-│   ├── PROJECT.md        # Project definition
-│   ├── ROADMAP.md        # Milestone plans
-│   ├── REQUIREMENTS.md   # Requirements tracking
-│   ├── STATE.md          # Current milestone state
-│   └── config.json       # GSD configuration
-│
-├── .vscode/              # VSCode configuration
-│   └── c_cpp_properties.json  # IntelliSense includes for Eigen3
-│
-├── .github/              # GitHub configuration
-│
-├── CMakeLists.txt        # Root build configuration
-├── Doxyfile              # Doxygen documentation config
-├── Doxyfile.bak          # Doxygen config backup
-├── AGENTS.md             # Agent instructions for AI tools
-├── REVIEW.md             # Code review checklist/documentation
-├── v1.0-VERIFICATION.md  # v1.0 milestone verification
-├── LICENSE               # License file
-└── README.md             # Project readme
+│   └── main.cpp           # Demo usage
+├── tests/                 # Test files (13 files)
+│   ├── TestSpatialVector.cpp
+│   ├── TestPluckerTransform.cpp
+│   ├── TestRotation.cpp
+│   ├── TestLowerTriangular.cpp
+│   ├── TestSpatialUtils.cpp
+│   ├── TestRigidBodyInertia.cpp
+│   ├── TestArticulatedBodyInertia.cpp
+│   ├── TestForwardDynamics.cpp
+│   ├── TestInverseDynamics.cpp
+│   ├── TestDynamicsConsistency.cpp
+│   ├── TestSpatialOperations.cpp
+│   ├── compile_smoke_test.cpp
+│   └── TestInterfaceContracts.md  # Interface contract documentation
+├── examples/              # Usage examples (5 files)
+│   ├── basic_vectors.cpp  # MotionVector / ForceVector operations
+│   ├── transforms.cpp     # Plücker transform demonstration
+│   ├── inertia.cpp        # Rigid body inertia operations
+│   ├── dynamics.cpp       # Forward dynamics (ABA) demonstration
+│   └── CMakeLists.txt     # Example build targets
+├── robot_dynamics/        # Python implementation
+│   └── rnea.py            # Standalone RNEA using NumPy (not integrated)
+├── eigen-5.0.1/           # Vendored Eigen5 (alternative build)
+├── docs/                  # Generated documentation
+│   ├── html/              # Doxygen HTML output
+│   └── latex/             # Doxygen LaTeX output
+├── .planning/             # GSD planning artifacts
+│   ├── codebase/          # Codebase maps (this file)
+│   ├── research/          # Research documents
+│   ├── phases/            # Phase plans and summaries
+│   ├── milestones/        # Milestone artifacts
+│   ├── ROADMAP.md
+│   ├── PROJECT.md
+│   ├── REQUIREMENTS.md
+│   └── STATE.md
+├── .vscode/               # VS Code configuration
+│   ├── c_cpp_properties.json  # IntelliSense config (Eigen3 path)
+│   └── settings.json
+├── build/                 # Default build directory
+├── build-eigen5/          # Eigen5 alternative build
+├── CMakeLists.txt         # Root CMake build configuration
+├── Doxyfile               # Doxygen configuration (1.12.0)
+├── MATERIAL_CONVENTIONS.md # Mathematical conventions document
+├── CLAUDE.md              # Claude agent instructions
+├── AGENTS.md              # Agent instructions (build/test/arch)
+├── README.md              # Project README
+├── LICENSE                # License file
+└── .gitignore
 ```
 
 ## Directory Purposes
 
 **`include/`:**
-- Purpose: Public library API — all headers users must include
-- Contains: 12 header files, one per class/module
-- Key files: `SpatialVector.h:68` (base class), `PluckerTransform.h:77` (transform), `LowerTriangular.h:75` (packed matrix), `ForwardDynamics.h:134` (ABA solver)
-- No umbrella header: users include individual headers as needed
+- Purpose: All public API headers. Single-file-per-class, with `SpatialAlgebra.h` umbrella header.
+- Contains: Header declarations with full Doxygen documentation. All classes in `namespace SpatialAlgebra`.
+- Key files: `SpatialAlgebra.h` (umbrella), `SpatialVector.h` (foundation), `ForwardDynamics.h` (ABA), `InverseDynamics.h` (RNEA)
 
 **`src/`:**
-- Purpose: Library implementation — compiled into `libSpatialAlgebra.a`
-- Contains: 12 `.cpp` files matching headers + `main.cpp` demo
-- Key files: `PluckerTransform.cpp:250` lines (most complex implementation), `ForwardDynamics.cpp:158` lines (ABA algorithm), `InverseDynamics.cpp:141` lines (RNEA algorithm)
-- Note: `RigidBodyInertia.cpp` and `ArticulatedBodyInertia.cpp` are empty stubs
+- Purpose: Implementation files for headers. One `.cpp` per header.
+- Contains: Method definitions, algorithm implementations, demo `main.cpp`.
+- Key files: `PluckerTransform.cpp` (most complex ~252 lines), `ForwardDynamics.cpp` (ABA ~210 lines), `InverseDynamics.cpp` (RNEA ~137 lines)
 
 **`tests/`:**
-- Purpose: Unit tests and property-based tests
-- Contains: 9 GTest test executables + 1 markdown contract doc
-- Key files: `TestPluckerTransform.cpp:946` lines (most comprehensive tests), `TestSpatialVector.cpp:609` lines, `TestForwardDynamics.cpp`, `TestInverseDynamics.cpp`
-- 2 test executables registered in `CMakeLists.txt` (`TestSpatialVector`, `TestPluckerTransform` at lines 30-31); 7 more added later (lines 67-132)
-- All test files have their own `main()` calling `RUN_ALL_TESTS()`
+- Purpose: GTest test suites. One test file per class/component, plus cross-cutting tests.
+- Contains: GTest `TEST()` / `TEST_F()` test cases for all components.
+- Key files: `TestPluckerTransform.cpp` (most comprehensive, ~940 lines), `TestSpatialVector.cpp` (~609 lines), `TestDynamicsConsistency.cpp` (cross-check)
 
 **`examples/`:**
-- Purpose: Usage demonstrations for all major library features
-- Contains: 4 example source files, each produces its own executable
-- Key files: `basic_vectors.cpp`, `transforms.cpp`, `inertia.cpp`, `dynamics.cpp`
-- Built by `examples/CMakeLists.txt` which links each executable to `SpatialAlgebra` library
+- Purpose: Runnable usage demonstrations, built as separate executables.
+- Contains: Self-contained `main()` functions demonstrating library usage with descriptive output.
+- Key files: `dynamics.cpp` (ABA workflow), `transforms.cpp` (Plücker transform chain)
 
-**`build/`:**
-- Purpose: CMake build output directory
-- Contains: Static library + test/example executables (gitignored)
-- Build command: `cmake -B build && cmake --build build`
-- Test command: `cmake --build build && cd build && ctest --output-on-failure`
+**`eigen-5.0.1/`:**
+- Purpose: Vendored copy of Eigen 5.0.1 for alternative build configuration (`build-eigen5/`).
+- Contains: Full Eigen 5.0.1 source distribution.
+- Committed: Yes (vendored dependency).
 
 **`robot_dynamics/`:**
-- Purpose: Standalone Python implementation
-- Contains: `rnea.py` — RNEA using NumPy with `RigidBodyParams` dataclass and `MultiBodySystem` class
-- Not integrated with C++ library
+- Purpose: Python reference implementation for algorithm validation.
+- Contains: NumPy-based RNEA (`rnea.py`). Not integrated with C++ library.
+- Committed: Yes.
+
+**`docs/`:**
+- Purpose: Generated documentation artifacts (not hand-edited).
+- Contains: Doxygen HTML and LaTeX output. Regenerated via `doxygen Doxyfile`.
+- Generated: Yes. Committed: Yes.
 
 **`.planning/`:**
-- Purpose: GSD project management artifacts
-- Contains: Codebase analysis, milestone context, phase plans, requirements, state tracking
-- Key files: `STATE.md` (current milestone status), `PROJECT.md` (project definition), `ROADMAP.md` (planned phases/features)
+- Purpose: GSD planning and project management artifacts.
+- Contains: Codebase maps, phase plans, milestones, research notes, state tracking.
+- Generated: Planning artifacts. Committed: Yes (by GSD conventions).
+
+**`build/`, `build-eigen5/`:**
+- Purpose: CMake build output directories.
+- Contains: Compiled static library, test executables, example executables, CMake cache.
+- Generated: Yes. Not committed (in `.gitignore`).
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main.cpp`: Minimal library demo (creates vectors, transforms, inertias). Built as part of `SpatialAlgebra` library, not a separate executable.
-- `tests/TestSpatialVector.cpp:605-608`: `main()` running GTest for vector tests
-- `tests/TestPluckerTransform.cpp:942-945`: `main()` running GTest for transform tests
-- Every test file (`tests/Test*.cpp`) has its own `main()` with `RUN_ALL_TESTS()`
-- `examples/basic_vectors.cpp:24`: Example entry point
-- `examples/transforms.cpp:30`: Example entry point
-- `examples/inertia.cpp:30`: Example entry point
-- `examples/dynamics.cpp:30`: Example entry point
+- `src/main.cpp`: Demo entry point (shows vectors, transforms, inertia)
+- `examples/basic_vectors.cpp`: Vector operations example
+- `examples/transforms.cpp`: Plücker transform example
+- `examples/inertia.cpp`: Inertia operations example
+- `examples/dynamics.cpp`: Forward dynamics (ABA) example
 
 **Configuration:**
-- `CMakeLists.txt`: Root build configuration — C++17, Eigen3, GTest, library, tests, examples (135 lines)
-- `examples/CMakeLists.txt`: Example build configuration (23 lines)
-- `Doxyfile`: Doxygen documentation generation configuration
-- `.vscode/c_cpp_properties.json`: VSCode IntelliSense includes path for Eigen3
-- `AGENTS.md`: Agent instructions for AI tooling (C++17 build, test commands, architecture overview, coding conventions)
+- `CMakeLists.txt`: Root build configuration (C++17, Eigen3, GTest, coverage options)
+- `Doxyfile`: Doxygen 1.12.0 documentation generation
+- `.vscode/c_cpp_properties.json`: VS Code IntelliSense (Eigen 3.4.0 include path)
+- `.vscode/settings.json`: VS Code editor settings
 
 **Core Logic:**
-- `include/SpatialVector.h`: Base class definition (177 lines of header, 65 lines impl)
-- `include/MotionVector.h`: Motion vector specialization (161 lines header, 55 lines impl)
-- `include/ForceVector.h`: Force vector specialization (164 lines header, 60 lines impl)
-- `include/PluckerTransform.h`: Plücker transform (211 lines header, 250 lines impl) — most complex class
-- `include/LowerTriangular.h`: Packed matrix (571 lines header, 55 lines impl) — largest header
-- `include/Rotation.h`: 3D rotation (177 lines header, 71 lines impl)
-- `include/ForwardDynamics.h`: ABA solver (191 lines header, 158 lines impl)
-- `include/InverseDynamics.h`: RNEA solver (175 lines header, 141 lines impl)
+- `include/SpatialVector.h` + `src/SpatialVector.cpp`: Spatial vector base (75 lines impl)
+- `include/PluckerTransform.h` + `src/PluckerTransform.cpp`: Transform logic (252 lines)
+- `include/ForwardDynamics.h` + `src/ForwardDynamics.cpp`: ABA solver (210 lines)
+- `include/InverseDynamics.h` + `src/InverseDynamics.cpp`: RNEA solver (137 lines)
+- `include/RigidBodyInertia.h`: Fully inline inertia (122 lines)
+- `include/ArticulatedBodyInertia.h`: Fully inline articulated inertia (220 lines)
+- `include/LowerTriangular.h` + `src/LowerTriangular.cpp`: Packed storage matrix (55 lines impl)
+- `include/SpatialUtils.h`: Free function utilities, all inline (129 lines)
 
 **Testing:**
-- `tests/TestSpatialVector.cpp`: 609 lines — comprehensive vector/motion/force tests
-- `tests/TestPluckerTransform.cpp`: 946 lines — transform/RBI/ABI tests with property tests
-- Other test files exist but vary in implementation status
+- `tests/TestSpatialVector.cpp`: 11 tests for SpatialVector/MotionVector/ForceVector (609 lines)
+- `tests/TestPluckerTransform.cpp`: ~33 tests across 7 test suites (940 lines)
+- `tests/TestRotation.cpp`: Rotation tests
+- `tests/TestLowerTriangular.cpp`: LowerTriangular tests
+- `tests/TestSpatialUtils.cpp`: SpatialUtils free function tests
+- `tests/TestRigidBodyInertia.cpp`: RigidBodyInertia tests
+- `tests/TestArticulatedBodyInertia.cpp`: ArticulatedBodyInertia tests
+- `tests/TestForwardDynamics.cpp`: ABA tests
+- `tests/TestInverseDynamics.cpp`: RNEA tests
+- `tests/TestDynamicsConsistency.cpp`: Cross-validation between inverse and forward dynamics
+- `tests/TestSpatialOperations.cpp`: SpatialOperations tests
+- `tests/compile_smoke_test.cpp`: Simple compilation verification
+
+**Documentation:**
+- `AGENTS.md`: Agent instructions (build, test, arch, conventions)
+- `CLAUDE.md`: Claude-specific configuration
+- `MATHEMATICAL_CONVENTIONS.md`: Mathematical notation reference
+- `README.md`: Project overview and setup instructions
+- `REVIEW.md`: Review documentation
+- `v1.0-VERIFICATION.md`: v1.0 verification checklist
+
+**Dependencies:**
+- Eigen 3.3+ (system): `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)` in `CMakeLists.txt:12`
+- Google Test (system or FetchContent fallback): `find_package(GTest QUIET)` in `CMakeLists.txt:15-24`
+- Eigen 5.0.1 (vendored): `eigen-5.0.1/` for alternative build
 
 ## Naming Conventions
 
 **Files:**
-- PascalCase with descriptive names: `SpatialVector.h`, `PluckerTransform.cpp`, `ForwardDynamics.h`
+- PascalCase for classes: `SpatialVector.h`, `PluckerTransform.h`, `ForwardDynamics.h`
 - Test files prefixed with `Test`: `TestSpatialVector.cpp`, `TestPluckerTransform.cpp`
-- Example files lowercase with underscores: `basic_vectors.cpp`, `transforms.cpp`
+- Implementation files match header names: `SpatialVector.cpp` implements `SpatialVector.h`
+- Purpose-prefixed in `src/`: `main.cpp` (demo), project classes match headers
+- Examples use lowercase descriptive names: `basic_vectors.cpp`, `transforms.cpp`
 
-**Classes:**
-- PascalCase: `SpatialVector`, `MotionVector`, `ForceVector`, `PluckerTransform`, `RigidBodyInertia`, `ArticulatedBodyInertia`, `LowerTriangular`, `ForwardDynamics`, `InverseDynamics`, `SpatialOperations`, `Rotation`
-- Structs also PascalCase: `Link`, `InverseDynamicsLink`, `RigidBodyParams` (Python)
-
-**Type Aliases (at namespace scope):**
-- Lowercase abbreviations for concise notation: `mv` = MotionVector, `fv` = ForceVector, `plux` = PluckerTransform, `rbi` = RigidBodyInertia, `abi` = ArticulatedBodyInertia, `lt` = LowerTriangular
-
-**Methods:**
-- camelCase verbs: `transformMotion`, `crossProductMotion`, `getAngular`, `setFromAngleAxis`, `computeAccelerations`, `inverseTransformMotion`
-- Getters prefixed with `get`: `getAngular()`, `getLinear()`, `getMass()`, `getCom()`, `getInertiaMatrixLT()`
-- Operators as standard C++: `operator+`, `operator-`, `operator*`, `operator()`
-
-**Members:**
-- Private: lowercase (e.g., `angular`, `linear`, `rotation`, `translation`, `mass`, `com`, `Inertia`, `H`, `M`, `data`, `n`)
-- Note: `ArticulatedBodyInertia` uses PascalCase members (`Inertia`, `H`, `M`) — inconsistent with other classes
-
-**Namespaces:**
-- `SpatialAlgebra` — single namespace for entire library
-
-**Include Guards:**
-- `#ifndef`/`#define`/`#endif` matching filename: `SPATIAL_VECTOR_H`, `PLUCKER_TRANSFORM_H`, `FORWARD_DYNAMICS_H`
-- Exception: `LowerTriangular.h` uses `#pragma once`
-
-**Source directory names:**
-- All lowercase: `include/`, `src/`, `tests/`, `examples/`, `docs/`, `build/`, `robot_dynamics/`
+**Directories:**
+- Lowercase singular: `include/`, `src/`, `tests/`, `examples/`, `docs/`, `build/`
+- `robot_dynamics/`: snake_case for Python package compatibility
+- `eigen-5.0.1/`: versioned vendor directory
 
 ## Where to Add New Code
 
-**New Feature (new class):**
-- Header: `include/NewClass.h`
-- Source: `src/NewClass.cpp`
-- Tests: `tests/TestNewClass.cpp`
-- CMake: Add test executable in `CMakeLists.txt` following pattern (lines 30-31 or 67-132)
-- Type alias: Add `using nc = NewClass;` at namespace scope in header
+**New Feature / Class:**
+- Header declaration: `include/<ClassName>.h`
+- Implementation: `src/<ClassName>.cpp`
+- Tests: `tests/Test<ClassName>.cpp`
+- Example usage: `examples/<feature_name>.cpp`
+- Register in `CMakeLists.txt`:
+  - Source files are auto-globbed from `src/*.cpp` (line 27), but stubs are explicitly removed (lines 30-33)
+  - Test executables must be added manually with `add_executable()` + `target_link_libraries()` + `add_test()`
+  - Examples registered in `examples/CMakeLists.txt`
 
-**New Method (existing class):**
-- Declare in the matching header file (`include/ClassName.h`) inside `namespace SpatialAlgebra`
-- Define in the matching source file (`src/ClassName.cpp`) or inline in header for trivial implementations
-- Add Doxygen `@brief`, `@details`, `@param`, `@return` comments
+**New Utility / Helper:**
+- If a free function, add to `include/SpatialUtils.h` (all inline) or create a new header if group is significant
+- If a static method class, add to existing or new header
 
-**New Algorithm (dynamics variant):**
-- Header: `include/NewAlgorithm.h` (model after `include/ForwardDynamics.h`)
-- Source: `src/NewAlgorithm.cpp` (model after `src/ForwardDynamics.cpp`)
-- Tests: `tests/TestNewAlgorithm.cpp` with GTest
-- Register in `CMakeLists.txt` following the pattern at lines 94-102 (or any line range following the established add_executable → target_link_libraries → add_test sequence)
+**New dynamics algorithm:**
+- Follow the pattern of `ForwardDynamics` / `InverseDynamics`:
+  - Header: define a `struct Link` for the kinematic chain
+  - Header: define a solver class with `links` vector and compute method
+  - Source: implement outward/inward pass methods
+  - Tests: validate against known results or cross-validate with existing algorithm
 
-**New Example:**
-- Source: `examples/new_example.cpp`
-- Build: Add to `examples/CMakeLists.txt` following existing pattern (line 10-12)
-- Link against `SpatialAlgebra` and `Eigen3::Eigen`
-
-**New Test:**
-- Source: `tests/TestNewFeature.cpp` with `main()` calling `RUN_ALL_TESTS()`
-- CMake: Add in root `CMakeLists.txt` following pattern:
-  ```
-  add_executable(TestNewFeature tests/TestNewFeature.cpp)
-  target_link_libraries(TestNewFeature SpatialAlgebra GTest::GTest GTest::Main)
-  add_test(NAME TestNewFeature COMMAND TestNewFeature)
-  ```
-- Use GTest `TEST()` macros with `EXPECT_DOUBLE_EQ` / `EXPECT_NEAR`
-
-**New Utility Function:**
-- If closely related to existing class: add as method in that class's header/source
-- If general spatial algebra utility: add as free function in `SpatialUtils.h` (inline in header)
-- If static utility wrapper: add as static method in `SpatialOperations.h/cpp`
+**Type aliases:**
+- Add namespace-level aliases in the class header: `using mv = MotionVector`, `using plux = PluckerTransform`
+- Keep aliases short (2-4 characters), lowercase, abbreviations of full names
 
 ## Special Directories
 
-**`build/`:**
-- Purpose: Build output directory
-- Generated: Yes (by CMake)
-- Committed: No (gitignored)
+**`eigen-5.0.1/`:**
+- Purpose: Vendored Eigen 5.0.1 for independent build verification
+- Generated: No (downloaded/distributed dependency)
+- Committed: Yes
 
 **`docs/`:**
-- Purpose: Generated Doxygen documentation
-- Generated: Yes (`doxygen Doxyfile`)
-- Committed: Yes (HTML and LaTeX output)
-
-**`.planning/`:**
-- Purpose: GSD project planning artifacts
-- Generated: No (manually created by developers/AI agents)
+- Purpose: Generated Doxygen HTML and LaTeX documentation
+- Generated: Yes (by `doxygen Doxyfile`)
 - Committed: Yes
 
-**`robot_dynamics/`:**
-- Purpose: Standalone Python implementation, not part of C++ build
-- Generated: No
-- Committed: Yes
+**`build/`, `build-eigen5/`:**
+- Purpose: CMake build artifacts (static library, test executables, examples)
+- Generated: Yes
+- Committed: No (in `.gitignore`)
 
 ---
 
-*Structure analysis: 2026-05-17*
+*Structure analysis: 2026-06-05*

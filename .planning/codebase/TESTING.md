@@ -1,288 +1,363 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## Test Framework
 
 **Runner:**
-- Google Test (GTest) — `gtest` library
-- Version: As provided by Homebrew (`brew install googletest`)
-- Config: Test executables defined in `CMakeLists.txt` (lines 30-132)
-- CTest integration via `enable_testing()` (line 27) and `add_test()` calls (lines 76-132)
-
-**Build Commands:**
-```bash
-cmake -B build                           # Configure
-cmake --build build                      # Build tests
-cd build && ctest --output-on-failure    # Run all registered tests
-# Run individual test executables:
-build/TestSpatialVector
-build/TestPluckerTransform
-build/TestRotation
-```
+- Google Test (GTest) — version release-1.12.1 (via FetchContent fallback)
+- Config: Built-in CMake `enable_testing()` + `add_test()` commands in `CMakeLists.txt`
+- System or Homebrew GTest is tried first via `find_package(GTest QUIET)`, fallback to FetchContent
 
 **Assertion Library:**
-- GTest built-in: `EXPECT_DOUBLE_EQ`, `EXPECT_NEAR`, `EXPECT_THROW`, `EXPECT_TRUE`, `EXPECT_GT`, `EXPECT_FALSE`, `EXPECT_EQ`
-- No external assertion library (e.g., Catch2, doctest not used)
+- GTest built-in macros: `EXPECT_DOUBLE_EQ`, `EXPECT_NEAR`, `EXPECT_EQ`, `EXPECT_TRUE`, `EXPECT_FALSE`, `ASSERT_NEAR`, `EXPECT_THROW`
+- No additional assertion libraries (no Catch2, no Boost.Test)
+
+**Run Commands:**
+```bash
+cmake --build build && cd build && ctest --output-on-failure    # Run all tests
+cmake --build build && cd build && ctest -R TestRotation        # Run a single test suite
+cd build && ./TestSpatialVector                                  # Run a single test executable directly
+cd build && ./TestForwardDynamics --gtest_filter=*TwoLink*      # GTest filter pattern
+cd build && ./TestArticulatedBodyInertia --gtest_list_tests     # List test names
+```
+
+**Coverage:**
+```bash
+cmake -B build -DENABLE_COVERAGE=ON
+cmake --build build
+cd build && ctest --output-on-failure
+# then use gcov or lcov to generate coverage reports
+```
 
 ## Test File Organization
 
-**Location:**
-- All test files in `tests/` directory:
-```
-tests/
-├── TestSpatialVector.cpp       (609 lines)
-├── TestPluckerTransform.cpp    (946 lines)
-├── TestRotation.cpp            (413 lines)
-├── TestLowerTriangular.cpp     (450 lines)
-├── TestSpatialUtils.cpp        (335 lines)
-├── TestRigidBodyInertia.cpp    (376 lines)
-├── TestArticulatedBodyInertia.cpp (531 lines)
-├── TestForwardDynamics.cpp     (253 lines)
-├── TestInverseDynamics.cpp     (192 lines)
-├── TestDynamicsConsistency.cpp (266 lines)
-├── TestSpatialOperations.cpp   (320 lines)
-```
+**Location:** All test files in `tests/` directory — co-located at project level, not with source.
 
 **Naming:**
-- `Test<ClassName>.cpp` for each class-specific test suite
-- `TestDynamicsConsistency.cpp` for cross-component integration tests
-- `TestSpatialUtils.cpp` covers both `SpatialUtils.h` free functions and `SpatialOperations.h`
+- Files prefixed with `Test` + class name: `TestSpatialVector.cpp`, `TestPluckerTransform.cpp`, `TestRotation.cpp`, `TestLowerTriangular.cpp`, `TestRigidBodyInertia.cpp`, `TestArticulatedBodyInertia.cpp`, `TestSpatialUtils.cpp`, `TestSpatialOperations.cpp`, `TestInverseDynamics.cpp`, `TestForwardDynamics.cpp`, `TestDynamicsConsistency.cpp`
+- Each file corresponds to one class or one module
 
-**Structure within each test file:**
-1. Includes (header under test, `<gtest/gtest.h>`, Eigen headers, optional standard headers)
-2. `using namespace` declarations
-3. Tolerance constant definition (typically `EPSILON` or `TOLERANCE`)
-4. Section-separator comments (`// =====` style)
-5. Test cases (Doxygen-documented TEST blocks)
-6. `main()` function with `InitGoogleTest` + `RUN_ALL_TESTS`
+**Executable Registration:**
+- Each test file maps to a separate CMake executable target defined in `CMakeLists.txt`
+- Each target links against `SpatialAlgebra`, `GTest::GTest`, and `GTest::Main`
+- Each target has a corresponding `add_test()` registration for `ctest`
+
+**Registered Test Executables (from `CMakeLists.txt`):**
+| Executable | Lines in CMake |
+|---|---|
+| `TestSpatialVector` | `add_executable` at line 52 |
+| `TestPluckerTransform` | line 53 |
+| `TestRotation` | line 54 |
+| `TestLowerTriangular` | line 55 |
+| `TestSpatialUtils` | line 56 |
+| `TestRigidBodyInertia` | line 89 |
+| `TestArticulatedBodyInertia` | line 106 |
+| `TestForwardDynamics` | line 116 |
+| `TestSpatialOperations` | line 126 |
+| `TestInverseDynamics` | line 136 |
+| `TestDynamicsConsistency` | line 146 |
+
+**Build Artifacts (from `build/`):**
+```
+TestArticulatedBodyInertia      (1.2 MB)
+TestDynamicsConsistency         (3.2 MB)
+TestForwardDynamics             (3.2 MB)
+TestInverseDynamics             (2.7 MB)
+TestLowerTriangular             (790 KB)
+TestPluckerTransform            (6.2 MB)
+TestRigidBodyInertia            (919 KB)
+TestRotation                    (1.2 MB)
+TestSpatialOperations           (2.7 MB)
+TestSpatialUtils                (2.6 MB)
+TestSpatialVector               (843 KB)
+```
 
 ## Test Structure
 
 **Suite Organization:**
-- Class-scoped test suites use `TEST(SuiteName, TestName)`:
+
 ```cpp
-TEST(TestSpatialVector, Constructor) { ... }
-TEST(TestSpatialVector, Getters) { ... }
-TEST(TestSpatialVector, Addition) { ... }
-```
-- Functional-group suites use descriptive names:
-```cpp
-TEST(TransformMotionTest, IdentityTransform) { ... }
-TEST(TransformMotionTest, PureRotation) { ... }
-TEST(TransformMotionTest, Property_Linearity) { ... }
+// ============================================================================
+// [Category Name] Tests
+// ============================================================================
+
+/**
+ * @brief Test [what is being tested]
+ * @details [Scenario description]
+ */
+TEST(TestSuiteName, TestCaseName)
+{
+    // [optional: Arrange]
+    Vector3d angular(1.0, 2.0, 3.0);
+    Vector3d linear(4.0, 5.0, 6.0);
+
+    // [Act]
+    SpatialVector v(angular, linear);
+
+    // [Assert]
+    EXPECT_DOUBLE_EQ(v.getAngular()[0], 1.0);
+    EXPECT_DOUBLE_EQ(v.getAngular()[1], 2.0);
+    EXPECT_DOUBLE_EQ(v.getAngular()[2], 3.0);
+}
 ```
 
-**Test Fixture Classes** (used in 4 of 11 test files):
+**Suite Name Patterns (observed):**
+- `TestSpatialVector` — tests for `SpatialVector` class (no fixture)
+- `TestMotionVector` — tests for `MotionVector` class (no fixture)
+- `TestForceVector` — tests for `ForceVector` class (no fixture)
+- `TransformMotionTest` — tests for `transformMotion` method (`TestPluckerTransform.cpp`)
+- `TransformForceTest` — tests for `transformForce` method (`TestPluckerTransform.cpp`)
+- `PluckerPropertyTest` — property-based tests for Plücker transforms (`TestPluckerTransform.cpp`)
+- `RotationTest` — tests for `Rotation` class (`TestRotation.cpp`)
+- `LowerTriangularTest` — tests for `LowerTriangular` class (`TestLowerTriangular.cpp`)
+- `RigidBodyInertiaTest` — tests for `RigidBodyInertia` class (`TestRigidBodyInertia.cpp`)
+- `ArticulatedBodyInertiaTest` — tests for `ArticulatedBodyInertia` class (`TestArticulatedBodyInertia.cpp`)
+- `InverseDynamicsTest` — tests for `InverseDynamics` (`TestInverseDynamics.cpp`)
+- `ForwardDynamicsTest` — tests for `ForwardDynamics` (`TestForwardDynamics.cpp`)
+- `ConsistencyTest` — round-trip tests (`TestDynamicsConsistency.cpp`)
+- `TestSkew`, `TestDot`, `TestCross` — fixture-based test suites (`TestSpatialUtils.cpp`)
+- `TestCrossProductMotion`, `TestCrossProductForce`, `TestTransformInertia` — fixture-based test suites (`TestSpatialOperations.cpp`)
+
+**Test Case Name Patterns:**
+- VerbNoun: `Constructor`, `Getters`, `Addition`, `Subtraction`, `DotProduct`, `CrossProductAntiCommutativity`
+- Scenario-based: `CrossMotionWithLinearComponents`, `SingleLinkPendulum`, `TwoLinkSerialChain`
+- Property-based: `Property_SkewSymmetric`, `Property_UnitDeterminant`, `Property_Orthogonality`
+- Requirement-referencing: `PackedStorageSize` (referencing LTR-01), `PackedStorageIndexing` (LTR-01), `UpperTriangularReturnsZero` (LTR-01)
+
+**Main Function:**
+- `TestSpatialVector.cpp` defines its own `main()`:
+  ```cpp
+  int main(int argc, char **argv)
+  {
+      ::testing::InitGoogleTest(&argc, argv);
+      return RUN_ALL_TESTS();
+  }
+  ```
+- All other test files rely on `GTest::Main` linkage (no explicit `main()`)
+
+## Assertion Styles
+
+**Patterns used:**
+
+- `EXPECT_DOUBLE_EQ(a, b)` — preferred for exact floating-point equality (zero-error cases)
+- `EXPECT_NEAR(a, b, tolerance)` — used with `EPSILON` or `TOLERANCE` constants for computed values
+- `ASSERT_NEAR` — used where subsequent assertions depend on the result (less common)
+- `EXPECT_TRUE(cond)` / `EXPECT_FALSE(cond)` — boolean conditions
+- `EXPECT_EQ(a, b)` — integer equality
+- `EXPECT_THROW(expr, exception_type)` — exception testing (`TestLowerTriangular.cpp`)
+
+**Floating-Point Tolerance Constants:**
+- `constexpr double EPSILON = 1e-10;` — used in `TestPluckerTransform.cpp`, `TestSpatialOperations.cpp`, `TestInverseDynamics.cpp`, `TestForwardDynamics.cpp`, `TestDynamicsConsistency.cpp`
+- `const double TOLERANCE = 1e-10;` — used in `TestRotation.cpp`, `TestLowerTriangular.cpp`, `TestRigidBodyInertia.cpp`, `TestArticulatedBodyInertia.cpp`
+- `constexpr double EPSILON = 1e-8;` — slightly looser tolerance in `TestDynamicsConsistency.cpp` (line 8)
+- Both `double` and `constexpr double` used inconsistently — no project-wide standard
+
+## Test Data / Fixtures
+
+**No Fixture Tests (most common pattern):**
+- Tests use `TEST()` (not `TEST_F()`) and define data inline within each test case
+- Example: `TestSpatialVector.cpp`, `TestPluckerTransform.cpp`, `TestRotation.cpp`, `TestLowerTriangular.cpp`, `TestRigidBodyInertia.cpp`, `TestArticulatedBodyInertia.cpp`
+
+**Fixture Tests (used in `TestSpatialUtils.cpp` and `TestSpatialOperations.cpp`):**
 ```cpp
-class TestCrossProductMotion : public ::testing::Test {
+class TestSkew : public ::testing::Test {
 protected:
     void SetUp() override {}
     void TearDown() override {}
 };
-```
-Then: `TEST_F(TestCrossProductMotion, SimpleRotationVectors) { ... }`
 
-Fixtures are used in these files:
-- `tests/TestPluckerTransform.cpp` — `TestInverse`, `TestMultiply`, `TestPrint`
-- `tests/TestSpatialUtils.cpp` — `TestSkew`, `TestDot`, `TestCross`, `TestSpatialOperations`
-- `tests/TestSpatialOperations.cpp` — `TestCrossProductMotion`, `TestCrossProductForce`, `TestTransformInertia`
-
-**Main Entry Point** (every test file):
-```cpp
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
-```
-
-**Test Categories:**
-- **Constructor tests:** Verify default and parameterized constructors store correct values
-- **Getter tests:** Verify accessors return stored data correctly
-- **Arithmetic tests:** Add, subtract, scale operations with known values
-- **Property tests:** Mathematical invariants (commutativity, anti-commutativity, associativity, distributivity)
-- **Textbook example tests:** Known problems from Featherstone 2008 (e.g., `FeatherstoneExample2_1`, `WrenchExample`)
-- **Edge case tests:** Zero input, identity transform, pure rotation/pure translation
-- **Linearity/proportionality tests:** Double input → double output
-- **Round-trip tests:** Apply transform then inverse returns original
-- **Consistency tests:** Forward dynamics + inverse dynamics consistency (cross-component)
-
-## Floating-Point Tolerance
-
-Throughout the tested codebase, two patterns exist:
-
-**Pattern 1 — `constexpr double EPSILON`** (preferred in newer tests):
-```cpp
-constexpr double EPSILON = 1e-10;
-```
-Used in: `TestPluckerTransform.cpp`, `TestSpatialOperations.cpp`, `TestForwardDynamics.cpp`, `TestInverseDynamics.cpp`, `TestDynamicsConsistency.cpp`
-
-**Pattern 2 — `const double TOLERANCE`** (in older tests):
-```cpp
-const double TOLERANCE = 1e-10;
-```
-Used in: `TestRotation.cpp`, `TestLowerTriangular.cpp`, `TestRigidBodyInertia.cpp`, `TestArticulatedBodyInertia.cpp`
-
-Both patterns use `1e-10`. The `DynamicsConsistency` test uses a looser `1e-8`.
-
-**Assertion Usage:**
-- `EXPECT_DOUBLE_EQ(a, b)` — Exact double equality (used when no computation error, e.g., getter return values)
-- `EXPECT_NEAR(a, b, EPSILON)` — Floating-point approximate equality (preferred for computed results)
-- `EXPECT_THROW(expr, exception_type)` — Exception testing (e.g., `EXPECT_THROW(L(0,1)=5.0, std::invalid_argument)`)
-- `EXPECT_TRUE(condition)` / `EXPECT_FALSE(condition)` — Boolean conditions
-- `EXPECT_GT(a, b)` / `EXPECT_LT(a, b)` / `EXPECT_EQ(a, b)` — Comparison assertions
-- `EXPECT_NE(output.find("Rotation"), std::string::npos)` — String matching (in `TestPluckerTransform.cpp`)
-- `.norm()` comparison for vector results: `EXPECT_NEAR((a - b).norm(), 0.0, EPSILON)`
-
-## Mocking
-
-**Framework:** None used.
-
-**What to Mock:**
-- No mocking framework (Mockito, GMock, etc.) is used or installed
-- No interfaces or abstract classes designed for mocking exist
-- `ForwardDynamics.h` uses `ArticulatedBodyInertia` and `PluckerTransform` directly (no dependency injection)
-
-**What NOT to Mock:**
-- All classes are concrete types with value semantics
-- Tests create real instances with test data
-- Mathematical verification relies on known expected values, not mock expectations
-
-## Fixtures and Factories
-
-**Test Data Pattern:**
-No dedicated test data files or factory functions. Each test creates its own data inline:
-
-```cpp
-TEST(TestSpatialVector, Addition)
-{
-    SpatialVector v1(Vector3d(1.0, 2.0, 3.0), Vector3d(4.0, 5.0, 6.0));
-    SpatialVector v2(Vector3d(2.0, 3.0, 4.0), Vector3d(5.0, 6.0, 7.0));
-    SpatialVector sum = v1 + v2;
-    EXPECT_DOUBLE_EQ(sum.getAngular()[0], 3.0);
+TEST(TestSkew, CreatesSkewSymmetricMatrix) {
+    // Arrange
+    Vector3d v(1.0, 2.0, 3.0);
+    
+    // Act
+    Eigen::Matrix3d S = skew(v);
+    
+    // Assert
+    EXPECT_DOUBLE_EQ(S(0, 0), 0.0);
     // ...
 }
 ```
 
-**Helper Functions** (defined in test file, not in a shared header):
+**Note:** Most fixture classes have empty `SetUp()` / `TearDown()`. Fixtures are used as organizational grouping rather than setup/reuse.
+
+**Test Data:**
+- All test data defined inline within test functions — no external test data files, no JSON fixtures, no YAML configs
+- `TestSpatialOperations.cpp` defines helper functions for creating test matrices:
+  ```cpp
+  LowerTriangular createIdentityInertia() {
+      Eigen::Matrix3d identity = Eigen::Matrix3d::Identity();
+      return LowerTriangular::fromFullMatrix(identity);
+  }
+  
+  LowerTriangular createDiagonalInertia(double value) {
+      Eigen::Matrix3d diagonal = Eigen::Matrix3d::Identity() * value;
+      return LowerTriangular::fromFullMatrix(diagonal);
+  }
+  ```
+
+## Mocking
+
+**No mocking framework used.** No mock objects, no test doubles, no dependency injection patterns.
+
+**Why:** The library is a pure math library with no external dependencies. Classes depend directly on concrete types (Eigen matrices, other SpatialAlgebra classes). There are no interfaces to mock.
+
+**What would benefit from mocking:** If network/database IO were added, or if a plugin architecture were introduced. Currently not applicable.
+
+## Property-Based Tests
+
+Several test files include property-based tests that verify mathematical invariants:
+
 ```cpp
-// TestSpatialOperations.cpp:
-LowerTriangular createIdentityInertia() {
-    Eigen::Matrix3d identity = Eigen::Matrix3d::Identity();
-    return LowerTriangular::fromFullMatrix(identity);
+// Anti-commutativity: a×b = -(b×a)
+TEST(TestMotionVector, CrossProductAntiCommutativity) {
+    MotionVector a(...), b(...);
+    MotionVector a_cross_b = a.crossMotion(b);
+    MotionVector b_cross_a = b.crossMotion(a);
+    MotionVector neg_b_cross_a = b_cross_a * -1.0;
+    EXPECT_DOUBLE_EQ(a_cross_b.getAngular()[0], neg_b_cross_a.getAngular()[0]);
+    // ... all 6 components
 }
 
-LowerTriangular createDiagonalInertia(double value) {
-    Eigen::Matrix3d diagonal = Eigen::Matrix3d::Identity() * value;
-    return LowerTriangular::fromFullMatrix(diagonal);
+// Distributivity: a×(b+c) = a×b + a×c
+TEST(TestMotionVector, CrossProductDistributivity) { ... }
+
+// Scalar multiplication property: (k*a)×b = k*(a×b)
+TEST(TestMotionVector, ScalarMultiplicationProperty) { ... }
+
+// Skew-symmetry: S + S^T = 0
+TEST(TestSkew, Property_SkewSymmetric) {
+    Eigen::Matrix3d sum = S + S.transpose();
+    EXPECT_NEAR(sum.norm(), 0.0, 1e-10);
+}
+
+// Determinant of rotation = 1
+TEST(RotationTest, Property_UnitDeterminant) {
+    Rotation rot(angleAxis);
+    EXPECT_NEAR(rot.determinant(), 1.0, TOLERANCE);
 }
 ```
 
-**Location:** Helper functions are file-local in test files — no shared test utility directory.
+## Round-Trip / Consistency Tests
+
+`TestDynamicsConsistency.cpp` verifies the round-trip property:
+- Start with random torque → compute accelerations via ABA → compute torques via RNEA → should get original torque
+- Start with random acceleration → compute torques via RNEA → compute accelerations via ABA → should get original acceleration
+
+```cpp
+TEST(ConsistencyTest, RoundTripABARNEA) {
+    Eigen::VectorXd tau_input(1);
+    tau_input[0] = 1.0;
+    // ... setup ...
+    fd.computeAccelerations(tau_input);
+    double qddot_result = fd.links[0].qddot;
+    // ... inverse dynamics ...
+    Eigen::VectorXd tau_output = id.computeTorques(qddot_vec);
+    EXPECT_NEAR(tau_output[0], tau_input[0], EPSILON);
+}
+```
 
 ## Coverage
 
-**Requirements:** None enforced.
+**Requirements:**
+- Not enforced (no CI, no coverage gate)
+- Optional CMake flag `ENABLE_COVERAGE` in `CMakeLists.txt:42-46`:
+  ```cmake
+  option(ENABLE_COVERAGE "Enable coverage flags for CI" OFF)
+  if(ENABLE_COVERAGE)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  endif()
+  ```
+- Uses `gcov` for profiling (no `gcovr` or `lcov` configured)
 
-- No coverage tools (gcov, lcov, CodeCov) configured
-- No coverage CI step
-- No coverage threshold defined
-
-**View Coverage:**
-```bash
-# Not configured — would need gcov + manual setup
-```
+**Current state:** No coverage tracking in regular builds. Must enable via `-DENABLE_COVERAGE=ON`.
 
 ## Test Types
 
-**Unit Tests:**
-- Scope: Each test file covers a single class or header
-- Approach: White-box testing with known mathematical formulas
-- Pattern: Create objects with known values, assert expected results
+**Unit Tests (all existing tests):**
+- Each test file tests a single class or module in isolation
+- Direct construction of objects, method calls, and assertion checks
+- Examples: `TestSpatialVector.cpp` (arithmentic, cross product, dot product), `TestRotation.cpp` (constructors, accessors, inverse)
+- Mathematical property tests verify invariants
 
 **Integration Tests:**
-- `tests/TestDynamicsConsistency.cpp` — Cross-component test verifying forward dynamics (ABA) and inverse dynamics (RNEA) produce consistent results
-- Tests round-trip: `ABA(RNEA(tau)) ≈ tau` and `RNEA(ABA(qddot)) ≈ qddot`
-- Tests multi-link serial chains (3-link) and branching trees (Y-configuration)
-- Tests PluckerTransform usage within dynamics algorithms
+- `TestInverseDynamics.cpp` — tests RNEA on 1-link, 2-link, 3-link chains, branching trees, edge cases
+- `TestForwardDynamics.cpp` — tests ABA on 1-link, 2-link, 3-link chains, branching trees, gravity
+- `TestDynamicsConsistency.cpp` — round-trip tests connecting RNEA and ABA
+- `TestSpatialOperations.cpp` — cross product and inertia transform using multiple classes
+- These tests exercise multiple classes together but are still in the same test process
 
-**E2E Tests:** Not used.
-
-**Python Tests:** Not used. `robot_dynamics/rnea.py` is a standalone implementation with no test coverage.
+**E2E Tests:**
+- None. No integration with external systems.
 
 ## Common Patterns
 
 **Arrange-Act-Assert Comments:**
-Many test files annotate each test with `// Arrange`, `// Act`, `// Assert` sections:
 ```cpp
-TEST(TestCrossProductMotion, SimpleRotationVectors) {
-    // Arrange: pure angular velocities about X and Y axes
-    MotionVector v1(Vector3d(1, 0, 0), Vector3d(0, 0, 0));
-    MotionVector v2(Vector3d(0, 1, 0), Vector3d(0, 0, 0));
-    
-    // Act
-    SpatialVector result = SpatialOperations::crossProductMotion(v1, v2);
-    
-    // Assert: ω1×ω2 = (1,0,0)×(0,1,0) = (0,0,1)
-    EXPECT_NEAR(result.getAngular()[2], 1.0, EPSILON);
+// Arrange
+MotionVector v1(Vector3d(1, 0, 0), Vector3d(0, 0, 0));
+MotionVector v2(Vector3d(0, 1, 0), Vector3d(0, 0, 0));
+
+// Act
+SpatialVector result = SpatialOperations::crossProductMotion(v1, v2);
+
+// Assert
+EXPECT_NEAR(result.getAngular()[0], 0.0, EPSILON);
+```
+Used in `TestSpatialOperations.cpp` and `TestSpatialUtils.cpp`. Not used consistently in older test files.
+
+**Doxygen on Tests:**
+- Every `TEST()` or `TEST_F()` gets a `@brief` and optional `@details` block
+- Test function comments explain what invariant or scenario is being verified
+- References to literature: `@see Featherstone 2008, Chapter 2`
+
+**Inline Calculation Comments:**
+```cpp
+// ω1×ω2 = (1,0,0)×(0,1,0) = (0,0,1)
+// ω1×v2 = (1,0,0)×(0,0,1) = (0,-1,0)
+// v1×ω2 = (0,1,0)×(0,1,0) = (0,0,0)
+// Linear = (0,-1,0) + (0,0,0) = (0,-1,0)
+// Result: [(0,0,1); (0,-1,0)]
+```
+
+**Error Testing:**
+```cpp
+// Exception tests
+TEST(LowerTriangularTest, InvalidDimensions)
+{
+    LowerTriangular L(3);
+    EXPECT_THROW(L.multiply(LowerTriangular(4)), std::invalid_argument);
+}
+```
+Exception testing used only in `TestLowerTriangular.cpp`.
+
+**Loop-Based Matrix Verification:**
+```cpp
+// Full matrix element-by-element check
+for (int i = 0; i < 3; ++i)
+{
+    for (int j = 0; j < 3; ++j)
+    {
+        if (i == j)
+            EXPECT_DOUBLE_EQ(rot(i, j), 1.0);
+        else
+            EXPECT_DOUBLE_EQ(rot(i, j), 0.0);
+    }
 }
 ```
 
-**Property-Based Tests:**
-Tests verify mathematical invariants rather than specific values:
-```
-CrossProductAntiCommutativity     a×b = -(b×a)
-DotProductCommutativity           a·b = b·a
-CrossProductDistributivity        a×(b+c) = a×b + a×c
-ScalarMultiplicationProperty      (k*a)×b = k*(a×b)
-MassConservation                  mass unchanged by Plücker transform
-InverseRoundTrip                  X^(-1)(X(v)) = v
-LinearityProperty                 f(a+b) = f(a) + f(b)
-```
-
-**Manual Math Verification in Comments:**
-Tests explicitly show the expected calculation step-by-step:
+**Label-Based Requirements References:**
 ```cpp
-// Expected:
-// ω' = R*ω = [0,0,1]
-// v' = R*(v - r×ω) = R*([1,0,0] - [1,0,0]×[0,0,1])
-//    = R*([1,0,0] - [0,-1,0]) = R*[1,1,0]
-// R*[1,1,0] = [-1,1,0] (90° rotation)
+// ===== LTR-01: Packed Storage Tests =====
+// ===== LTR-02: Dense Matrix Multiplication Tests =====
+// ===== LTR-03: Vector Multiplication Tests =====
+// INR-01: Default constructor should create massless body
+// VER-01: Default constructor should create zero inertia
 ```
-
-**Dynamics Test Pattern:**
-Forward/Inverse dynamics tests use a struct-based robot model setup:
-```cpp
-ForwardDynamics fd;
-Link link;
-link.parent = -1;
-link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
-link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
-link.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
-link.q = 0.0;
-link.qdot = 0.0;
-link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
-fd.links.push_back(link);
-```
-
-## CMake Test Registration
-
-Each test executable is registered in `CMakeLists.txt` with:
-1. `add_executable(TestName tests/TestName.cpp)`
-2. `target_link_libraries(TestName SpatialAlgebra GTest::GTest GTest::Main)`
-3. `add_test(NAME TestName COMMAND TestName)`
-
-Currently registered test executables (10 total):
-`TestSpatialVector`, `TestPluckerTransform`, `TestRotation`, `TestLowerTriangular`, `TestSpatialUtils`, `TestRigidBodyInertia`, `TestArticulatedBodyInertia`, `TestForwardDynamics`, `TestSpatialOperations`, `TestInverseDynamics`, `TestDynamicsConsistency`
-
-## Known Issues
-
-- `TestSpatialVector.cpp` uses `.eval()` on `.cross()` results (line 45 in `SpatialVector.cpp`), which is an anti-pattern — Eigen cross product returns an expression template that does not require `.eval()`
-- No test for `src/main.cpp` — the example program is not tested
-- No test for Python `robot_dynamics/rnea.py`
-- `TestSpatialVector.cpp` property tests use `EXPECT_DOUBLE_EQ` for cross product results, which may be fragile for computed values; newer tests correctly use `EXPECT_NEAR`
-- Test tolerance `EPSILON = 1e-10` is uniformly applied but some operations (dynamics round-trip) use looser `1e-8`
+Labels like `LTR-01`, `INR-01`, `VER-01` appear in section comments to trace test cases back to requirements.
 
 ---
 
-*Testing analysis: 2026-05-17*
+*Testing analysis: 2026-06-05*

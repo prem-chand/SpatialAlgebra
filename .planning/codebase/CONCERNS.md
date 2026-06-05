@@ -1,308 +1,369 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## Tech Debt
 
-### CR-01: Swapped Constructor Arguments in `ArticulatedBodyInertia::operator+(RigidBodyInertia)`
+### Empty stub `.cpp` files excluded from build
 
-- **Issue:** The `operator+(const RigidBodyInertia &)` method passes arguments to the `ArticulatedBodyInertia` constructor in the wrong order. The first argument receives the `M` (mass matrix) field instead of `Inertia` (rotational inertia), and the third argument receives `Inertia` instead of `M`. Additionally, the coupling term is missing the `mass` multiplier — it uses `skew(other.getCom())` instead of `other.getMass() * skew(other.getCom())`.
-- **Files:**
-  - `include/ArticulatedBodyInertia.h:150-155`
-- **Impact:** Combining articulated body inertias with rigid body inertias (e.g., during ABA) produces numerically incorrect results in all components. This affects any code path that accumulates inertias.
-- **Fix approach:** Swap the first and third constructor arguments and add the mass multiplier to the coupling term.
+**Issue:** `src/RigidBodyInertia.cpp` and `src/ArticulatedBodyInertia.cpp` are empty stubs explicitly excluded from compilation in `CMakeLists.txt:30-33`. The entire `RigidBodyInertia` and `ArticulatedBodyInertia` classes are defined inline in their headers, making the `.cpp` files dead code that invites confusion.
 
-### CR-02: ABA Forward Dynamics — Inward Pass Overwrites Accumulated Child Inertias
+**Files:** `src/RigidBodyInertia.cpp`, `src/ArticulatedBodyInertia.cpp`, `CMakeLists.txt:30-33`
 
-- **Issue:** The Articulated Body Algorithm (ABA) inward pass (`ForwardDynamics::inwardPass` at `src/ForwardDynamics.cpp:54-107`) initializes `links[i].Ia` and `links[i].pa` for each link while iterating tip-to-base, but this **overwrites** the contributions that child links already added to their parent. For a 3-link chain (0→1→2): link 2's contribution is added to link 1, then link 1 re-initializes itself (destroying link 2's contribution), then propagates only its own (wrong) inertia to link 0. The result: the ABA computes accelerations as if each link is isolated, ignoring all downstream inertias for non-terminal links.
-- **Files:** `src/ForwardDynamics.cpp:54-107`
-- **Impact:** Multi-link forward dynamics are incorrect. The single-link pendulum test passes (no children to accumulate). The two-link test only checks "positive and finite" which masks the bug. The round-trip consistency tests compound errors. **This makes ABA effectively broken for all multi-link systems.**
-- **Fix approach:** Restructure the inward pass with a two-phase approach: initialize all Ia/pa from rigid body inertia first, then accumulate from children to parents without re-initialization.
+**Impact:** Developers may mistakenly add method definitions to these files without updating CMakeLists.txt, resulting in linker errors. The `list(REMOVE_ITEM ...)` hack in CMakeLists.txt is a maintenance trap.
 
-### CR-03: Three Mutually-Inconsistent Implementations of Force×Force Cross Product
-
-- **Issue:** The mathematically correct force-force cross product formula is `[τ1×τ2 + f1×f2; τ1×f2 - τ2×f1]` (anti-commutative). It has three separate implementations, **none of which match the correct formula**:
-  - `SpatialVector::crossForce` (`src/SpatialVector.cpp:48-55`): Angular = ω1×ω2 + v1×v2 (correct), Linear = ω1×v2 — **missing `- v2×ω1`**
-  - `ForceVector::crossForce` (`src/ForceVector.cpp:40-46`): Angular = τ1×τ2 — **missing `f1×f2`**, Linear = τ1×f2 - τ2×f1 (correct)
-  - `cross(ForceVector,ForceVector)` (`include/SpatialUtils.h:115-125`): Angular = τ1×τ2 + f1×f2 (correct), Linear = τ1×f2 — **missing `- τ2×f1`**
-- **Files:**
-  - `src/SpatialVector.cpp:48-55`
-  - `src/ForceVector.cpp:40-46`
-  - `include/SpatialUtils.h:115-125`
-- **Impact:** Any code using cross-product operations with force vectors will produce incorrect results that depend on which overload happens to be called. Violates anti-commutativity, a fundamental physical property.
-- **Fix approach:** Unify all three to use the single correct formula: `angular = t1.cross(t2) + f1.cross(f2)`, `linear = t1.cross(f2) - t2.cross(f1)`.
-
-### Swapped Constructor Arguments in ArticulatedBodyInertia (Documented but Unfixed)
-
-- **Files:** `include/ArticulatedBodyInertia.h:95-96`
-- **Issue:** Same bug as CR-01 but already identified in a prior review (`REVIEW.md:73-102`). The code is in a verified-known-broken state.
-- **Fix approach:** See CR-01 fix.
-
-### `MotionVector::crossForce` Has No Physical Meaning
-
-- **Issue:** `MotionVector::crossForce` computes `[ω1×v2; v1×ω2]` which does not correspond to any standard spatial algebra operation. The force cross product (`crf`) is defined as `motion × force → force`. Applying `crossForce` to two motion vectors has no physical meaning. Additionally, `ForceVector::crossMotion` applies the motion-cross formula to two force vectors, which is a category error.
-- **Files:**
-  - `src/MotionVector.cpp:38-41`
-  - `src/ForceVector.cpp:31-38`
-  - `include/MotionVector.h:131-137` (Doxygen comment says "crf operation" but returns `MotionVector`)
-- **Impact:** These methods compile and run, but produce mathematically and physically meaningless results. They mislead users into thinking there's a valid operation here.
-- **Fix approach:** Either remove `MotionVector::crossForce` and `ForceVector::crossMotion`, or mark them as deprecated with clear documentation that they have no physical interpretation.
-
-### `PluckerTransform::multiply` Has `auto` Return Type — Linkage Hazard
-
-- **Issue:** `multiply` is declared with `auto` return type in the header (`include/PluckerTransform.h:172`) and defined in the `.cpp` file (`src/PluckerTransform.cpp:228-239`). In C++17, `auto` return type deduction requires the definition to be visible at the call site. Calling `multiply` from any other translation unit will fail to compile/link. Currently it's only called from `apply()` within the same `.cpp`, so it works — but as a public API this is a trap.
-- **Files:** `include/PluckerTransform.h:172`, `src/PluckerTransform.cpp:228-239`
-- **Impact:** Any user including `PluckerTransform.h` and calling `multiply()` will get a compile/link error.
-- **Fix approach:** Change the return type from `auto` to `PluckerTransform` explicitly.
-
-### `Rotation::transpose()` Invokes Method Without Explicit Object
-
-- **Issue:** `Rotation::transpose()` uses `Eigen::Matrix3d::transpose()` which relies on implicit `*this` to call a non-static member function. This works only because we're inside a member function of the derived class, but it's fragile — minor changes to Eigen's API or context could silently break. The `inverse()` method correctly uses `this->transpose()`.
-- **Files:** `src/Rotation.cpp:54-57`
-- **Impact:** Fragile code that could silently produce wrong results or fail to compile with Eigen version updates.
-- **Fix approach:** Use `Eigen::Matrix3d::transpose()` instead of `Eigen::Matrix3d::transpose()` — wait, that's the issue. Use `this->transpose()` consistently.
-
-### Test Helper Functions Return Zero Instead of Identity/Diagonal
-
-- **Issue:** Helper functions `createIdentityInertia()` and `createDiagonalInertia(double)` in `tests/TestSpatialOperations.cpp` create a `LowerTriangular(3)` (zero-initialized) and return it without setting any values. The data vector they construct is dead code — the return value is always the zero matrix. Five tests use these helpers and only verify `getMass()` and `getCom()`, not the inertia matrix values, so they pass despite using wrong input inertias.
-- **Files:** `tests/TestSpatialOperations.cpp:27-37, 206-218`
-- **Impact:** Test coverage is illusory — these tests verify minimal properties of inertia transforms while using zero inertia inputs. A zero inertia matrix is physically invalid for a body with mass.
-- **Fix approach:** Actually populate the LowerTriangular matrix with identity/diagonal values before returning.
-
-### Global Namespace Pollution with `using Vector3d`
-
-- **Issue:** Six header files each declare `using Vector3d = Eigen::Matrix<double, 3, 1>` at **global namespace scope** (before the `namespace SpatialAlgebra` block). This leaks the alias into the global namespace of every translation unit that includes any SpatialAlgebra header. Only one declaration is needed, and it should be inside `namespace SpatialAlgebra`.
-- **Files:**
-  - `include/SpatialVector.h:44`
-  - `include/LowerTriangular.h:54`
-  - `include/PluckerTransform.h:54`
-  - `include/RigidBodyInertia.h:17`
-  - `include/InverseDynamics.h:59`
-  - `include/ForwardDynamics.h:63`
-- **Impact:** ODR violations or ambiguity if users have their own `Vector3d` type, or if Eigen ever adds a `Vector3d` typedef.
-- **Fix approach:** Move the `using` declaration inside `namespace SpatialAlgebra` in a single header (e.g., `SpatialVector.h` or a common base header).
-
-### `MotionVector::getAngular/getLinear` Shadow Parent Methods Inconsistently
-
-- **Issue:** `MotionVector` and `ForceVector` declare their own `getAngular()` and `getLinear()` methods that return by value (hiding `SpatialVector::getAngular()/getLinear()` which return by const reference). There is no additional behavior or type narrowing — these are redundant and create confusion about which method is called through a base-class reference.
-- **Files:**
-  - `include/MotionVector.h:101-107` (getters not explicitly shown but inherited from SpatialVector — MotionVector.cpp has no getter overrides)
-  - `include/ForceVector.h` (same)
-- **Impact:** Hybrid dispatch behavior: calling through a `SpatialVector&` returns const ref, calling through `MotionVector&` returns by value. This can cause subtle lifetime issues.
-- **Fix approach:** Remove the redundant overrides and let the base class methods be inherited.
-
-### Empty `src/ArticulatedBodyInertia.cpp` and `src/RigidBodyInertia.cpp`
-
-- **Issue:** Both files contain only a comment saying "No implementation needed — all methods are inline in header". These are compiled into the library, producing empty object files. They serve no purpose and are included by CMake's `file(GLOB SOURCES "src/*.cpp")`.
-- **Files:**
-  - `src/ArticulatedBodyInertia.cpp` (8 lines, no code)
-  - `src/RigidBodyInertia.cpp` (8 lines, no code)
-- **Impact:** Trivial — small waste of compilation time. Indicates incomplete migration from header-only to separate compilation.
-- **Fix approach:** Remove the empty files or add real implementations.
-
-## Known Bugs
-
-### ABI Transform (tformABI/invtformABI) Formula Errors — 5 Failing Tests
-
-- **Symptoms:** Five tests fail in `TestPluckerTransform.cpp`:
-  - `TransformABITest.Property_Symmetric`
-  - `InverseTransformABITest.InverseIsIdentity`
-  - `InverseTransformABITest.Property_Symmetric`
-  - `InverseTransformABITest.RoundTrip`
-  - `TestInverse.MultiplyWithInverseIsIdentity`
-- **Files:** `src/PluckerTransform.cpp:104-161, 163-213`
-- **Trigger:** Transforming articulated body inertias with non-zero coupling matrices (H ≠ 0).
-- **Root Cause:** Formula derivation for `tformABI()` and `invtformABI()` does not correctly implement Featherstone Eq 7.16. The current implementation has incorrect handling of the coupling matrix H transformation and sign errors in the inverse transform formula.
-- **Workaround:** For simple chains with H = 0 (no rotational-linear coupling), the algorithm works correctly. Avoid transforming ABI with non-zero H.
-- **Fix approach:** Re-derive the block formula based on Featherstone Eq 7.16 and reimplement. Verification required against known test cases.
-- **Verification state:** Identified in `v1.0-VERIFICATION.md` as known issue. Unfixed as of 2026-05-17.
-
-### Multi-Link Dynamics Consistency Between RNEA and ABA — 2 Failing Tests
-
-- **Symptoms:** `TestDynamicsConsistency.cpp` tests fail for multi-link systems:
-  - `ConsistencyTest.ThreeLinkSerialChain`
-  - `ConsistencyTest.BranchingYConfiguration`
-- **Files:** `tests/TestDynamicsConsistency.cpp`
-- **Trigger:** Cross-validation between inverse dynamics (RNEA) and forward dynamics (ABA) for multi-link chains.
-- **Root Cause:** RNEA and ABA use different conventions for joint acceleration computation, different bias acceleration handling, and may have different joint axis conventions. The CR-02 bug (ABA overwriting child inertias) compounds this.
-- **Workaround:** Single-link consistency verified and working. Do not rely on RNEA↔ABA consistency for multi-link systems.
-- **Fix approach:** Fix CR-02 first, then align RNEA/ABA conventions. Verify with the consistency tests.
-
-## Security Considerations
-
-### No Input Validation on SpatialVector Operations
-
-- **Risk:** Spatial vector constructors and arithmetic operations do not validate their inputs. NaN or Inf values propagate silently through the system. While this is a mathematical library (not a network-facing service), NaN propagation can cause silent failures in dependent applications (e.g., robot controllers making unsafe movements).
-- **Files:** All `SpatialVector` operations in `src/SpatialVector.cpp`, `src/MotionVector.cpp`, `src/ForceVector.cpp`
-- **Current mitigation:** Input validation (`std::isnan`/`std::isinf` checks) exists only in `ForwardDynamics::computeAccelerations` and `InverseDynamics::computeTorques`. No validation in core vector/inertia operations.
-- **Recommendation:** Add debug-mode assertions for NaN/Inf in critical arithmetic operations. Consider a validation layer for production use.
-
-### No Bounds Checking in Release Mode
-
-- **Risk:** `LowerTriangular` has bounds checking guarded by `#ifndef NDEBUG`, meaning it's disabled in release builds. If a user accesses an out-of-bounds element in release mode, the behavior is undefined (silent memory corruption via Eigen's `VectorXd::operator[]`).
-- **Files:** `include/LowerTriangular.h:146-173`
-- **Current mitigation:** Debug-mode bounds checking only.
-- **Recommendation:** Consider `std::out_of_range` throws unconditionally, or document the performance/security tradeoff.
-
-### Potential Forthcoming Eigen 5.x Incompatibility
-
-- **Risk:** CMakeLists.txt uses `find_package(Eigen3 3.3 REQUIRED NO_MODULE)` which may fail with Eigen 5.x because Eigen 5 changed its CMake version-compatibility range. Users on Homebrew (which now ships Eigen 5.0.1) will get a build error.
-- **Files:** `CMakeLists.txt:12`
-- **Current mitigation:** Either remove the version pin or set `-DEigen3_DIR=$(brew --prefix eigen)/share/eigen3/cmake`. Documented in `AGENTS.md`.
-- **Recommendation:** Remove the version pin or bump to support both 3.3+ and 5.x.
-
-## Performance Bottlenecks
-
-### ABI Transform Uses Full 6×6 Matrix Construction Instead of Block Operations
-
-- **Problem:** `PluckerTransform::tformABI` and `invtformABI` build full 6×6 matrices using `MatrixXd::Zero(6,6)` then extract 3×3 blocks. This involves heap allocation for every inertia transform and O(6³) operations when O(3³) block operations would suffice.
-- **Files:** `src/PluckerTransform.cpp:104-161, 163-213`
-- **Cause:** Implementation shortcuts — constructing the full 6×6 matrix and using dense multiplication is simpler to code but far from optimal.
-- **Improvement path:** Implement direct block-wise formulas for ABI transformation. The three components (I, H, M) can each be transformed using 3×3 matrix multiplications and skew operations, avoiding the 6×6 overhead.
-
-### OpenMP Dependency with Unclear Availability
-
-- **Problem:** `LowerTriangular::operator*(const LowerTriangular&)` uses `#pragma omp parallel for collapse(2)`. OpenMP support on macOS (Apple Clang) is not available by default — users must install `libomp` via Homebrew. The CMakeLists.txt does not check for or enable OpenMP, so this pragma is silently ignored on most macOS builds. On platforms where it does work, it adds threading overhead for small matrices (n=3 typically) where it's unnecessary.
-- **Files:** `include/LowerTriangular.h:202-203`
-- **Cause:** The `LowerTriangular` class was designed for general n×n matrices, but in practice it's always 3×3 (inertia tensors). The OpenMP parallelization is overkill for 3×3 matrices and may actually be slower due to thread spawning overhead.
-- **Improvement path:** Remove OpenMP dependency entirely (it's unused in practice for n=3). Specialize operations for 3×3 case with explicit unrolled loops.
-
-### Redundant Cross Product Implementations
-
-- **Problem:** The force×force cross product is implemented (incorrectly) in three separate places. Even after fixing the correctness issue, having three implementations means three code paths to maintain and optimize. Each does essentially the same work.
-- **Files:**
-  - `src/SpatialVector.cpp:48-55`
-  - `src/ForceVector.cpp:40-46`
-  - `include/SpatialUtils.h:115-125`
-- **Cause:** Lack of a single canonical implementation. The base class `SpatialVector` provides a version, derived classes override, and free functions provide yet another.
-- **Improvement path:** Pick one canonical implementation (recommended: the free function in `SpatialUtils.h`) and delegate all other implementations to it.
-
-## Fragile Areas
-
-### ABA Forward Dynamics Implementation
-
-- **Files:** `src/ForwardDynamics.cpp` (entire file, 158 lines)
-- **Why fragile:** The ABA implementation has a known critical bug (CR-02) that makes multi-link results incorrect. The bias acceleration handling (WR-05 from REVIEW.md) is coupled with the Ia initialization issue — fixing one without the other will not produce correct results. The algorithm has no gravity term (`gravityMode` is not implemented), and this omission is undocumented. The `inwardPass` method does both accumulation and solve in one phase, making the logic hard to verify.
-- **Test coverage:** 6 tests, all single-link or verify only "positive and finite". The multi-link tests pass despite the bug. Tests do not verify correct numerical values for multi-link scenarios.
-- **Safe modification:** Refactor the inward pass to clearly separate initialization, accumulation, and solve phases. Add gravity support as a separate concern.
-
-### RNEA Inverse Dynamics Implementation
-
-- **Files:** `src/InverseDynamics.cpp` (entire file, 141 lines)
-- **Why fragile:** The inward pass (`inwardPass`) iterates through all links for each link to find children (`for (int j = 0; j < links.size(); j++)`). This is O(n²) instead of the expected O(n) for RNEA. The algorithm assumes links are ordered with children after parents but does not enforce or verify this. There is no gravity term (documented as "add external forces").
-- **Test coverage:** 5 tests, all single-link or two-link. No tests with non-zero velocity (Coriolis/centrifugal terms are computed but not verified).
-- **Safe modification:** Restructure the inward pass to use a precomputed child list for O(n) performance. Add gravity support. Validate link ordering.
-
-### LowerTriangular `inverse()` Implementation
-
-- **Files:** `include/LowerTriangular.h:424`, `src/LowerTriangular.cpp:25-53`
-- **Why fragile:** The inverse uses forward substitution with a hardcoded singularity threshold of `1e-15`. This threshold is arbitrary and may be too strict for some applications or not strict enough for others. There's no documentation about the expected numerical accuracy. The method throws `std::runtime_error` for singular matrices but doesn't provide diagnostic information about the condition number.
-- **Test coverage:** 5 tests covering inverse correctness, diagonal elements, identity, 2×2 case. No tests for near-singular matrices or numerical stability.
-- **Safe modification:** Document the singularity threshold. Consider using a relative tolerance based on matrix norm. Add a `conditionNumber()` estimate method.
-
-### `SpatialOperations` Static Methods with Unsafe Downcasts
-
-- **Files:** `src/SpatialOperations.cpp:11-25`
-- **Why fragile:** `crossProductMotion` and `crossProductForce` use `static_cast` from `const SpatialVector&` to `const MotionVector&` / `const ForceVector&`. If a user passes the wrong concrete type, the cast succeeds silently and produces garbage results. There is no runtime type checking. This bypasses the type safety that `MotionVector` and `ForceVector` are designed to provide.
-- **Test coverage:** 11 tests. Tests pass correct types, so the issue is not caught.
-- **Safe modification:** Change the function signatures to accept the correct concrete types directly (`const MotionVector&`, `const ForceVector&`), eliminating the need for casts.
-
-## Scaling Limits
-
-### No Branching Tree Support in ABA (Effectively)
-
-- **Current capacity:** Single serial chain forward dynamics works (after fixing CR-02).
-- **Limit:** Branching trees produce incorrect results due to CR-02 and the inward pass structure. The O(n²) child lookup in RNEA also limits practical tree sizes.
-- **Scaling path:** Fix CR-02, then add explicit child-link index lists for O(n) branching tree traversal.
-
-### No Joint Limit or Singularity Handling
-
-- **Current capacity:** The singularity check in ABA (`std::abs(denom) < EPSILON` with `EPSILON = 1e-10`) detects exactly-zero inertia projections but does not handle near-singular configurations gracefully.
-- **Limit:** At kinematic singularities, the ABA throws a `std::runtime_error`. There's no damping, regularization, or fallback behavior. For real robot control, this would cause abrupt failure.
-- **Scaling path:** Add damped least-squares (DLS) / Levenberg-Marquardt regularization for near-singular configurations.
-
-## Dependencies at Risk
-
-### Eigen3 Version Compatibility (3.3+ Pinned)
-
-- **Risk:** CMakeLists.txt pins `find_package(Eigen3 3.3 REQUIRED NO_MODULE)`. Eigen 5.x changed its CMake version range, causing `find_package` to fail even though the actual API used is compatible. Users on macOS Homebrew (which now ships Eigen 5.x) cannot build without manual workarounds.
-- **Impact:** Build failure on systems with Eigen 5.x.
-- **Migration plan:** Remove the version pin entirely, or add a version compatibility fallback. Test against both Eigen 3.4 and 5.x.
-
-### Google Test Dependency
-
-- **Risk:** CMakeLists.txt uses `find_package(GTest REQUIRED)` which expects GTest to be system-installed. There's no fallback to FetchContent or bundled GTest. This is fragile for CI or cross-platform builds.
-- **Impact:** Build failure if GTest is not installed.
-- **Migration plan:** Add a FetchContent fallback in CMakeLists.txt for GTest, or document the system dependency clearly.
-
-## Missing Critical Features
-
-### No Gravity Term in Dynamics Algorithms
-
-- **Problem:** Both RNEA and ABA implementations explicitly state "Gravity forces (not implemented, add external forces)". There is no `gravityMode`, no gravity vector parameter, and no documentation on how to correctly add gravity via external forces. This is a significant omission for robotics users — gravity compensation is essential for all practical applications.
-- **Files:**
-  - `include/ForwardDynamics.h:21` (comment)
-  - `include/InverseDynamics.h:21` (comment)
-- **Blocks:** Any practical robotics simulation or control application.
-- **Fix approach:** Add an optional gravity vector parameter to both `computeAccelerations` and `computeTorques`. The RNEA gravity acceleration propagates through the outward pass as an additional acceleration term in the base link.
-
-### No Python Bindings or C++/Python Integration
-
-- **Problem:** There's a standalone Python RNEA implementation (`robot_dynamics/rnea.py`) that is completely independent from the C++ library. It implements fewer features (no ABA, no Plücker transforms, no articulated body inertia, uses plain 3D vectors instead of spatial vectors). There is no Pybind11, Cython, or any C++/Python bridge.
-- **Files:** `robot_dynamics/rnea.py` (does not import from C++)
-- **Blocks:** Users who want to use the library from Python (common in robotics) cannot do so.
-- **Fix approach:** Add pybind11 bindings for core classes, or at minimum document the gap.
-
-### No Umbrella Header for Library Inclusion
-
-- **Problem:** Users must include individual headers (`SpatialVector.h`, `PluckerTransform.h`, etc.) explicitly. There is no `include/SpatialAlgebra.h` that includes all public headers. This is a discoverability and convenience issue.
-- **Files:** (missing) `include/SpatialAlgebra.h`
-- **Fix approach:** Create a single umbrella header that includes all public headers, with documented include order.
-
-## Test Coverage Gaps
-
-### Untested: ABA Multi-Link Correctness
-
-- **What's not tested:** Correct numerical acceleration values for multi-link serial chains and branching trees. The existing tests only verify "positive and finite" or single-link correctness.
-- **Files:** `tests/TestForwardDynamics.cpp`
-- **Risk:** The CR-02 bug exists undetected in production. Any user computing forward dynamics for a 2+ link chain gets wrong results.
-- **Priority:** HIGH
-
-### Untested: RNEA with Non-Zero Velocity
-
-- **What's not tested:** All 5 RNEA tests use `qdot = 0.0`. The Coriolis/centrifugal computation is never exercised.
-- **Files:** `tests/TestInverseDynamics.cpp`
-- **Risk:** The Coriolis bias acceleration calculation in RNEA may be incorrect without detection.
-- **Priority:** HIGH
-
-### Untested: Force×Force Cross Product Correctness
-
-- **What's not tested:** The cross product tests use pure torque or pure force inputs where the buggy formulas happen to produce correct results. Tests with mixed torque+force inputs (which trigger the inconsistencies) are absent.
-- **Files:** `tests/TestSpatialVector.cpp`, `tests/TestSpatialUtils.cpp`
-- **Risk:** Users relying on force cross product for any non-trivial wrench get silently incorrect results.
-- **Priority:** HIGH
-
-### Untested: Edge Cases (NaN, Inf, Extreme Values)
-
-- **What's not tested:** NaN and Inf propagation through spatial vector operations. Extreme values (very large/small numbers), degenerate geometries (zero-length links, zero mass).
-- **Files:** All test files.
-- **Risk:** Numerical edge cases in downstream applications may produce silently incorrect physical results.
-- **Priority:** MEDIUM
-
-### Untested: Inertia Addition Edge Cases (Zero Combined Mass)
-
-- **What's not tested:** `RigidBodyInertia::operator+` with zero combined mass (both bodies massless, or complementary masses that cancel). The code handles this case (`if (newMass > 0.0)`) but it's untested.
-- **Files:** `include/RigidBodyInertia.h:64-68`
-- **Risk:** Division by zero scenario exists but is guarded; the code path for `newMass == 0` returns uninitialized COM.
-- **Priority:** LOW
-
-### Untested: PluckerTransform Inertia Transform (Rotation Only)
-
-- **What's not tested:** In `TestSpatialOperations.cpp`, the `createIdentityInertia()` helper returns a zero matrix instead of identity. The tests using this helper only verify `getMass()` and `getCom()`, not inertia matrix values. The actual inertia tensor transformation is never verified for numerical correctness.
-- **Files:** `tests/TestSpatialOperations.cpp:27-37, 218-293`
-- **Risk:** The inertia transformation via `SpatialOperations::transformInertia` / `PluckerTransform::tformRBI` may produce incorrect inertia matrices with undetected bugs.
-- **Priority:** MEDIUM
+**Fix approach:** Either delete the stub files and remove the exclusion from CMakeLists.txt, or move the class implementations out of the headers into these `.cpp` files.
 
 ---
 
-*Concerns audit: 2026-05-17*
+### SpatialOperations is a near-empty delegation layer
+
+**Issue:** `SpatialOperations` (declared in `include/SpatialOperations.h`, 35 lines) provides only 3 static methods that are thin wrappers:
+- `crossProductMotion()` delegates to free function `cross()` in `SpatialUtils.h`
+- `crossProductForce()` delegates to free function `cross()` in `SpatialUtils.h`
+- `transformInertia()` delegates to `PluckerTransform::tformRBI()`
+
+The class serves no purpose — it's an unnecessary indirection between callers and the actual implementations.
+
+**Files:** `include/SpatialOperations.h:19-31`, `src/SpatialOperations.cpp:11-25`
+
+**Impact:** Callers have two equivalent ways to call cross product operations (`SpatialOperations::crossProductMotion(a,b)` vs `cross(a,b)` from `SpatialUtils.h`), creating API ambiguity. The class adds conceptual weight with no value.
+
+**Fix approach:** Deprecate or remove `SpatialOperations` and let callers use `SpatialUtils` free functions directly.
+
+---
+
+### Include guard inconsistency
+
+**Issue:** Most headers use `#ifndef`/`#define`/`#endif` include guards (e.g., `SPATIAL_VECTOR_H`, `PLUCKER_TRANSFORM_H`). However, `LowerTriangular.h` uses a different style (`LOWER_TRIANGULAR_H` — no `#pragma once` actually, but the guard naming convention is inconsistent with the file naming pattern). The `AGENTS.md` mentions `LowerTriangular.h` previously used `#pragma once`, which may have been changed.
+
+**Files:** `include/*.h`
+
+**Impact:** Cosmetic inconsistency. No functional impact but suggests the codebase has been edited by multiple contributors with different conventions.
+
+---
+
+### ForwardDynamics uses raw 6x6 matrix conversion instead of API methods
+
+**Issue:** The anonymous namespace helper `transformInertiaToParent()` in `src/ForwardDynamics.cpp:22-53` manually converts `ArticulatedBodyInertia` to a dense 6x6 matrix, constructs the Plücker transform as a 6x6 matrix, and performs the triple product `X^T * Ia * X`. It then extracts the blocks back into `ArticulatedBodyInertia` components. This duplicates the logic already present in `PluckerTransform::tformABI()` and `PluckerTransform::invtformABI()`.
+
+**Files:** `src/ForwardDynamics.cpp:22-53`, `include/PluckerTransform.h:106-163`
+
+**Impact:** Maintains two implementations of the same ABI transform logic. Any fix to one must be manually mirrored in the other. The local helper uses `X^T * Ia * X` while `tformABI()` uses `X * Ia * X^T` — the direction difference suggests one may be incorrect.
+
+**Fix approach:** Replace the local helper with a call to the appropriate `PluckerTransform` method (likely `invtformABI()`), and delete the duplicated matrix construction code.
+
+---
+
+### Python RNEA not integrated with C++ library
+
+**Issue:** `robot_dynamics/rnea.py` contains a standalone NumPy-based RNEA implementation that is completely disconnected from the C++ library. It defines its own `RigidBodyParams` and `MultiBodySystem` classes instead of using the C++ `RigidBodyInertia` and `Link` structures. The example usage at the bottom of the file is broken (`[link1, ...]` is not valid Python).
+
+**Files:** `robot_dynamics/rnea.py:1-120`
+
+**Impact:** Two separate RNEA implementations to maintain. The Python version won't benefit from C++ bug fixes and vice versa. The broken example code erodes confidence.
+
+**Fix approach:** Either add Python bindings (pybind11) to the C++ library, or remove the orphaned Python file.
+
+---
+
+### Redundant definitions of the same arithmetic operators
+
+**Issue:** `SpatialVector` defines `operator+`, `operator-`, `operator*`, `crossMotion`, `crossForce`, and `dot`. `MotionVector` and `ForceVector` each redundantly re-define the same arithmetic operators instead of using the base class. Many of these just call similarly-named methods on the base or are duplicates of the free functions in `SpatialUtils.h`.
+
+**Files:** `src/MotionVector.cpp:16-29`, `src/ForceVector.cpp:16-29`, `src/SpatialVector.cpp:36-69`, `include/SpatialUtils.h:38-127`
+
+**Impact:** The codebase has up to 3 different ways to compute the same spatial cross product. This violates DRY and increases the surface area for bugs.
+
+---
+
+## Known Bugs
+
+### ForwardDynamicsLink default Ia is not zero
+
+**Issue:** The `Link` struct default constructor (`include/ForwardDynamics.h:101-110`) initializes `Ia` (articulated body inertia) as:
+```cpp
+Ia(lt::Identity(3), Eigen::Matrix3d::Zero(), lt::Identity(3))
+```
+This is a non-zero articulated inertia (identity blocks on the rotation and mass sub-blocks), which is not physically correct for an uninitialized link. The `ArticulatedBodyInertia` default constructor (`include/ArticulatedBodyInertia.h:104-107`) correctly creates a zero inertia. The `Link` default should use the zero ABI constructor.
+
+**Files:** `include/ForwardDynamics.h:109`, `include/ArticulatedBodyInertia.h:104-107`
+
+**Trigger:** Any use of a `Link` without explicitly setting `Ia` will have incorrect initial articulated body inertia. The `inwardPass()` then overwrites `Ia` before use (line 89-93 of `ForwardDynamics.cpp`), which mitigates the issue but makes the default misleading.
+
+**Impact:** Low (Ia is always overwritten in inwardPass before use). However, the incorrect default could mask bugs if code is refactored.
+
+**Workaround:** `inwardPass()` explicitly initializes `Ia` at `ForwardDynamics.cpp:89-93`.
+
+---
+
+### PluckerTransform::multiply() rotation composition without re-orthogonalization
+
+**Issue:** `PluckerTransform::multiply()` has a TODO comment at `src/PluckerTransform.cpp:236`:
+```
+// TODO: how to ensure product to 2 rotation matrices is still a rotation matrix upto finite precision?
+```
+Repeated multiplication of rotation matrices can cause the result to drift from SO(3) due to floating-point error accumulation.
+
+**Files:** `src/PluckerTransform.cpp:236-237`
+
+**Trigger:** Extended kinematic chains with many transform compositions (e.g., 100+ links). Each composition introduces O(ε) drift in orthogonality.
+
+**Impact:** Low for typical robot models (6-50 links). Could cause instability in very long chains or iterative algorithms that repeatedly multiply transforms.
+
+**Workaround:** None implemented. A re-orthogonalization step (e.g., SVD projection onto SO(3) or Gram-Schmidt on the rotation matrix columns) would fix this.
+
+---
+
+### InverseDynamics does not use joint position `q`
+
+**Issue:** The `InverseDynamicsLink` struct stores `q` (joint position), but `InverseDynamics::outwardPass()` never reads it. The joint position is only needed in the Plücker transform `X`, which is already stored separately and does not automatically update when `q` changes. The `InverseDynamics::computeTorques()` documentation lists `q` as a state variable, but the algorithm ignores it for kinematics.
+
+**Files:** `include/InverseDynamics.h:86`, `src/InverseDynamics.cpp:19-53`
+
+**Impact:** If the user updates `q` but not the corresponding `X` (Plücker transform), the kinematics are wrong. This is a design flaw — the transform should be a function of `q`, but the library doesn't enforce this relationship.
+
+---
+
+## Security Considerations
+
+### No input validation in release builds
+
+**Risk:** NaN/Inf checking is only active under `#ifndef NDEBUG` (debug builds). Release builds have zero input validation. A NaN or Inf value propagating through spatial algebra computations can cause silent numerical corruption (NaN poisoning) without any warning or error.
+
+**Files:**
+- `include/SpatialVector.h` — no validation at all (base class)
+- `src/SpatialVector.cpp:15-20` — `#ifndef NDEBUG` guard
+- `include/RigidBodyInertia.h:90-94` — `#ifndef NDEBUG` guard
+- `include/ArticulatedBodyInertia.h:183-187` — `#ifndef NDEBUG` guard
+
+**Current mitigation:** NaN/Inf warnings printed to stderr in debug builds only.
+
+**Recommendations:** Promote NaN/Inf checks to release builds by either removing the `#ifndef NDEBUG` guard or adding a library-level configuration macro (e.g., `SPATIAL_ALGEBRA_RELEASE_VALIDATION`). The `computeTorques()` and `computeAccelerations()` entry points already validate inputs unconditionally (`src/InverseDynamics.cpp:109-118`, `src/ForwardDynamics.cpp:195-201`), but lower-level class constructors and methods do not.
+
+---
+
+### Zero-mass edge case can throw or silently produce NaNs
+
+**Risk:** `ForwardDynamics::inwardPass()` throws a `std::runtime_error` when the scalar articulated inertia `D = S^T·Ia·S` is near zero (`src/ForwardDynamics.cpp:118-124`). However, the `ZeroMassEdgeCase` test (`tests/TestForwardDynamics.cpp:676-704`) explicitly allows both exceptions and silent finite results — meaning the behavior for massless links is implementation-defined and could change silently.
+
+**Files:** `src/ForwardDynamics.cpp:118-124`, `tests/TestForwardDynamics.cpp:676-704`
+
+**Recommendations:** Define explicit behavior for degenerate inertias (mass = 0). Either always throw, or always handle gracefully with documented output semantics.
+
+---
+
+## Performance Bottlenecks
+
+### Dense 6x6 matrix construction in ABI transforms
+
+**Problem:** `PluckerTransform::tformABI()` (`src/PluckerTransform.cpp:106-163`) and `invtformABI()` (`src/PluckerTransform.cpp:165-215`) construct full 6x6 dense matrices (Eigen::MatrixXd) for both the ABI and the transform, perform a full 6x6 matrix triple product, then extract 3x3 blocks. The same pattern is duplicated in `ForwardDynamics.cpp:22-53`. This is O(6³)=216 multiply-adds when analytic formulas could do the same in ~O(3³) per block.
+
+**Files:** `src/PluckerTransform.cpp:134-149`, `src/PluckerTransform.cpp:186-202`, `src/ForwardDynamics.cpp:31-52`
+
+**Cause:** Laziness — the 6x6 matrix path is simpler to implement but computationally wasteful.
+
+**Improvement path:** Derive and implement block-form formulas for `X * Ia * X^T` and `X^{-1} * Ia * X^{-T}` operating directly on the 3x3 blocks, avoiding the 6x6 construction entirely. This would give approximately a 2-3x speedup for inertia transforms.
+
+---
+
+### LowerTriangular::multiplySymmetric uses conditionals in inner loop
+
+**Problem:** The generic `multiplySymmetric()` (`include/LowerTriangular.h:327-349`) has an `if (i >= j)` branch inside a double loop over `n x n`. For each element, it decides whether to read from the lower triangle or mirror from the upper. This defeats auto-vectorization and is ~2x slower than an explicit unrolled loop for the 3x3 case (which already exists separately at line 359-369).
+
+**Files:** `include/LowerTriangular.h:327-349`
+
+**Cause:** The generic implementation was written for readability, not performance.
+
+**Improvement path:** The 3x3 specialization (lines 359-369) is already efficient — it should be the primary path since all current uses are 3x3. The generic version could be replaced with two explicit loops without branches.
+
+---
+
+### LowerTriangular::operator<< accesses elements through virtual dispatch overhead
+
+**Problem:** The `operator<<` for LowerTriangular (line 447-458) calls `operator()(i,j)` for every element, which has an implicit branch for upper-triangular elements and bound-checking in debug mode. For an `n x n` dense output, this is `n²` function calls.
+
+**Files:** `include/LowerTriangular.h:447-458`
+
+**Improvement path:** Directly index into `data` using the `getIndex()` formula for output, or iterate over the packed array directly with formatted column breaks.
+
+---
+
+## Fragile Areas
+
+### ForwardDynamics::inwardPass() — high complexity
+
+**Files:** `src/ForwardDynamics.cpp:82-180`
+
+**Why fragile:** This single method (~100 lines) handles three distinct phases:
+1. Phase 1: Initialize `Ia` and `pa` from rigid body inertia (lines 84-102)
+2. Phase 2: Backward pass — condense articulated inertias and propagate to parent (lines 104-158)
+3. Phase 3: Forward pass — correct `qddot` and compute spatial accelerations (lines 160-179)
+
+Phase 2 itself is the most complex part — it computes `IaS`, `D`, `u`, partial `qddot`, the condensation corrections (`inertiaCorr`, `HCorr`, `massCorr`), then transforms and propagates to the parent. There are 3 distinct index vectors (`links`, `D_store`, `Ia_unc`) plus intermediate states that must be stored for Phase 3.
+
+**Safe modification:** Any change to the condensation formula or propagation logic must maintain consistency between `Ia_unc[i]` (stored before condensation) and the post-condensation propagated `Ia`. The correction step at line 174 that uses `Ia_unc[i].apply(a_prime)` is particularly sensitive.
+
+**Test coverage:** The test suite covers single-link, two-link, branching, and gravity cases, but does not test the condensation logic with more than 3 links where the difference between pre-condensation `Ia_unc` and post-condensation `Ia` becomes non-trivial.
+
+---
+
+### PluckerTransform inherits includes from multiple layers
+
+**Files:** `include/PluckerTransform.h:46-52`
+
+**Why fragile:** `PluckerTransform.h` includes `RigidBodyInertia.h` and `ArticulatedBodyInertia.h`, but Plucker transforms are conceptually a lower-level concept than inertia. This creates a circular dependency risk (though currently avoided) and means any change to `RigidBodyInertia.h` triggers a recompile of everything that includes `PluckerTransform.h`.
+
+**Details:** The `tformRBI()`, `invtformRBI()`, `tformABI()`, and `invtformABI()` methods are defined in `PluckerTransform.cpp`, so technically they only need the inertia class declarations (not definitions). The includes could be replaced with forward declarations.
+
+---
+
+### MotionVector/ForceVector access protected members of SpatialVector
+
+**Files:** `src/MotionVector.cpp:18,28,35,41`, `src/ForceVector.cpp:18,28,35,41`
+
+**Why fragile:** Both `MotionVector` and `ForceVector` derive from `SpatialVector` and directly access the protected members `angular` and `linear`. If the base class storage format changes (e.g., to a single `Eigen::Matrix<double, 6, 1>` instead of two `Vector3d`), all derived class implementations must be updated.
+
+---
+
+### No unique_ptr or ownership semantics for large objects
+
+**Files:** `include/ForwardDynamics.h:137`, `include/InverseDynamics.h:123`
+
+**Why fragile:** `ForwardDynamics` and `InverseDynamics` store `std::vector<Link>` and `std::vector<InverseDynamicsLink>` as public members. These `Link` structs contain `PluckerTransform`, `RigidBodyInertia`, `ArticulatedBodyInertia`, etc. by value. Copying a `ForwardDynamics` or `InverseDynamics` object performs a deep copy of every link, including all inertia and transform data. While this is fine for small chains, it's a performance trap for larger models and there's no move-semantics optimization anywhere.
+
+---
+
+## Scaling Limits
+
+### Robot model complexity
+
+**Current capacity:** Tested with serial chains up to 3 links and branching trees with 3 links.
+
+**Limit:** The `ForwardDynamics::inwardPass()` uses `std::vector<double>` and `std::vector<ArticulatedBodyInertia>` for temporary storage (lines 106-107), sized to `links.size()`. With the naive O(n) ABA algorithm, complexity scales linearly, but the current implementation uses dense 6x6 matrices for each transform, not block-form optimizations.
+
+**Scaling path:** Implement block-form ABI transforms (see Performance section). Add benchmark tests for 10, 50, 100+ link chains. Consider removing the pre-condensation state copy (`Ia_unc`) if the correction formula can be reformulated.
+
+---
+
+### LowerTriangular matrix dimension
+
+**Current capacity:** Only used for 3x3 matrices throughout the codebase. The generic implementation supports arbitrary `n`.
+
+**Limit:** The `inverse()` method has O(n³) complexity for an n×n matrix, with an O(n²) memory allocation on every call (`LowerTriangular result(n)` constructs a new `Eigen::VectorXd` of size `n(n+1)/2`). For n=3 this is negligible.
+
+---
+
+## Dependencies at Risk
+
+### Eigen 5.0.1 vendored in repository (116 MB)
+
+**Risk:** The entire Eigen 5.0.1 source tree is vendored at `eigen-5.0.1/` (116 MB on disk). This bloats the repository size significantly. The CMakeLists.txt uses `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)` which can find either the system-installed Eigen or the vendored copy, but there's no explicit path setup to prefer the vendored copy.
+
+**Files:** `eigen-5.0.1/`, `CMakeLists.txt:12`
+
+**Impact:** Large clone sizes, longer `git clone` times, and potential confusion about which Eigen version is actually used. The `build-eigen5/` directory (present in directory listing) suggests a separate build was made for testing Eigen 5 compatibility, but this build configuration is not documented.
+
+**Migration plan:** Remove the vendored `eigen-5.0.1/` directory, document the required system dependency (`brew install eigen`), or use CMake's `FetchContent` to download Eigen at build time if not found.
+
+---
+
+### No CI pipeline
+
+**Risk:** There are no GitHub Actions workflows for CI (`ci.yml` exists but may not be active or comprehensive). The codebase has no automated build verification, test runner, or static analysis.
+
+**Files:** `.github/workflows/ci.yml`
+
+**Impact:** Bugs can be introduced and only caught on the developer's machine. No regression detection. No enforced coding standards.
+
+---
+
+## Missing Critical Features
+
+### No Joint abstraction
+
+**Problem:** Joint types are represented by a `MotionVector S` (screw axis) and a `double q`/`qdot`/`qddot`. There is no `Joint` class that encapsulates joint type (revolute, prismatic, spherical), limits, friction, or actuation mode. The Plücker transform `X` must be manually set by the user for each joint position — it is not computed automatically from `q`.
+
+**Files:** `include/ForwardDynamics.h:79-111`, `include/InverseDynamics.h:75-100`
+
+**Blocks:** Realistic robot simulation where joint types beyond simple 1-DOF revolute/prismatic are needed.
+
+---
+
+### No robot model loader
+
+**Problem:** No URDF, SDF, or any standard robot model format importer. Users must manually create `Link` structs and set transform/inertia/joint data by hand.
+
+**Blocks:** Using the library with real robot models from standard sources.
+
+---
+
+### No benchmark/performance tests
+
+**Problem:** The test suite has 13 test executables with functional tests, but there are no benchmarks measuring execution time for any operation. This makes it impossible to detect performance regressions or evaluate optimization improvements.
+
+**Files:** `tests/*.cpp`
+
+---
+
+## Test Coverage Gaps
+
+### Forward/Inverse dynamics validated only for simple chains
+
+**What's not tested:** The round-trip consistency tests (`TestDynamicsConsistency.cpp`) only use single-link chains. The branching tree tests only verify positive/finite output, not numerical correctness. Condensation behavior in the ABA inward pass is not explicitly validated.
+
+**Files:** `tests/TestDynamicsConsistency.cpp:16-93`, `tests/TestForwardDynamics.cpp:51-131`
+
+**Risk:** The core ABA algorithm (`inwardPass`) has the highest complexity in the codebase but the weakest validation. Bugs in inertia condensation or parent propagation could go undetected.
+
+**Priority:** High
+
+---
+
+### LowerTriangular::inverse() limited coverage
+
+**What's not tested:** The `inverse()` method in `LowerTriangular.cpp:25-53` has no dedicated test coverage that verifies `L * L^{-1} = I`. The test file `TestLowerTriangular.cpp` focuses on storage, indexing, and matrix-vector multiplication.
+
+**Files:** `src/LowerTriangular.cpp:25-53`, `tests/TestLowerTriangular.cpp`
+
+**Risk:** The inverse computation uses forward substitution with three nested loops. Any off-by-one error in the index arithmetic would produce silently wrong results.
+
+**Priority:** Medium
+
+---
+
+### No tests for `PluckerTransform::tformABI()` and `invtformABI()`
+
+**What's not tested:** `TestPluckerTransform.cpp` does not test the `tformABI()` and `invtformABI()` methods. These are the newest and most complex transforms in the file (`src/PluckerTransform.cpp:106-215`).
+
+**Files:** `src/PluckerTransform.cpp:106-215`, `tests/TestPluckerTransform.cpp`
+
+**Risk:** These methods build full 6x6 matrices and perform triple products. Without dedicated tests, any bug here would only be caught indirectly through `ForwardDynamics` tests.
+
+**Priority:** Medium
+
+---
+
+### No NaN/Inf propagation tests for release builds
+
+**What's not tested:** All NaN/Inf guards are behind `#ifndef NDEBUG`. There are no tests that verify behavior when NaN/Inf inputs enter the library in release mode.
+
+**Files:** `src/SpatialVector.cpp:15-20`, `include/RigidBodyInertia.h:90-94`, `include/ArticulatedBodyInertia.h:183-187`
+
+**Risk:** NaN values can silently propagate through matrix operations in release builds, corrupting downstream results.
+
+**Priority:** Medium
+
+---
+
+### ZeroMassEdgeCase test non-deterministic
+
+**What's not tested:** The test `ForwardDynamicsTest.ZeroMassEdgeCase` (`TestForwardDynamics.cpp:676-704`) accepts two possible outcomes (exception OR finite result), making it a weak test. The specific behavior for degenerate inertias is not defined.
+
+**Files:** `tests/TestForwardDynamics.cpp:676-704`
+
+**Priority:** Low
+
+---
+
+*Concerns audit: 2026-06-05*

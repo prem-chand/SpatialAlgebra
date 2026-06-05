@@ -1,258 +1,290 @@
-<!-- refreshed: 2026-05-17 -->
+<!-- refreshed: 2026-06-05 -->
 # Architecture
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## System Overview
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                     APPLICATION LAYER                           │
-│  `examples/`  `src/main.cpp`  `robot_dynamics/rnea.py`          │
-├─────────────────────────────────────────────────────────────────┤
-│                     DYNAMICS ALGORITHMS                         │
-│  ┌──────────────────────┐  ┌──────────────────────────────────┐ │
-│  │  ForwardDynamics     │  │  InverseDynamics                │ │
-│  │  (ABA, Algorithm7.3) │  │  (RNEA, Algorithm 7.1)          │ │
-│  │  `src/FD.cpp`         │  │  `src/ID.cpp`                  │ │
-│  │  `include/FD.h`      │  │  `include/ID.h`                │ │
-│  ├──────────────────────┤  ├──────────────────────────────────┤ │
-│  │ struct Link (ABA)    │  │ struct InverseDynamicsLink (RNEA)│ │
-│  │  parent, X, I, S,    │  │  parent, X, I, S,               │ │
-│  │  v, c, f, Ia, pa     │  │  v, a                           │ │
-│  └──────────────────────┘  └──────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────┤
-│                     TRANSFORMS & INERTIA                         │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
-│  │  PluckerTransform│  │  RigidBodyInertia│  │ ArticBodyIner │  │
-│  │  6×6 motion/force│  │  m, com, I_lt    │  │ I, H, M (ABI) │  │
-│  │  transform       │  │  apply(mv)->fv   │  │ apply(mv)->fv │  │
-│  └────────┬─────────┘  └──────────────────┘  └───────┬───────┘  │
-│           │                                          │          │
-├───────────┼──────────────────────────────────────────┼──────────┤
-│           ▼                                          ▼          │
-│                    CORE SPATIAL VECTORS                          │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Rotation ──┬── extends Eigen::Matrix3d                 │   │
-│  │  SpatialVector (base)         ┌──────────────────┐      │   │
-│  │   ├── motion/force duality    │ LowerTriangular  │      │   │
-│  │   ├── 6D [angular; linear]    │ packed storage   │      │   │
-│  │   ├── crossMotion / crossForce│ O(n²/2) memory   │      │   │
-│  │   └── dot()                   └──────────────────┘      │   │
-│  │    ↳ MotionVector (twist) ──── cross/ +/dot             │   │
-│  │    ↳ ForceVector (wrench) ──── cross/ +/dot             │   │
-│  └─────────────────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────────────────┤
-│                       LINEAR ALGEBRA BACKEND                    │
-│                         Eigen3 3.3+                             │
-│                    `#include <Eigen/Dense>`                     │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                        ALGORITHM LAYER                              │
+│  ┌──────────────────────┐  ┌──────────────────────────────────────┐ │
+│  │   ForwardDynamics    │  │        InverseDynamics                │ │
+│  │   (Articulated Body  │  │   (Recursive Newton-Euler)           │ │
+│  │    Algorithm)        │  │                                      │ │
+│  │  `src/ForwardDynamics` │  │  `src/InverseDynamics.cpp`          │ │
+│  └──────────┬───────────┘  └──────────────┬───────────────────────┘ │
+│             │                              │                         │
+│  ┌──────────▼──────────────────────────────▼───────────────────────┐ │
+│  │                  SpatialOperations (static utility)             │ │
+│  │                  `include/SpatialOperations.h`                  │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────────────┤
+│                       GEOMETRY / INERTIA LAYER                       │
+│  ┌────────────────┐  ┌──────────────────┐  ┌──────────────────────┐ │
+│  │  PluckerTransform│  │  RigidBodyInertia│  │ArticulatedBodyInertia│ │
+│  │  `include/...`  │  │  `include/...`   │  │  `include/...`      │ │
+│  └───────┬────────┘  └────────┬─────────┘  └──────────┬───────────┘ │
+│          │                    │                         │             │
+│  ┌───────▼────────────────────▼─────────────────────────▼───────────┐ │
+│  │               LowerTriangular (packed storage)                    │ │
+│  │               `include/LowerTriangular.h`                         │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────────────┤
+│                       SPATIAL VECTOR LAYER                           │
+│  ┌────────────────┐  ┌──────────────────────┐  ┌──────────────────┐ │
+│  │   MotionVector │  │     SpatialUtils     │  │    ForceVector   │ │
+│  │    (twist)     │  │   cross(), dot(),     │  │    (wrench)      │ │
+│  │                │  │   skew()             │  │                   │ │
+│  └───────┬────────┘  └──────────────────────┘  └─────────┬─────────┘ │
+│          │                                                │           │
+│  ┌───────▼────────────────────────────────────────────────▼─────────┐ │
+│  │                    SpatialVector (6D base class)                   │ │
+│  │                    `include/SpatialVector.h`                       │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────────────┤
+│                        FOUNDATION LAYER                              │
+│  ┌────────────────────┐  ┌─────────────────────────────────────────┐ │
+│  │  Rotation          │  │  Eigen3 (all linear algebra)            │ │
+│  │  extends Matrix3d  │  │  Used by every class above              │ │
+│  │  `include/Rotation.h│  │  External dependency                   │ │
+│  └────────────────────┘  └─────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Responsibilities
 
 | Component | Responsibility | File |
 |-----------|----------------|------|
-| SpatialVector | 6D vector base: angular+linear components, cross/dot ops | `include/SpatialVector.h`, `src/SpatialVector.cpp` |
-| MotionVector | Twist type: type-safe motion vectors, covariant transforms | `include/MotionVector.h`, `src/MotionVector.cpp` |
-| ForceVector | Wrench type: type-safe force vectors, contravariant transforms | `include/ForceVector.h`, `src/ForceVector.cpp` |
-| Rotation | 3D rotation: angle-axis/quaternion/3×3 matrix, extends Eigen::Matrix3d | `include/Rotation.h`, `src/Rotation.cpp` |
-| PluckerTransform | 6×6 spatial transform: motion/force/inertia across coordinate frames | `include/PluckerTransform.h`, `src/PluckerTransform.cpp` |
-| RigidBodyInertia | Body mass properties: mass, COM, inertia tensor (LT storage) | `include/RigidBodyInertia.h` (all inline) |
-| ArticulatedBodyInertia | Composite inertia for ABA: I, H, M block structure (LT storage) | `include/ArticulatedBodyInertia.h` (all inline) |
-| LowerTriangular | Packed lower-triangular matrix: O(n²/2) storage, symmetric mult | `include/LowerTriangular.h`, `src/LowerTriangular.cpp` |
-| SpatialUtils | Free functions: skew(), dot(), cross() overloads | `include/SpatialUtils.h` |
-| SpatialOperations | Static utility class: wraps cross ops, transformInertia | `include/SpatialOperations.h`, `src/SpatialOperations.cpp` |
-| ForwardDynamics | ABA solver: outward→inward pass, resolves q̈ from τ | `include/ForwardDynamics.h`, `src/ForwardDynamics.cpp` |
-| InverseDynamics | RNEA solver: outward→inward pass, resolves τ from q̈ | `include/InverseDynamics.h`, `src/InverseDynamics.cpp` |
-| `struct Link` | Forward dynamics link data: parent, X, I, S, v, c, f, Ia, pa | `include/ForwardDynamics.h:79-111` |
-| `struct InverseDynamicsLink` | Inverse dynamics link data: parent, X, I, S, v, a | `include/InverseDynamics.h:75-100` |
+| SpatialVector | 6D base: angular + linear components, arithmetic, cross/dot products | `include/SpatialVector.h`, `src/SpatialVector.cpp` |
+| MotionVector | Type-safe twist (motion) representation | `include/MotionVector.h`, `src/MotionVector.cpp` |
+| ForceVector | Type-safe wrench (force) representation | `include/ForceVector.h`, `src/ForceVector.cpp` |
+| Rotation | 3D rotation matrix extending Eigen::Matrix3d | `include/Rotation.h`, `src/Rotation.cpp` |
+| PluckerTransform | 6x6 Plücker coordinate transform (rotation+translation) | `include/PluckerTransform.h`, `src/PluckerTransform.cpp` |
+| RigidBodyInertia | Body mass, COM, inertia tensor (fully inline) | `include/RigidBodyInertia.h` |
+| ArticulatedBodyInertia | Articulated body [I, H; H^T, M] block inertia | `include/ArticulatedBodyInertia.h` |
+| LowerTriangular | Packed-storage lower triangular matrix (custom, not Eigen) | `include/LowerTriangular.h`, `src/LowerTriangular.cpp` |
+| SpatialUtils | Free functions: skew(), dot(), cross() (forced `noexcept`) | `include/SpatialUtils.h` |
+| SpatialOperations | Static utility: crossProductMotion, crossProductForce, transformInertia | `include/SpatialOperations.h`, `src/SpatialOperations.cpp` |
+| InverseDynamics | Recursive Newton-Euler Algorithm solver | `include/InverseDynamics.h`, `src/InverseDynamics.cpp` |
+| ForwardDynamics | Articulated Body Algorithm solver | `include/ForwardDynamics.h`, `src/ForwardDynamics.cpp` |
+| SpatialAlgebra.h | Umbrella header (includes all public headers in dependency order) | `include/SpatialAlgebra.h` |
 
 ## Pattern Overview
 
-**Overall:** Object-oriented spatial algebra library following Featherstone's formulation. Core pattern is **base-class specialization** for motion/force duality with **composition** for transforms (PluckerTransform contains Rotation + translation bound together in a 6×6 transformation matrix).
+**Overall:** Layered architecture with inheritance for spatial vector types, composition for transforms, and protocol-based link structures for dynamics algorithms.
 
 **Key Characteristics:**
-- **Class inheritance vs composition hybrid**: `Rotation` extends `Eigen::Matrix3d` (inheritance). `SpatialVector` is the base class, `MotionVector` and `ForceVector` inherit from it. `PluckerTransform` composes `Rotation` + `Vector3d translation`.
-- **Value semantics**: All objects passed by value or const reference. No pointer-based ownership. Small objects returned by value.
-- **Packed storage specialization**: `LowerTriangular` uses a custom 1D packed array instead of Eigen's dense storage for inertia tensors, with O(n²/2) memory footprint.
-- **Three-phase algorithm pattern**: Both dynamics solvers (ABA, RNEA) follow outward-pass → inward-pass → solve loop structure.
-- **Inline-heavy design**: `RigidBodyInertia` and `ArticulatedBodyInertia` are entirely inline in their headers. Other classes split declarations in headers and implementations in `.cpp` files.
+- `SpatialVector` → `MotionVector` / `ForceVector`: inheritance used for type safety (not polymorphism; no virtual methods except destructor)
+- `Rotation` extends `Eigen::Matrix3d`: inheritance used for seamless Eigen integration
+- `PluckerTransform` uses composition: stores `Rotation` + `Vector3d` translation separately (not a 6x6 matrix)
+- `RigidBodyInertia` and `ArticulatedBodyInertia` use `LowerTriangular` for packed symmetric storage (3x3 inertia tensor)
+- `LowerTriangular` is a custom packed-storage class (not Eigen-based internally, but uses Eigen vectors for data)
+- Dynamics algorithms (`ForwardDynamics`, `InverseDynamics`) are struct-of-arrays-like, storing vectors of `Link`/`InverseDynamicsLink`
+- All types use value semantics (pass by value/const reference, no heap allocation)
+- All code lives in `namespace SpatialAlgebra`
+- Mathematical notation follows Featherstone (2008) throughout
 
 ## Layers
 
-**Core Layer (Spatial Vectors & Utils):**
-- Purpose: Fundamental 6D vector types and linear algebra utilities
-- Location: `include/SpatialVector.h`, `include/MotionVector.h`, `include/ForceVector.h`, `include/SpatialUtils.h`
-- Contains: SpatialVector (base), MotionVector (twist), ForceVector (wrench), skew/dot/cross free functions, LowerTriangular (packed storage)
-- Depends on: Eigen3 (`<Eigen/Dense>`)
-- Used by: All higher-level layers
+**Foundation Layer:**
+- Purpose: Fundamental 3D math and linear algebra primitives
+- Location: `include/Rotation.h`, `include/SpatialVector.h`, `include/SpatialUtils.h`, `include/LowerTriangular.h`
+- Contains: `Rotation` (3x3 matrix extending Eigen), `SpatialVector` (6D base), `SpatialUtils` (free function cross/dot/skew), `LowerTriangular` (packed matrix)
+- Depends on: Eigen3 (`Eigen/Dense`, `Eigen/Geometry`)
+- Used by: All higher layers
 
-**Transforms & Inertia Layer:**
-- Purpose: Coordinate transformations and mass property representations
-- Location: `include/Rotation.h`, `include/PluckerTransform.h`, `include/RigidBodyInertia.h`, `include/ArticulatedBodyInertia.h`, `include/LowerTriangular.h`
-- Contains: Rotation (3D rotations extending Eigen::Matrix3d), PluckerTransform (6×6 Plücker transforms), RigidBodyInertia (mass+COM+inertia_tensor), ArticulatedBodyInertia (I/H/M block-matrix form)
-- Depends on: Core Layer (SpatialVector, MotionVector, ForceVector, SpatialUtils)
-- Used by: Dynamics Algorithms Layer, Application Layer
+**Spatial Vector Layer:**
+- Purpose: Type-safe motion (twist) and force (wrench) 6D vectors
+- Location: `include/MotionVector.h`, `include/ForceVector.h`, `src/MotionVector.cpp`, `src/ForceVector.cpp`
+- Contains: `MotionVector` (angular→ω, linear→v), `ForceVector` (angular→τ, linear→f), each with typed arithmetic and cross/dot operations
+- Depends on: `SpatialVector`
+- Used by: `PluckerTransform`, inertia classes, dynamics algorithms
 
-**Dynamics Algorithms Layer:**
-- Purpose: O(n) recursive dynamics solvers for kinematic chains
-- Location: `include/ForwardDynamics.h`, `include/InverseDynamics.h`, `src/ForwardDynamics.cpp`, `src/InverseDynamics.cpp`
-- Contains: ForwardDynamics class (ABA algorithm), InverseDynamics class (RNEA algorithm), Link and InverseDynamicsLink structs
-- Depends on: Transforms & Inertia Layer (PluckerTransform, RigidBodyInertia, ArticulatedBodyInertia, SpatialVector family)
-- Used by: Application Layer
+**Geometry/Inertia Layer:**
+- Purpose: Coordinate frame transforms, mass property representations
+- Location: `include/PluckerTransform.h`, `include/RigidBodyInertia.h`, `include/ArticulatedBodyInertia.h`, `src/PluckerTransform.cpp`
+- Contains: `PluckerTransform` (motion/force transforms + inertia transformation), `RigidBodyInertia` (mass, COM, inertia), `ArticulatedBodyInertia` (block inertia for ABA)
+- Depends on: `SpatialVector`, `MotionVector`, `ForceVector`, `Rotation`, `LowerTriangular`
+- Used by: Dynamics algorithms
 
-**Application Layer:**
-- Purpose: Library demos, testing, and standalone Python implementation
-- Location: `src/main.cpp`, `examples/`, `tests/`, `robot_dynamics/rnea.py`
-- Contains: Demonstration executables (basic_vectors, transforms, inertia, dynamics), all test suites, standalone Python RNEA
-- Depends on: All library layers
+**Algorithm Layer:**
+- Purpose: Rigid body dynamics solvers
+- Location: `include/ForwardDynamics.h`, `include/InverseDynamics.h`, `src/ForwardDynamics.cpp`, `src/InverseDynamics.cpp`, `include/SpatialOperations.h`, `src/SpatialOperations.cpp`
+- Contains: `ForwardDynamics` (ABA for joint accelerations), `InverseDynamics` (RNEA for joint torques), `SpatialOperations` (static wrappers)
+- Depends on: All lower layers
+- Used by: `src/main.cpp` (demo), `examples/` (usage demonstrations)
 
 ## Data Flow
 
+### Primary Request Path — Inverse Dynamics (RNEA)
+
+1. User populates `InverseDynamics::links` with `InverseDynamicsLink` structs (parent, X, I, S, q, qdot, qddot) (`include/InverseDynamics.h:75-100`)
+2. User calls `computeTorques(qddot, gravity)` (`src/InverseDynamics.cpp:96-136`)
+3. **Outward pass** (base→tip): Propagates velocities and accelerations through kinematic chain (`src/InverseDynamics.cpp:19-52`)
+   - Base: `v = S·q̇`, `a = S·q̈ - g`
+   - Children: `v = X·v_parent + S·q̇`, `a = X·a_parent + S·q̈ + v×S·q̇`
+4. **Inward pass** (tip→base): Propagates forces, computes joint torques (`src/InverseDynamics.cpp:55-94`)
+   - `f = I·a + v×I·v`
+   - `τ = S·f`
+   - Propagate to parent: `f_parent += X⁻ᵀ·f`
+5. Returns `Eigen::VectorXd tau` of joint torques
+
 ### Primary Request Path — Forward Dynamics (ABA)
 
-1. **Setup**: User populates `ForwardDynamics::links` vector with `Link` structs (parent, X, I, S, q, qdot) (`include/ForwardDynamics.h:137`)
-2. **Entry**: `fd.computeAccelerations(tau)` called with joint torque vector (`src/ForwardDynamics.cpp:128`)
-3. **Outward Pass (base→tip)**: Propagate spatial velocities from parent to child links, compute bias accelerations (`src/ForwardDynamics.cpp:19-51`):
-   - Base: `v₀ = S₀·q̇₀`, `c₀ = 0`
-   - Child: `vᵢ = Xᵢ·v_parent + Sᵢ·q̇ᵢ`, `cᵢ = Xᵢ·c_parent + vᵢ × Sᵢ·q̇ᵢ`
-4. **Inward Pass (tip→base)**: Initialize articulated inertias Iₐ from rigid body inertias, accumulate child contributions (`src/ForwardDynamics.cpp:53-126`):
-   - Initialize: `Iₐᵢ = rbi_to_abi(Iᵢ)`, `pₐᵢ = Iₐᵢ·cᵢ + vᵢ × Iₐᵢ·vᵢ + fᵢ`
-   - Accumulate: `Iₐ_parent += X⁻¹·Iₐ_child·X⁻ᵀ`, `pₐ_parent += X⁻ᵀ·pₐ_child`
-5. **Solve**: Compute joint accelerations: `q̈ᵢ = (τᵢ - Sᵢᵀ·pₐᵢ) / (Sᵢᵀ·Iₐᵢ·Sᵢ)` (`src/ForwardDynamics.cpp:96-125`)
-6. **Output**: `Link::qddot` populated for each link
+1. User populates `ForwardDynamics::links` with `Link` structs (parent, X, I, S, q, qdot) (`include/ForwardDynamics.h:79-111`)
+2. User calls `computeAccelerations(tau, gravity)` (`src/ForwardDynamics.cpp:182-209`)
+3. **Outward pass** (base→tip): Propagates velocities, computes bias accelerations (`src/ForwardDynamics.cpp:57-80`)
+   - Base: `v = S·q̇`, `c = -g`
+   - Children: `v = X·v_parent + S·q̇`, `c = X·c_parent + v×S·q̇`
+4. **Inward pass** (tip→base): Accumulates articulated inertias, computes partial accelerations (`src/ForwardDynamics.cpp:82-180`, 3 phases)
+   - Phase 1: Initialize `Ia`, `pa` from rigid body inertia + bias forces
+   - Phase 2: Condense `Ia`/`pa` along joint axis, propagate to parent
+   - Phase 3: Correct partial `qddot` using parent acceleration
+5. Results stored in `links[i].qddot`
 
-### Secondary Flow — Inverse Dynamics (RNEA)
+### Transform Pipeline (PluckerTransform)
 
-1. **Setup**: User populates `InverseDynamics::links` vector with `InverseDynamicsLink` structs (`include/InverseDynamics.h:123`)
-2. **Entry**: `id.computeTorques(qddot)` called with joint acceleration vector (`src/InverseDynamics.cpp:103`)
-3. **Outward Pass (base→tip)**: Propagate velocities and accelerations (`src/InverseDynamics.cpp:19-52`):
-   - Base: `v₀ = S₀·q̇₀`, `a₀ = S₀·q̈₀`
-   - Child: `vᵢ = Xᵢ·v_parent + Sᵢ·q̇ᵢ`, `aᵢ = Xᵢ·a_parent + Sᵢ·q̈ᵢ + vᵢ × Sᵢ·q̇ᵢ`
-4. **Inward Pass (tip→base)**: Compute spatial forces, accumulate child forces, project onto joint axes (`src/InverseDynamics.cpp:54-101`):
-   - `fᵢ = Iᵢ·aᵢ + vᵢ × Iᵢ·vᵢ + Σ Xⱼ⁻ᵀ·fⱼ (children)`
-   - `τᵢ = fᵢ·Sᵢ`
-5. **Output**: Returns `Eigen::VectorXd tau` — joint torques
-
-### Transform Flow — Plücker Coordinates
-
-1. Create `PluckerTransform(rotation, translation)` — stores rotation and translation separately (`src/PluckerTransform.cpp:12-13`)
-2. `transformMotion(mv)`: applies `X_m = [R, 0; -R·[t]×, R]` to a motion vector (`src/PluckerTransform.cpp:15-26`)
-3. `transformForce(fv)`: applies `X_f = X_m⁻ᵀ` to a force vector (`src/PluckerTransform.cpp:28-38`)
-4. `tformRBI(rbi)`: applies `I' = X·I·Xᵀ` for rigid body inertias (`src/PluckerTransform.cpp:64-81`)
-5. `tformABI(abi)`: applies 6×6 block transform `Iₐ' = X·Iₐ·Xᵀ` for articulated body inertias (`src/PluckerTransform.cpp:104-161`)
+1. Motion vector transform: `v' = X·v = [R·ω; R·(v - r×ω)]` (`src/PluckerTransform.cpp:15-26`)
+2. Force vector transform: `f' = X⁻ᵀ·f = [R·(τ - r×f); R·f]` (`src/PluckerTransform.cpp:28-40`)
+3. Inverse motion: `v = X⁻¹·v' = [Rᵀ·ω'; Rᵀ·v' + r×(Rᵀ·ω')]` (`src/PluckerTransform.cpp:42-51`)
+4. Inverse force: `f = Xᵀ·f' = [Rᵀ·τ' + r×(Rᵀ·f'); Rᵀ·f']` (`src/PluckerTransform.cpp:53-64`)
+5. Composition: `X₁·X₂` uses `R = R₁·R₂`, `t = t₂ + R₂ᵀ·t₁` (`src/PluckerTransform.cpp:229-240`)
+6. Inverse: `X⁻¹` uses `R_inv = Rᵀ`, `t_inv = -R·t` (`src/PluckerTransform.cpp:217-227`)
+7. Inertia transform (`tformRBI`): `I' = X·I·Xᵀ` (`src/PluckerTransform.cpp:66-83`)
+8. ABI transform (`tformABI`): uses 6x6 block matrix construction (`src/PluckerTransform.cpp:106-163`)
 
 **State Management:**
-- No global state. All computation is local to the class instance.
-- `ForwardDynamics` and `InverseDynamics` store link state as `std::vector<Link>` public members, mutated in-place during passes.
-- Dynamics classes are reusable — callers update link state and re-invoke.
+- Pure value semantics: no shared pointers, no global state
+- Dynamics solvers store link vectors as mutable state; user configures before each call
+- No persistent state between dynamics solves (caller must re-populate or mutate links)
+- No lazy evaluation, no caching
 
 ## Key Abstractions
 
-**SpatialVector (6D vector):**
-- Purpose: Base class representing a 6D spatial vector with angular and linear components
-- Examples: `include/SpatialVector.h:68`
-- Pattern: Concrete base class with protected `Vector3d angular` and `Vector3d linear` members. Provides `crossMotion()`, `crossForce()`, and `dot()` operations. Not intended for direct use — use `MotionVector` or `ForceVector` for type safety.
+**SpatialVector (6D base):**
+- Purpose: 6D vector combining angular + linear 3D components
+- Examples: `include/SpatialVector.h:67-174`
+- Pattern: Base class with protected `Vector3d angular, linear` members; virtual destructor for type safety
+- Provides: arithmetic (+/-/*), `crossMotion`, `crossForce`, `dot`, `print`
 
-**MotionVector / ForceVector (physical specialization):**
-- Purpose: Type-safe specialization for motion (twist) and force (wrench) duality
-- Examples: `include/MotionVector.h:69`, `include/ForceVector.h:71`
-- Pattern: Inheritance from `SpatialVector`. Each overrides operators to return their own type. `MotionVector` transforms covariantly under Plücker transforms; `ForceVector` transforms contravariantly.
-
-**PluckerTransform (6×6 spatial transform):**
-- Purpose: Rigid body coordinate transformation in Plücker coordinates
-- Examples: `include/PluckerTransform.h:77`
-- Pattern: Composes `Rotation rotation` and `Vector3d translation`. Provides `transformMotion()`, `transformForce()`, `inverse()`, `multiply()`, `tformRBI()`, `tformABI()`. All transforms use the 6×6 block matrix formulation from Featherstone.
-
-**LowerTriangular (packed matrix):**
-- Purpose: Memory-efficient storage for symmetric matrices (inertia tensors)
-- Examples: `include/LowerTriangular.h:75`
-- Pattern: 1D `Eigen::VectorXd` array with index mapping `idx = i*(i+1)/2 + j`. Provides `multiplySymmetric()` for symmetric matrix-vector multiplication, `getSymmetricMatrix()` for full reconstruction, OpenMP parallelization for matrix-matrix multiply.
-
-**Link (kinematic chain node):**
-- Purpose: Represents a single link in a kinematic tree for dynamics algorithms
-- Examples: `include/ForwardDynamics.h:79` (ABA), `include/InverseDynamics.h:75` (RNEA)
-- Pattern: Public struct with parent index, Plücker transform, rigid body inertia, joint motion axis, state (q, qdot, qddot), and intermediate quantities (v, a/c, f, Ia, pa). Parent index -1 indicates base link.
+**MotionVector / ForceVector (typed spatial vectors):**
+- Purpose: Type-safe wrappers with correct physical interpretation
+- Examples: `include/MotionVector.h:69-146`, `include/ForceVector.h:71-148`
+- Pattern: Inherit `SpatialVector`, add typed operators returning derived type
+- Type aliases: `using mv = MotionVector`, `using fv = ForceVector`
 
 **Rotation (3D rotation):**
-- Purpose: 3D rotation matrix with multiple representation support
-- Examples: `include/Rotation.h:57`
-- Pattern: Extends `Eigen::Matrix3d` via inheritance. Constructs from `AngleAxisd`, `Quaterniond`, or `Matrix3d`. Provides `inverse()`, `transpose()`, `toAngleAxis()`, `toQuaternion()`.
+- Purpose: 3x3 rotation matrix extending Eigen
+- Examples: `include/Rotation.h:57-171`
+- Pattern: Inherits `Eigen::Matrix3d`, adds constructors from AngleAxis/Quaternion, `inverse()`, `transpose()`, `toAngleAxis()`, `toQuaternion()`
+
+**PluckerTransform (6x6 spatial transform):**
+- Purpose: Rigid body coordinate transformation in Plücker coordinates
+- Examples: `include/PluckerTransform.h:77-216`
+- Pattern: Stores `Rotation` and `Vector3d translation` separately; provides `transformMotion`, `transformForce`, inverse variants, and inertia transformations (`tformRBI`, `tformABI`)
+- Type alias: `using plux = PluckerTransform`
+
+**RigidBodyInertia:**
+- Purpose: Body mass properties (mass, COM, inertia tensor)
+- Examples: `include/RigidBodyInertia.h:27-116`
+- Pattern: Stores `double mass`, `Vector3d com`, `LowerTriangular inertiaMatrixLT`; fully inline implementation
+- Key method: `apply(mv)` → returns `fv = [Iω + com×v; m·v - com×ω]`
+- Type alias: `using rbi = RigidBodyInertia`
+
+**ArticulatedBodyInertia:**
+- Purpose: Block inertia for articulated bodies: [I, H; Hᵀ, M]
+- Examples: `include/ArticulatedBodyInertia.h:77-213`
+- Pattern: Stores `lt Inertia` (rotational), `Matrix3d H` (coupling), `lt M` (mass); inline implementation
+- Key method: `apply(mv)` → returns `fv = [Iω + H·v; Hᵀω + M·v]`
+- Type alias: `using abi = ArticulatedBodyInertia`
+
+**LowerTriangular (packed storage):**
+- Purpose: Memory-efficient lower triangular matrix for symmetric storage
+- Examples: `include/LowerTriangular.h:75-564`
+- Pattern: 1D `Eigen::VectorXd` array with index mapping `idx = i*(i+1)/2 + j`; provides multiply, inverse, transpose, `getSymmetricMatrix()`, `fromFullMatrix()`, `multiplySymmetric()`
+- OpenMP parallelization commented in docs, not observed in implementation
+- Type alias: `using lt = LowerTriangular`
+
+**Link / InverseDynamicsLink:**
+- Purpose: Protocol struct for kinematic chain configuration
+- Examples: `include/ForwardDynamics.h:79-111`, `include/InverseDynamics.h:75-100`
+- Pattern: Struct with parent index, X (PluckerTransform), I (RigidBodyInertia), S (joint axis MotionVector), q/qdot/qddot, and intermediate computed quantities (v, c, a, f, Ia, pa)
 
 ## Entry Points
 
-**Library Headers (Primary):**
-- Location: `include/*.h` (12 header files)
-- Triggers: User `#include`s the desired header(s)
-- Responsibilities: Declare all class interfaces. The library has **no umbrella header** — users include what they need individually.
+**Public API Headers:**
+- Location: `include/*.h` (13 headers)
+- Triggers: User includes one or more headers and instantiates classes
+- Responsibilities: Provide full spatial algebra API
+- Umbrella header: `include/SpatialAlgebra.h` includes all public headers in order
 
-**Library Source (Compilation):**
-- Location: `src/*.cpp` (12 source files, plus `main.cpp`)
-- Triggers: CMake compiles all `src/*.cpp` into `libSpatialAlgebra.a`
-- Responsibilities: Define non-inline methods. Note: `RigidBodyInertia.cpp` and `ArticulatedBodyInertia.cpp` are empty stubs (all inline in headers).
+**Dynamics Solvers:**
+- `InverseDynamics::computeTorques(qddot, gravity)` — entry for inverse dynamics (`src/InverseDynamics.cpp:96`)
+- `ForwardDynamics::computeAccelerations(tau, gravity)` — entry for forward dynamics (`src/ForwardDynamics.cpp:182`)
+
+**Demo Executable:**
+- `src/main.cpp`: Quick demonstration of vectors, transforms, inertia
+- `examples/basic_vectors.cpp`, `examples/transforms.cpp`, `examples/inertia.cpp`, `examples/dynamics.cpp`: Usage examples built as separate executables
 
 **Test Executables:**
-- Location: `tests/Test*.cpp` (9 test files, all with `main()` calling `RUN_ALL_TESTS()`)
-- Triggers: Built and registered via CTest when `cmake --build build && ctest` is run
-- Responsibilities: Verify correctness of all library classes
+- 10 test executables registered in `CMakeLists.txt` (lines 52-154): `TestSpatialVector`, `TestPluckerTransform`, `TestRotation`, `TestLowerTriangular`, `TestSpatialUtils`, `TestRigidBodyInertia`, `TestArticulatedBodyInertia`, `TestForwardDynamics`, `TestSpatialOperations`, `TestInverseDynamics`
+- Plus: `TestDynamicsConsistency` (cross-check between inverse and forward dynamics)
 
-**Example Executables:**
-- Location: `examples/basic_vectors.cpp`, `transforms.cpp`, `inertia.cpp`, `dynamics.cpp`
-- Triggers: Built when cmake processes `examples/CMakeLists.txt`
-- Responsibilities: Demonstrate library usage patterns
-
-**Python RNEA:**
-- Location: `robot_dynamics/rnea.py`
-- Triggers: Python import or direct execution
-- Responsibilities: Standalone inverse dynamics (not integrated with C++ library)
+**Python Side:**
+- `robot_dynamics/rnea.py`: Standalone RNEA implementation using NumPy (not integrated with C++ library)
 
 ## Architectural Constraints
 
-- **Threading:** Single-threaded by default. `LowerTriangular::operator*` uses `#pragma omp parallel for` for matrix-matrix multiplication if OpenMP is available. No other parallel constructs.
-- **Global state:** None. All state is instance-local. The `using` type aliases (`mv`, `fv`, `plux`, `rbi`, `abi`, `lt`) at namespace scope in `SpatialAlgebra` are the only file-scope declarations.
-- **Circular imports:** None detected. The dependency graph is a DAG: SpatialVector → MotionVector/ForceVector → PluckerTransform → RigidBodyInertia/ArticulatedBodyInertia → ForwardDynamics/InverseDynamics.
-- **Memory model:** Value semantics throughout. No raw `new`/`delete`. No `std::shared_ptr` or `std::unique_ptr`. All vectors use `std::vector<T>` with value types.
-- **No virtual methods:** The class hierarchy (`SpatialVector → MotionVector/ForceVector`) uses no virtual functions. Specialization is achieved via method overriding (non-virtual) and type-specific return types. This is a deliberate design choice for performance (no vtable overhead).
+- **Threading:** Single-threaded. OpenMP is mentioned in `LowerTriangular.h` documentation but not used in the actual implementation. No thread safety considerations.
+- **Global state:** None. No module-level singletons or shared mutable state. Each dynamics solver has its own `links` vector.
+- **Circular imports:** None detected. Header dependency graph is a DAG with `SpatialVector.h` at root. `SpatialAlgebra.h` includes in strict dependency order.
+- **Memory model:** All objects are value types. `LowerTriangular` owns a heap-allocated `Eigen::VectorXd` internally (RAII). Dynamics solvers own `std::vector<Link>` by value.
+- **No runtime polymorphism:** The virtual destructor on `SpatialVector` is the only virtual method. All operations use static dispatch through typed derived classes.
+- **`noexcept` correctness:** Only `SpatialUtils.h` free functions (`skew`, `dot`, `cross` variants) are marked `noexcept`. Class methods are not.
 
 ## Anti-Patterns
 
-### Stub .cpp files
-**What happens:** `src/RigidBodyInertia.cpp` and `src/ArticulatedBodyInertia.cpp` exist but contain only comments saying "No implementation needed — all methods are inline in header."
-**Why it's wrong:** These files are compiled as part of `file(GLOB SOURCES "src/*.cpp")` in CMake, so they produce empty translation units. While harmless, they're misleading and unnecessary.
-**Do this instead:** Remove these stub `.cpp` files and exclude them from the glob, or remove the glob pattern and list sources explicitly.
+### Inconsistency: `noexcept` on free functions but not on class methods
 
-### Inconsistent include guard style
-**What happens:** `LowerTriangular.h` uses `#pragma once` while all other headers use traditional `#ifndef`/`#define`/`#endif` guards.
-**Why it's wrong:** Inconsistent guard style across the codebase. `#pragma once` is non-standard (though widely supported).
-**Do this instead:** Standardize on `#ifndef`/`#define`/`#endif` guards matching the filename pattern (as done in all other headers).
+**What happens:** `SpatialUtils.h` marks all free functions `noexcept`, but identical logic in `SpatialVector` (e.g., `dot()`, `crossMotion()`) and derived classes is not marked `noexcept`.
+**Why it's wrong:** Inconsistent exception specification makes it unclear which operations can throw. Most vector operations are pure math and cannot throw.
+**Do this instead:** Mirror the `noexcept` annotation from `SpatialUtils.h` onto equivalent `SpatialVector`/`MotionVector`/`ForceVector` methods, as seen in `include/SpatialUtils.h:24`.
 
-### Non-virtual inheritance in class hierarchy
-**What happens:** `MotionVector` and `ForceVector` inherit from `SpatialVector`, but no methods are virtual. Passing by base pointer/reference leads to static dispatch, not dynamic.
-**Why it's wrong:** This breaks polymorphism if someone tries to use `SpatialVector&` to hold either type, but it's a conscious performance trade-off.
-**Do this instead:** This is intentional — the hierarchy is for type safety and code reuse, not runtime polymorphism. Methods are overridden to return concrete types (`MotionVector`, `ForceVector`). Keep as-is but document the intent.
+### SpatialOperations is a thin wrapper
+
+**What happens:** `SpatialOperations` static methods (`crossProductMotion`, `crossProductForce`, `transformInertia`) simply delegate to free functions or `PluckerTransform` methods (`src/SpatialOperations.cpp:11-24`).
+**Why it's wrong:** The class adds no value — it duplicates existing API surface without additional logic or abstraction.
+**Do this instead:** Eliminate `SpatialOperations` and call `cross()` / `tformRBI()` directly.
+
+### Mixed test style
+
+**What happens:** `TestSpatialVector.cpp` originally used bare `assert()`, while `TestPluckerTransform.cpp` uses GTest (`TEST()` / `EXPECT_DOUBLE_EQ`). The test file now has been partially converted but bare asserts may remain in older revisions.
+**Why it's wrong:** Inconsistent test patterns make it harder to run all tests uniformly (bare `assert()` aborts on failure instead of reporting).
+**Do this instead:** Use GTest exclusively across all test files.
 
 ## Error Handling
 
-**Strategy:** Exception-based error handling with input validation at public method boundaries.
+**Strategy:** Exceptions for runtime errors, debug-only assertions for preconditions.
 
 **Patterns:**
-- `std::invalid_argument` for dimension mismatches (`LowerTriangular` operations, `ForwardDynamics::computeAccelerations`, `InverseDynamics::computeTorques`)
+- `std::invalid_argument` for dimension mismatches (`LowerTriangular` operations, `computeAccelerations`, `computeTorques`)
 - `std::out_of_range` for index bounds (debug mode only in `LowerTriangular`)
-- `std::runtime_error` for singular matrix conditions (`LowerTriangular::inverse()`, `ForwardDynamics::inwardPass` near-zero inertia)
-- `std::isnan`/`std::isinf` validation in dynamics solvers (`src/ForwardDynamics.cpp:143`, `src/InverseDynamics.cpp:117`)
-- `assert()` used in `TestSpatialVector.cpp` (not in library code)
+- `std::runtime_error` for singular matrix / near-zero inertia in ABA (`ForwardDynamics::inwardPass`)
+- No error codes, no `std::optional`, no custom exception types
+- NaN/Inf detection in debug mode with `std::cerr` warnings (`RigidBodyInertia::apply`, `ArticulatedBodyInertia::apply`, `SpatialVector` constructor)
+- Input validation: dynamics solvers check for NaN/Inf in input vectors before computation
 
 ## Cross-Cutting Concerns
 
-**Logging:** Every class has a `print()` method that writes to `std::cout`. No structured logging, no log levels, no log file output.
+**Logging:** All classes have `print()` method outputting to `std::cout`. No structured logging, no log levels.
 
-**Validation:** Minimal. Relies on caller correctness for most operations. Bounds checking only in debug mode via `#ifndef NDEBUG`. Input validation (NaN/Inf, dimension mismatch) exists in dynamics solver public entry points.
+**Documentation:** Every header uses Doxygen `@brief`/`@details`/`@param`/`@return`/`@note`/`@warning`/`@see` on every declaration. Config: `Doxyfile` (Doxygen 1.12.0).
 
-**Authentication:** Not applicable — this is a native compiled library with no network communication.
+**Validation:** Debug-mode NaN/Inf checks in constructors and critical methods, guarded by `#ifndef NDEBUG`.
 
-**Documentation:** All classes and methods have Doxygen `@brief`/`@details` comments. Generated via `doxygen Doxyfile` to `docs/html/` and `docs/latex/`.
+**Testing:** 10 GTest-based test executables, 1 `TestDynamicsConsistency` cross-check, 1 `compile_smoke_test.cpp` for compilation verification. Results registered with CTest.
 
 ---
 
-*Architecture analysis: 2026-05-17*
+*Architecture analysis: 2026-06-05*

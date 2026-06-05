@@ -1,101 +1,116 @@
 # External Integrations
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## APIs & External Services
 
-**None detected.** The library has zero runtime HTTP, gRPC, or IPC integrations. All computation is local, single-process C++.
+**None.** This is a compiled C++17 static library with no runtime HTTP or network dependencies. The library has zero external integrations at runtime.
+
+All external interactions are **build-time or development-time only**:
+- **Eigen3** — Linear algebra library (compile-time dependency)
+- **Google Test** — Unit testing framework (test-time dependency)
+- **Doxygen** — Documentation generation (dev-time dependency)
+- **Homebrew / apt** — System package managers for installing Eigen3 and GTest
+- **FetchContent** — CMake module that downloads GTest from GitHub as fallback
 
 ## Data Storage
 
 **Databases:**
-- None detected. No database client libraries, ORM, or embedded databases (SQLite, LevelDB, etc.) are used.
+- None. The library has no persistent data storage.
 
 **File Storage:**
-- Local filesystem only. No cloud storage SDKs (S3, GCS, etc.) detected.
+- Local filesystem only. Build artifacts (`build/`), documentation (`docs/`), and source code are stored on the local filesystem.
 
 **Caching:**
-- None detected. No Redis, Memcached, or in-memory cache libraries.
+- None. No caching layer used.
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- None. No authentication, authorization, or identity management libraries detected. No user model exists.
+- None. The library has no user authentication, API keys, or identity management.
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- None. No Sentry, Datadog, or similar libraries detected.
+- None. No Sentry, Datadog, or similar services.
 
-**Logging:**
-- Console output only via `print()` methods on each class (e.g., `SpatialVector::print()` at `include/SpatialVector.h:172`)
-- No structured logging framework (spdlog, glog, etc.)
-- No log levels
-- No log file output
-
-**Metrics:**
-- None detected.
-
-**Tracing:**
-- None detected.
+**Logs:**
+- No structured logging framework. All output goes to `std::cout` via `.print()` methods on each class (for debugging/display).
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Not applicable. Static library with no deployment target.
+- Not applicable. This is a C++ static library, not a deployed service.
+- Distribution is via source code (GitHub repository).
 
 **CI Pipeline:**
-- None detected. No `.github/` workflow files exist.
+- **GitHub Actions** — Defined in `.github/workflows/ci.yml`
+  - Triggers: `push` and `pull_request` on `main` branch
+  - **Matrix:**
+    | OS | Compiler | Eigen Version |
+    |----|----------|---------------|
+    | ubuntu-latest | g++ | 3.4 |
+    | ubuntu-latest | g++ | 5.0 |
+    | ubuntu-latest | clang++ | 3.4 |
+    | ubuntu-latest | clang++ | 5.0 |
+    | macos-latest | g++ | 3.4 |
+    | macos-latest | g++ | 5.0 |
+    | macos-latest | clang++ | 3.4 |
+    | macos-latest | clang++ | 5.0 |
+  - **Coverage:** Ubuntu + g++ + Eigen 3.4 only, uploaded to Codecov
+  - **Eigen install:** Built from source for non-standard versions (macOS 5.0, Linux 5.0)
+  - **GTest install:** `brew install googletest` (macOS) or `apt-get install libgtest-dev` (Linux)
+  - **Steps:** Checkout → Install dependencies → Configure → Build → Test → Upload coverage
 
-**Package Publishing:**
-- No package registry detected (no vcpkg, Conan, or Homebrew formula).
+**Coverage Reporting:**
+- **Codecov** — Coverage upload via `codecov/codecov-action@v4` at `.github/workflows/ci.yml:77`
+  - Only on ubuntu-latest + g++ + Eigen 3.4
+  - `fail_ci_if_error: false`
 
 ## Environment Configuration
 
 **Required env vars:**
-- None. The library has no runtime environment variable dependencies.
+- None. The library has zero runtime environment variable dependencies.
+
+**Optional env vars:**
+- `Eigen3_DIR` — CMake variable for finding Eigen3 installation directory (used in CI)
+- `COVERAGE_FLAG` — CI-internal flag for enabling coverage build
 
 **Secrets location:**
-- Not applicable. No secrets are used.
+- None. No secrets required.
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- None.
+- None. No webhook endpoints.
 
 **Outgoing:**
-- None.
+- None. No webhook callbacks.
 
-## External SDK / System Library Dependencies
+## Network Dependencies
 
-**System Libraries:**
-- Eigen3 (`find_package(Eigen3 REQUIRED NO_MODULE)`) — the only external library dependency
-- Google Test (`find_package(GTest REQUIRED)`) — test-only dependency, not shipped with library
+**Build-time:**
+- `https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz` — Eigen 3.4 source (CI fallback)
+- `https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz` — Eigen 5.0.1 source (CI fallback)
+- `https://github.com/google/googletest/archive/release-1.12.1.zip` — GTest FetchContent fallback
+- `codecov/codecov-action@v4` — Coverage upload (CI only)
 
-**Python Integration:**
-- `robot_dynamics/rnea.py` contains a standalone Python 3 NumPy-based RNEA implementation
-- **Not integrated** with the C++ library — no pybind11, Cython, or any Python binding mechanism
-- Python dependency: `numpy` (used in `robot_dynamics/rnea.py:2`)
-- Python stdlib: `dataclasses`, `typing` (stdlib only)
+**Runtime:**
+- None. No network calls at runtime.
 
-## Build-Time Integrations
+## Vendored Dependencies
 
-**CMake External Dependencies:**
-- `find_package(Eigen3)` — system-installed via Homebrew at `/usr/local/Cellar/eigen/3.4.0_1/include/eigen3`
-- `find_package(GTest)` — system-installed via Homebrew
-- No FetchContent, ExternalProject, or vcpkg/Conan package management
+- **Eigen 5.0.1** — Full copy vendored at `eigen-5.0.1/`. Not used by the default build (which uses system-installed Eigen), but present for convenience/testing. Contains its own CI, tests, benchmarks, and build system.
 
-**Compiler/Platform:**
-- Apple Clang via Xcode Command Line Tools (`/usr/bin/clang`)
-- VSCode with `clangd` or C++ IntelliSense configured in `.vscode/c_cpp_properties.json`
+## Development Tools
 
-## Document Generation
+**VSCode Configuration:**
+- `.vscode/c_cpp_properties.json` — IntelliSense configuration pointing to Eigen 3.4.0 headers at `/usr/local/Cellar/eigen/3.4.0_1/include/eigen3`
+- `.vscode/settings.json` — Minimal: `files.associations` for Makefile and array
 
-**Doxygen:**
-- Configuration: `Doxyfile`
-- Generate: `doxygen Doxyfile` produces `docs/html/` and `docs/latex/`
-- No integration with CI or automated publishing
+**GitHub Copilot:**
+- `.github/copilot-instructions.md` — Instructions for Copilot code generation: detailed comments, type hints, modular code, security considerations
 
 ---
 
-*Integration audit: 2026-05-17*
+*Integration audit: 2026-06-05*

@@ -1,300 +1,237 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-05-17
+**Analysis Date:** 2026-06-05
 
 ## Naming Patterns
 
 **Files:**
-- PascalCase for class header/source files: `SpatialVector.h`, `PluckerTransform.cpp`, `Rotation.h`
-- Test files prefixed with `Test`: `TestSpatialVector.cpp`, `TestPluckerTransform.cpp`
-- Utility headers named descriptively: `SpatialUtils.h`, `SpatialOperations.h`
-- Python script: `rnea.py` (snake_case)
+- PascalCase with descriptive names: `SpatialVector.h`, `PluckerTransform.cpp`, `RigidBodyInertia.h`
+- Test files uniformly prefixed with `Test`: `TestSpatialVector.cpp`, `TestRotation.cpp`
+- Header guards match filename: `SPATIAL_VECTOR_H` (in `SpatialVector.h`), `PLUCKER_TRANSFORM_H`, `ROTATION_H`
+- Exception: `LowerTriangular.h` uses `#pragma once` instead of include guards
 
 **Classes:**
-- PascalCase, descriptive of the mathematical concept: `SpatialVector`, `MotionVector`, `ForceVector`, `PluckerTransform`, `RigidBodyInertia`, `ArticulatedBodyInertia`, `LowerTriangular`, `Rotation`
+- PascalCase reflecting the mathematical concept: `SpatialVector`, `MotionVector`, `ForceVector`, `PluckerTransform`, `Rotation`, `RigidBodyInertia`, `ArticulatedBodyInertia`, `LowerTriangular`
+- `SpatialOperations` is a static utility class (no instances, all static methods)
 
 **Functions:**
-- camelCase for methods: `transformMotion`, `crossProductMotion`, `getAngular`, `setFromAngleAxis`
-- Verbs for operations: `transform`, `apply`, `inverse`, `transpose`, `multiplySymmetric`
-- Getters prefixed with `get`: `getMass`, `getCom`, `getInertia`, `getAngular`, `getLinear`
-- Static methods also camelCase: `SpatialOperations::crossProductMotion`, `LowerTriangular::fromFullMatrix`
+- camelCase for methods: `transformMotion`, `crossProductMotion`, `getAngular`, `setFromAngleAxis`, `computeTorques`, `computeAccelerations`
+- Verbs for operations: `transform`, `apply`, `inverse`, `transpose`, `dot`, `cross`, `print`
+- Getters prefixed with `get`: `getMass`, `getCom`, `getInertia`, `getAngular`, `getLinear`, `getData`, `getH`, `getM`
+- `SpatialUtils.h` free functions are lowercase: `skew()`, `dot()`, `cross()`, `crossSpatial()`
+- Free function dot product is overloaded: `dot(const MotionVector&, const MotionVector&)`, `dot(const ForceVector&, const ForceVector&)` (see `SpatialUtils.h:64-82`)
 
 **Variables:**
-- Private members: lowercase (e.g., `angular`, `linear`, `rotation`, `translation`, `mass`, `com`, `Inertia`, `H`, `M`, `data`, `n`)
-- Local variables: camelCase (e.g., `transformedAngular`, `newRotation`, `invRotation`, `combinedInertia`, `a_cross_b`)
-- Parameters: camelCase (e.g., `const SpatialVector &other`, `const Rotation &rotation`)
-- Loop counters: `i`, `j`, `k`
+- Private members: lowercase (e.g., `angular`, `linear`, `rotation`, `translation`, `mass`, `com`, `data`, `size`)
+- Underscore suffix for some private members: `data_`, `size_`, `rotation_`, `translation_` (inconsistent — `SpatialVector.h:77` uses `angular`, `linear` while `LowerTriangular.h:87` uses `data_`, `size_`)
+- Local variables: camelCase (e.g., `transformedAngular`, `newRotation`, `invRotation`, `twist1`, `dotProduct`)
+- Test variables: descriptive of the scenario (e.g., `mv1`, `fv1`, `wrench1`, `qddot_input`, `tau_output`)
 
-**Types:**
-- Eigen types use Eigen's typedefs: `Vector3d`, `Matrix3d`, `VectorXd`, `Vector6d`
-- File-scope `using` declarations for concise notation:
-```cpp
-using Vector3d = Eigen::Matrix<double, 3, 1>;
-using Vector6d = Eigen::Matrix<double, 6, 1>;
-```
-- Namespace-level type aliases for shorthand:
-```cpp
-using mv = MotionVector;
-using fv = ForceVector;
-using plux = PluckerTransform;
-using rbi = RigidBodyInertia;
-using abi = ArticulatedBodyInertia;
-using lt = LowerTriangular;
-```
-- Defined at namespace scope in their respective header files (e.g., `using mv = MotionVector` in `include/MotionVector.h:157`)
-- `lt` alias defined in `include/RigidBodyInertia.h:19`
-
-**Header Guards:**
-- `#ifndef`/`#define`/`#endif` pattern (traditional):
-```cpp
-#ifndef SPATIAL_VECTOR_H
-#define SPATIAL_VECTOR_H
-// ...
-#endif // SPATIAL_VECTOR_H
-```
-- Guard names match filename, uppercase with underscores: `SPATIAL_VECTOR_H`, `PLUCKER_TRANSFORM_H`, `MOTION_VECTOR_H`, `RIGID_BODY_INERTIA_H`, `ARTIC_BODY_INERTIA_H`
-- Exception: `include/LowerTriangular.h` uses `#pragma once` (line 1)
+**Type Aliases:**
+- `using Vector3d = Eigen::Matrix<double, 3, 1>` at file scope in headers
+- `using Vector6d = Eigen::Matrix<double, 6, 1>` in `SpatialVector.h:13`
+- Namespace-level shorthand aliases in `SpatialVector.h:18-21`:
+  ```cpp
+  using mv = MotionVector;
+  using fv = ForceVector;
+  using plux = PluckerTransform;
+  using rbi = RigidBodyInertia;
+  using abi = ArticulatedBodyInertia;
+  using lt = LowerTriangular;
+  ```
+- `lt` is both a type alias and used as a variable name for LowerTriangular instances in test code
+- `InverseDynamicsLink` and `ForwardDynamicsLink` are struct types (not aliases), defined in respective headers
 
 ## Code Style
 
-**Indentation:** 4 spaces (no tabs observed)
-
-**Braces:**
-- K&R style for functions (opening brace on same line):
-```cpp
-void SpatialVector::print() const
-{
-    std::cout << "Angular: " << angular.transpose() << std::endl;
-    std::cout << "Linear: " << linear.transpose() << std::endl;
-}
-```
-- Allman style for class/struct/namespace declarations (opening brace on next line):
-```cpp
-namespace SpatialAlgebra
-{
-    class SpatialVector
-    {
-    protected:
-        Vector3d angular;
-    public:
-        SpatialVector();
-    };
-}
-```
-- Space before opening paren in control flow statements:
-```cpp
-if (n != other.n)
-    throw std::invalid_argument("Matrix size mismatch");
-```
-- No spaces inside parentheses for function calls: `sum.getAngular()[0]`
-
-**Line length:** ~80-120 characters typical, with some longer lines for complex expressions
-
-**Horizontal spacing:**
-- Spaces around binary operators: `mass * scalar`, `com.cross(v)`, `i * (i + 1) / 2 + j`
-- No space after unary operators: `*this`, `&other`
-- Space after comma in parameter lists: `const Vector3d &angular, const Vector3d &linear`
+**Formatting:**
+- Indentation: 4 spaces (no tabs)
+- Line length: ~100-120 characters typical
+- Braces: K&R style for functions (`namespace {` on same line), Allman style for classes (opening brace on next line with colon)
+- No formatter configured — no `.clang-format` in project root (only `eigen-5.0.1/.clang-format` exists for the vendored Eigen)
 
 **Linting:**
-- No linter configured (no `.clang-tidy`, no `.eslintrc`, no `biome.json`)
-- No CI pipeline for lint enforcement
+- No linter configured
+- No `.clang-tidy` file in project root
+- No CI workflow that enforces style checks
 
-**Formatting:**
-- No formatter configured (no `.clang-format`)
+**Const Correctness:**
+- Method parameters passed by `const&` for objects: `const SpatialVector &other`, `const Vector3d &angular`
+- Methods marked `const` where appropriate: all getters, `dot()`, `print()` (though some older methods may miss this)
+- Return by const reference for internal data: `const Vector3d &getCom() const` (`RigidBodyInertia.h:57`), `const Eigen::VectorXd& getData() const` (`LowerTriangular.h:107`)
+
+**noexcept:**
+- Used sparingly. `Rotation.h` methods like `transpose()`, `inverse()` are `noexcept`. `SpatialVector.h` operators (`+`, `-`, `*`, etc.) are `noexcept`.
+- Not consistently applied across all classes — `PluckerTransform` constructors and methods omit `noexcept`.
+
+**`explicit`:**
+- Used on single-argument constructors: `explicit SpatialVector(const Vector3d &angular)` (`SpatialVector.h:82`), `explicit Rotation(const Eigen::Matrix3d &m)` (`Rotation.h:43`)
+- Not used on multi-argument constructors or default constructors
 
 ## Import Organization
 
-**Include order within `.cpp` files:**
-1. Corresponding header first: `#include "SpatialVector.h"`
-2. Other library headers: `#include <Eigen/Dense>`
-3. Standard library headers: `#include <iostream>`, `#include <cmath>`, `#include <stdexcept>`
-4. GTest headers (in test files): `#include <gtest/gtest.h>`
-
-**Include order within `.h` files:**
-1. Standard library: `#include <iostream>`, `#include <vector>`, `#include <iomanip>`
-2. Eigen headers: `#include <Eigen/Dense>`, `#include <Eigen/Geometry>`
-3. Project headers: `#include "SpatialVector.h"`, `#include "Rotation.h"`
-
-**Test file includes follow this order:**
+**Include Guard Pattern:**
 ```cpp
-#include "ClassUnderTest.h"
+#ifndef SPATIAL_VECTOR_H
+#define SPATIAL_VECTOR_H
+// ... header content ...
+#endif // SPATIAL_VECTOR_H
+```
+(Exception: `LowerTriangular.h` uses `#pragma once`.)
+
+**Include Order in Headers:**
+1. Standard library / Eigen headers (alphabetically)
+2. Project headers (alphabetically)
+```cpp
+#include <Eigen/Dense>
+#include <cmath>
+#include <iostream>
+
+#include "ClassName.h"
+#include "OtherDependency.h"
+```
+
+**Include Order in Source Files:**
+1. Corresponding header first (for self-containment check)
+2. Standard library / Eigen headers
+3. Other project headers
+4. GTest headers (in test files)
+```cpp
+#include "ClassName.h"
+
+#include <Eigen/Dense>
+#include <iostream>
+
+#include "Dependency.h"
+#include "OtherDependency.h"
+```
+
+**Test file includes:**
+```cpp
+#include "ClassName.h"
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
-// Optional: <Eigen/Geometry>, <cmath>, <stdexcept>
 ```
 
 **Path Aliases:**
-- None configured in CMake (no `-I` include path overrides beyond `include/` directory)
-- VSCode config in `.vscode/c_cpp_properties.json` specifies: `/usr/local/Cellar/eigen/3.4.0_1/include/eigen3`
-
-## Namespace Usage
-
-- All library code in `namespace SpatialAlgebra`:
-```cpp
-namespace SpatialAlgebra
-{
-    // class definitions
-}
-```
-- Test files: `using namespace SpatialAlgebra;` at file scope
-- `LowerTriangular.h` has a broader export: `using SpatialAlgebra::LowerTriangular;` at file scope (line 569) and `using SpatialAlgebra::Rotation;` in `Rotation.h:175`
-- Test files may also use `using namespace Eigen;`
-
-## Comments and Documentation
-
-**Doxygen Tags Used:**
-- `@brief` — Required on every class, method, and member declaration
-- `@details` — Detailed explanation of mathematical meaning (almost every declaration)
-- `@param` — Parameter descriptions with units where applicable (e.g., `(rad/s)`, `(kg⋅m²)`)
-- `@return` — Return value description
-- `@note` — Implementation notes, warnings about physics interpretation
-- `@warning` — Usage warnings (e.g., type-safety, physical validity)
-- `@see` — Cross-references to Featherstone textbook chapters, other classes
-- `@code{.cpp}` / `@endcode` — Example usage blocks
-- `@file` — On header files
-- `@throws` — Exception documentation (in headers)
-
-**Comment Style:**
-- Block Doxygen comments (`/** ... */`) on all declarations
-- Inline `///<` for member variable documentation:
-```cpp
-Vector3d angular; ///< Angular component (ω for motion vectors, τ for force vectors)
-```
-- Section separators in test files:
-```cpp
-// ============================================================================
-// TransformRBI Tests
-// ============================================================================
-```
-- Mathematical notation in comments (Greek letters transliterated):
-```cpp
-// Result: [(0,0,1); (0,-1,0)]
-// Linear = (0,-1,0) + (0,0,0) = (0,-1,0)
-```
-- References to Featherstone textbook with chapter notation:
-```cpp
-/**
- * @see Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 2.
- */
-```
+- None configured. All includes use bare filenames resolved by `include_directories(include)` in CMake
 
 ## Error Handling
 
-**Exception Types Used:**
-- `std::invalid_argument` — Dimension mismatches for matrix operations (`include/LowerTriangular.h:134,199,229,251,311,331,381`)
-- `std::out_of_range` — Index bounds checking (debug mode only via `#ifndef NDEBUG`):
-```cpp
-#ifndef NDEBUG
-    if (i >= n || j >= n || i < 0 || j < 0)
-        throw std::out_of_range("Index out of bounds");
-#endif
-```
-- `std::runtime_error` — Singular matrix in inversion (`include/LowerTriangular.h:410` in the `inverse()` method documentation)
+**Strategy:** C++ exceptions for runtime errors, assertions for debug-mode validation.
 
-**Pattern:**
-- Exceptions used for programmer errors (invalid arguments, out of bounds)
-- No error codes or `std::optional` return types
-- No custom exception types
-- Minimal input validation — relies on caller correctness for most operations
-- `InverseDynamics::computeTorques` documents `@throws std::invalid_argument` for NaN/Inf and size mismatch
-
-**Documentation Philosophy:**
-- Exceptions are documented with `@throws` Doxygen tag in header files
-- `noexcept` specifier used on simple accessors and utility functions:
-```cpp
-inline const Vector3d &getData() const noexcept { return data; }
-inline int getSize() const noexcept { return n; }
-```
+**Patterns:**
+- `std::invalid_argument` for dimension mismatches: `LowerTriangular` operations throw when matrix dimensions don't match (`LowerTriangular.cpp:45-48`)
+- `std::runtime_error` for singular matrices in `Rotation::inverse()` (`Rotation.cpp:37-42`)
+- Debug-mode NaN/Inf checking: constructors like `SpatialVector(const Vector3d &angular)` check `hasNaN()` and `hasInf()` via `#ifndef NDEBUG` guards with `std::cerr` warnings (`SpatialVector.cpp:7-19`)
+- Bounds checking only in debug mode: `LowerTriangular::operator()` checks index bounds via `assert()` inside `#ifndef NDEBUG` guards
+- No custom exception types defined
+- No error codes or `std::optional` / `std::expected` return types
+- No input validation at public API boundaries (caller is expected to pass valid data)
 
 ## Logging
 
-**Framework:** None — uses raw `std::cout`
+**Approach:** `print()` method on every class for human-readable output.
 
-**Pattern:**
-- `print()` method on every class:
+**Patterns:**
 ```cpp
-void print() const;
-```
-- Implementations write to `std::cout`:
-```cpp
-void SpatialVector::print() const
-{
-    std::cout << "Angular: " << angular.transpose() << std::endl;
-    std::cout << "Linear: " << linear.transpose() << std::endl;
+void SpatialVector::print() const {
+    std::cout << "Angular: [" << angular[0] << ", " << angular[1] << ", " << angular[2] << "]\n";
+    std::cout << "Linear:  [" << linear[0] << ", " << linear[1] << ", " << linear[2] << "]\n";
 }
 ```
-- No structured logging
-- No log levels
-- No log file output
+- Present on `SpatialVector` (`SpatialVector.h:145`), `MotionVector`, `ForceVector`, `PluckerTransform` (`PluckerTransform.h:131`), `Rotation` (`Rotation.h:85`), `LowerTriangular` (`LowerTriangular.h:107`)
+- Uses `std::cout` directly — no structured logging, no log levels, no log file output
+- `print()` is not `const` in all cases
+
+## Comments
+
+**Doxygen Style:**
+- Block comments (`/** ... */`) on every class and method declaration
+- Tags used: `@brief`, `@details`, `@param`, `@return`, `@note`, `@warning`, `@see`, `@code`
+- Example:
+  ```cpp
+  /**
+   * @brief Transform a motion vector (twist) to a new coordinate frame
+   * @details Applies the Plücker transform X = [R, 0; -R[r]x, R] to the
+   *          input motion vector. The transformation formula is:
+   *          ω' = R·ω
+   *          v' = R·(v - r×ω)
+   * @param input The motion vector to transform
+   * @return Transformed motion vector in the new coordinate frame
+   */
+  MotionVector transformMotion(const MotionVector &input) const;
+  ```
+- Test files use Doxygen `@brief` and `@details` blocks above each `TEST()` or `TEST_F()`
+- Inline comments (``) explain mathematical formulas and intermediate results
+- Mathematical notation preserved in comments: `[ω; v]`, `[τ; f]`, `[R, 0; -R[t]x, R]`
+- References to Featherstone textbook: `@see Featherstone 2008, Chapter 2`
+
+**When to Comment:**
+- Every class and public method gets a Doxygen block
+- Complex formulas get inline explanation with intermediate value calculations
+- Test cases explain the scenario and expected result
 
 ## Function Design
 
-**Size:**
-- Small to medium functions (10-50 lines typical)
-- Operators implemented inline for small classes (e.g., `RigidBodyInertia.h` entirely inline)
+**Size:** Small to medium functions (10-50 lines typical). Operators are 3-10 lines. Complex transforms are 15-30 lines.
 
-**Parameters:**
-- Pass by const reference for objects: `const SpatialVector &other`, `const Eigen::Vector3d &v`
-- Pass by value for primitives: `double scalar`, `int size`
-- Named parameters not used (C++ limitation)
+**Parameters/Return:**
+- Pass objects by `const&`: `const SpatialVector &other`
+- Pass primitives by value: `double scalar`, `int`
+- Return by value for small objects (SpatialVector, Rotation, PluckerTransform) — copy elision / RVO expected
+- Return by `const&` for internal data members: `const Vector3d &getCom() const`
+- No `std::optional` or `std::variant` usage anywhere
+- Named parameters not supported (C++ limitation)
 
-**Return Values:**
-- Return by value for small objects: `SpatialVector`, `Rotation`, `ForceVector`, `MotionVector`
-- Return by const reference for internal data: `const Vector3d &getCom() const`, `const Eigen::VectorXd &getData() const`
-- No `std::optional` or `std::variant` usage
+**Inline methods:**
+- Trivial getters and operators inlined in headers: `getAngular()`, `getLinear()`, `operator+`, `operator-`, `operator*`
+- Complex logic in `.cpp` files: `PluckerTransform::transformMotion`, `Rotation::inverse()`
+- `RigidBodyInertia` is entirely inline in header (`RigidBodyInertia.h`)
+- Free functions in `SpatialUtils.h` are all inline in the header
 
-**Inline Methods:**
-- Trivial getters in headers: `inline double getMass() const { return mass; }`
-- Simple operators in headers: `RigidBodyInertia` operators are all inline
-- Most methods declared in headers, defined in `.cpp` files for non-trivial classes
-- `RigidBodyInertia` and `ArticulatedBodyInertia` are entirely inline in their headers
-
-**Method Chaining:**
-- Not used — functions return results, not `*this`
+**Static free functions:**
+- `SpatialOperations` is a class with all static methods: `SpatialOperations::crossProductMotion()`, `SpatialOperations::crossProductForce()`, `SpatialOperations::transformInertia()`
+- `SpatialUtils.h` provides free functions in `namespace SpatialAlgebra`: `skew()`, `dot()`, `cross()`, `crossSpatial()`
 
 ## Module Design
 
+**Namespace:** All classes in `namespace SpatialAlgebra`. Free functions also in `namespace SpatialAlgebra`.
+
 **Exports:**
-- All classes in `namespace SpatialAlgebra`
-- Type aliases at namespace scope in respective headers
-- Free functions in `namespace SpatialAlgebra` (`SpatialUtils.h`, `SpatialOperations.h`)
-- No umbrella header (`include/SpatialAlgebra.h` not present)
+- No umbrella include pattern (though `SpatialAlgebra.h` exists that includes all public headers in dependency order)
+- Users include specific headers or `SpatialAlgebra.h`
 
-**Barrel Files:**
-- None — users include specific headers by class name
+**Source/Header Split:**
+- Declarations in `.h` files in `include/`
+- Definitions in `.cpp` files in `src/`
+- Inline methods in headers for trivial operations (getters, operators)
+- `RigidBodyInertia` is entirely inline in header
 
-**Header Dependencies:**
-- `SpatialVector.h` is the foundational header (included by all others)
-- `PluckerTransform.h` has the most includes, including forward declarations of `RigidBodyInertia` and `ArticulatedBodyInertia`
-- `RigidBodyInertia.h` and `ArticulatedBodyInertia.h` have circular dependency via `PluckerTransform.h` in the transform methods
+**Type Alias Pattern:**
+- Aliases at file scope in `SpatialVector.h:18-21`
+- Used consistently throughout the codebase: `mv`, `fv`, `plux`, `rbi`, `abi`, `lt`
 
-## Mathematical Notation Conventions
+## Documentation
 
-**Variable Names:**
-- Greek letters transliterated: `omega`, `tau` (not `ω`, `τ`)
-- Vector components as `Vector3d`, `Vector6d`
-- Matrix operations as `Matrix3d`, `MatrixXd`
-- Cross product: `angular.cross(other.angular)`
-- Dot product: `angular.dot(other.angular) + linear.dot(other.linear)`
+**Config:** `Doxyfile` in project root
 
-**Comments:**
-- Formulas preserved in mathematical notation with transliteration:
-```
-// V1 x V2 = [w1 x w2, w1 x v2 + v1 x w2]
-```
-- Source code comments include manual calculation verification:
-```
-// ω1·ω2 = 1*2 + 2*3 + 3*4 = 2 + 6 + 12 = 20
-// v1·v2 = 4*5 + 5*6 + 6*7 = 20 + 30 + 42 = 92
-// Total = 20 + 92 = 112
-```
+**Build:** `doxygen Doxyfile` generates HTML docs into `docs/html/` and LaTeX into `docs/latex/`
 
-**Units:**
-- Documented in `@param` Doxygen tags:
-- Motion vectors: `rad/s`, `m/s`
-- Force vectors: `N⋅m`, `N`
-- Inertia: `kg⋅m²`, `kg⋅m`, `kg`
+**Output:** `docs/html/`, `docs/latex/` (both gitignored)
+
+**Tags used:** `@brief`, `@details`, `@param`, `@return`, `@note`, `@warning`, `@see`, `@code`
+
+## Mathematical Notation
+
+- Greek letters transliterated: `omega`, `tau` (not ω, τ) in variable names
+- Formulas in code comments with Greek notation: `[ω; v]`, `[τ; f]`
+- Code uses `angular` / `linear` for components of spatial vectors
+- `crossMotion` formula: `[ω1×ω2; ω1×v2 + v1×ω2]`
+- `crossForce` formula: `[τ1×τ2 + f1×f2; τ1×f2 - τ2×f1]`
+- Plücker transform: `X = [R, 0; -R[r]x, R]`
+- Test files annotate intermediate hand calculations to verify results
 
 ---
 
-*Convention analysis: 2026-05-17*
+*Convention analysis: 2026-06-05*
