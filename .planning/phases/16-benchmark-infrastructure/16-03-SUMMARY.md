@@ -114,5 +114,12 @@ Each task was committed atomically:
 
 ---
 
+## Self-Check: PASSED
+
+- ✅ 4 stub/source files created and exist on disk
+- ✅ 4 commits created and recorded in git log
+- ✅ bench_all build artifact exists
+- ✅ All 7 success criteria verified (cmake configure, build, --benchmark_list_tests=80, --benchmark_filter, exit 0, default OFF guard)
+
 *Phase: 16-benchmark-infrastructure*
 *Completed: 2026-06-05*
