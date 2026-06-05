@@ -924,7 +924,7 @@ applyJointState(fd, q, qdot);
 | A5 | The 8th inertia operation does not exist distinctly | Pattern 3 | MEDIUM — D-18 says 8, codebase reveals 7. If user intended all 8, a missing operation (like L::multiplySymmetric standalone benchmark, or cross product inertia result) needs identification. |
 | A6 | Phase 16's `bench_all.cpp` is the current version (registering 4 benchmark families with DOF sweep) | Architecture | MEDIUM — Phase 17 modifies this file. The exact current content determines the diff. The stub file has been read and confirmed. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **8th inertia operation ambiguity**
    - What we know: D-18 specifies 8 inertia operations. Codebase reveals 7 identifiable methods: RBI::apply, RBI::operator+, RBI::operator\*, ABI::apply, ABI::operator+(ABI), ABI::operator+(RBI), ABI::operator\*.
