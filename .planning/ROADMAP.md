@@ -94,7 +94,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 15-01-PLAN.md — Update CMakeLists.txt, expand CI matrix to 8 jobs
+- [x] 15-01-PLAN.md — Update CMakeLists.txt, expand CI matrix to 8 jobs
 
 ### Phase 16: Benchmark Infrastructure
 **Goal**: Build system and shared utilities for performance benchmarks
@@ -159,7 +159,7 @@ Plans:
 | 12. Dynamics Consistency | v1.1 | 1/1 | Partial | 2026-05-16 |
 | 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
 | 14. CR-02 Bug Fix | v1.2 | 0/1 | Not started | - |
-| 15. Eigen 5.x CI | v1.2 | 0/1 | Not started | - |
+| 15. Eigen 5.x CI | v1.2 | 1/1 | Complete   | 2026-06-05 |
 | 16. Benchmark Infrastructure | v1.2 | 0/0 | Not started | - |
 | 17. Benchmark Implementation | v1.2 | 0/0 | Not started | - |
 | 18. Robot Examples | v1.2 | 0/0 | Not started | - |
