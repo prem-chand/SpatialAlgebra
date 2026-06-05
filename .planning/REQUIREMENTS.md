@@ -13,8 +13,8 @@ Requirements for v1.2 "Production Quality" milestone. Each maps to roadmap phase
 
 ### Build & CI
 
-- [ ] **CI-01**: Eigen 5.x compatible via version range syntax `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)`
-- [ ] **CI-02**: Eigen 5.x added to CI build matrix
+- [x] **CI-01**: Eigen 5.x compatible via version range syntax `find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)`
+- [x] **CI-02**: Eigen 5.x added to CI build matrix
 
 ### Benchmark Infrastructure
 
@@ -67,8 +67,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BFIX-01 | Phase 14 | Pending |
-| CI-01 | Phase 15 | Pending |
-| CI-02 | Phase 15 | Pending |
+| CI-01 | Phase 15 | Complete |
+| CI-02 | Phase 15 | Complete |
 | BINF-01 | Phase 16 | Pending |
 | BINF-02 | Phase 16 | Pending |
 | BINF-03 | Phase 16 | Pending |

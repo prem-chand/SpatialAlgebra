@@ -104,8 +104,13 @@ Plans:
   1. Google Benchmark v1.9.5 integrated via FetchContent in `benchmarks/CMakeLists.txt`
   2. `benchmarks/` directory exists with separate CMakeLists.txt and `SA_BUILD_BENCHMARKS` guard (default OFF)
   3. Shared benchmark utilities available: parameterized model factory for arbitrary n-DOF chains, random joint state generator
-  4. Benchmarks compile at `-O3 -DNDEBUG` and link correctly against libSpatialAlgebra.a
-**Plans**: TBD
+   4. Benchmarks compile at `-O3 -DNDEBUG` and link correctly against libSpatialAlgebra.a
+**Plans**: 3 plans
+
+Plans:
+- [ ] 16-01-PLAN.md — Build system integration (FetchContent, SA_BUILD_BENCHMARKS guard, directory structure)
+- [ ] 16-02-PLAN.md — Shared benchmark utilities (ModelFactory, RandomState)
+- [ ] 16-03-PLAN.md — Benchmark stubs and bench_all entry point
 
 ### Phase 17: Benchmark Implementation
 **Goal**: Executable microbenchmarks for ABA, RNEA, and core operations
@@ -160,7 +165,7 @@ Plans:
 | 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
 | 14. CR-02 Bug Fix | v1.2 | 0/1 | Not started | - |
 | 15. Eigen 5.x CI | v1.2 | 1/1 | Complete   | 2026-06-05 |
-| 16. Benchmark Infrastructure | v1.2 | 0/0 | Not started | - |
+| 16. Benchmark Infrastructure | v1.2 | 0/3 | In planning | - |
 | 17. Benchmark Implementation | v1.2 | 0/0 | Not started | - |
 | 18. Robot Examples | v1.2 | 0/0 | Not started | - |
 | 19. RBDL Comparison | v1.2 | 0/0 | Not started | - |
