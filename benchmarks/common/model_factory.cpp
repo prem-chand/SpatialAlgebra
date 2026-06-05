@@ -21,7 +21,7 @@ ForwardDynamics ModelFactory::createFD(int nDOF, const JointConfig& cfg) {
     fd.links.reserve(nDOF);
 
     for (int i = 0; i < nDOF; ++i) {
-        ForwardDynamics::Link link;
+        Link link;
         link.parent = i - 1;  // -1 for base (index 0), i-1 for children
 
         // Transform: identity rotation + configurable translation (D-02)
@@ -87,7 +87,7 @@ ForwardDynamics ModelFactory::createFD(const std::vector<JointConfig>& configs) 
 
     for (int i = 0; i < nDOF; ++i) {
         const JointConfig& cfg = configs[i];
-        ForwardDynamics::Link link;
+        Link link;
         link.parent = i - 1;
 
         link.X = PluckerTransform(
@@ -142,7 +142,7 @@ ForwardDynamics ModelFactory::createFDBranching(int nDOF, int branchPoint,
     fd.links.reserve(nDOF);
 
     for (int i = 0; i < nDOF; ++i) {
-        ForwardDynamics::Link link;
+        Link link;
         link.parent = i - 1;  // Default serial parent
 
         // Override for side branch: link at branchPoint+2 has parent = branchPoint
