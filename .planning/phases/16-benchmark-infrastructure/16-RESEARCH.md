@@ -616,7 +616,7 @@ void BM_ABA_ForwardDynamics(benchmark::State& state, int nDOF) {
 | A3 | `-flto` flag works on macOS with Apple Clang | Build Config | Low — Apple Clang supports `-flto`; if not, CMake's `cmake_policy` or `check_cxx_compiler_flag` can gate it |
 | A4 | Project's `include_directories(include)` at root propagates to `benchmarks/` subdirectory | Pitfall 6 | Medium — `add_subdirectory` inherits parent scope's `include_directories`; if not, `target_include_directories(bench_all PRIVATE ${CMAKE_SOURCE_DIR}/include)` would be needed |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Exact subdirectory CMakeLists.txt structure within each domain**
    - What we know: D-06 mandates `benchmarks/aba/`, `benchmarks/rnea/`, `benchmarks/core/`, `benchmarks/common/`
