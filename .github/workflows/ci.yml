@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        compiler: [g++, clang++]
+        eigen-version: [3.4, 5.0]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Eigen 3.4 (macOS) — from source
+      if: runner.os == 'macOS' && matrix.eigen-version == '3.4'
+      run: |
+        curl -sL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz | tar xz
+        cmake -B eigen-3.4.0/build -S eigen-3.4.0 -DCMAKE_INSTALL_PREFIX=$HOME/eigen-3.4.0
+        cmake --build eigen-3.4.0/build
+        cmake --install eigen-3.4.0/build
+        brew install googletest
+
+    - name: Install Eigen 5.0.1 (macOS) — from source
+      if: runner.os == 'macOS' && matrix.eigen-version == '5.0'
+      run: |
+        curl -sL https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz | tar xz
+        cmake -B eigen-5.0.1/build -S eigen-5.0.1 -DCMAKE_INSTALL_PREFIX=$HOME/eigen-5.0.1
+        cmake --build eigen-5.0.1/build
+        cmake --install eigen-5.0.1/build
+        brew install googletest
+
+    - name: Install Eigen 3.4 (Ubuntu)
+      if: runner.os == 'Linux' && matrix.eigen-version == '3.4'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libeigen3-dev libgtest-dev lcov
+
+    - name: Build and install Eigen 5.0.1 (Ubuntu)
+      if: runner.os == 'Linux' && matrix.eigen-version == '5.0'
+      run: |
+        curl -sL https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz | tar xz
+        cmake -B eigen-5.0.1/build -S eigen-5.0.1 -DCMAKE_INSTALL_PREFIX=$HOME/eigen-5.0.1
+        cmake --build eigen-5.0.1/build
+        cmake --install eigen-5.0.1/build
+        sudo apt-get update
+        sudo apt-get install -y libgtest-dev lcov
+
+    - name: Configure
+      run: |
+        if [ "${{ matrix.eigen-version }}" = "5.0" ]; then
+          EIGEN_DIR_FLAG="-DEigen3_DIR=$HOME/eigen-5.0.1/share/eigen3/cmake"
+        elif [ "${{ runner.os }}" = "macOS" ]; then
+          EIGEN_DIR_FLAG="-DEigen3_DIR=$HOME/eigen-3.4.0/share/eigen3/cmake"
+        else
+          EIGEN_DIR_FLAG=""
+        fi
+        COVERAGE_FLAG="${{ (matrix.os == 'ubuntu-latest' && matrix.compiler == 'g++' && matrix.eigen-version == '3.4') && '-DENABLE_COVERAGE=ON' || '' }}"
+        cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} $EIGEN_DIR_FLAG $COVERAGE_FLAG
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Test
+      run: cd build && ctest --output-on-failure
+
+    - name: Upload coverage
+      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'g++' && matrix.eigen-version == '3.4'
+      uses: codecov/codecov-action@v4
+      with:
+        directory: ./build
+        fail_ci_if_error: false
