@@ -133,6 +133,14 @@ Each task was committed atomically:
 - Default build (`SA_BUILD_BENCHMARKS=OFF` by default) is unaffected — no benchmark artifacts leak into normal builds
 - **Note:** The `_init.cpp` placeholders in `benchmarks/` and `benchmarks/common/` should be removed by Plans 02 and 03 respectively when real source files are added
 
+## Self-Check: PASSED
+
+- [x] All 9 created/modified files exist on disk (verified via `[ -f ]`)
+- [x] All 4 commits present in git log (2e18201, 18ddc0a, 5f33ebd, cb0aab4)
+- [x] CMake configure with `-DSA_BUILD_BENCHMARKS=ON` exits 0
+- [x] CMake build `bench_all` target succeeds (placeholder sources compile and link)
+- [x] CMake configure with `-DSA_BUILD_BENCHMARKS=OFF` exits 0 (no benchmark output)
+
 ---
 *Phase: 16-benchmark-infrastructure*
 *Plan: 01*
