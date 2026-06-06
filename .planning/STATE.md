@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Production Quality
-status: verifying
+status: Awaiting next milestone
 stopped_at: Phase 18 complete — awaiting verification
-last_updated: "2026-06-06T12:50:00.000Z"
-last_activity: 2026-06-06
+last_updated: "2026-06-06T08:03:25.949Z"
+last_activity: 2026-06-06 — Milestone v1.2 completed and archived
 progress:
   total_phases: 6
   completed_phases: 5
@@ -26,21 +26,16 @@ progress:
 **See:** .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** Complete, well-tested spatial algebra library — achieved with both v1.0 and v1.1  
-**Current focus:** Phase 18 — robot-examples (complete)
+**Current focus:** Phase 18 — robot-examples
 
 ---
 
 ## Current Position
 
-Phase: 18 — COMPLETE
-Plan: 1 of 1
-Plans: 1 plan (1 wave)
-Status: Phase complete — ready for verification
-Last activity: 2026-06-06
-
-Progress: [██████████] 100%
-
----
+Phase: Milestone v1.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-06-06 — Milestone v1.2 completed and archived
 
 ## Performance Metrics
 
@@ -85,11 +80,15 @@ Progress: [██████████] 100%
 
 ## Deferred Items
 
+Items acknowledged and deferred at milestone close on 2026-06-06:
+
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| v1.3+ | Pinocchio comparison benchmarks | Planned | v1.2 planning |
-| v1.3+ | CI-based regression tracking | Planned | v1.2 planning |
-| v1.3+ | URDF model loading | Deferred | v1.2 planning |
+| phase | Phase 14: CR-02 Bug Fix (BFIX-01) — never started | Deferred | v1.2 close |
+| phase | Phase 19: RBDL Comparison (RBDL-01, RBDL-02, RBDL-03) — never started | Deferred | v1.2 close |
+| feature | Pinocchio comparison benchmarks | Planned | v1.2 planning |
+| feature | CI-based regression tracking | Planned | v1.2 planning |
+| feature | URDF model loading | Deferred | v1.2 planning |
 
 ---
 
@@ -98,3 +97,7 @@ Progress: [██████████] 100%
 Last session: 2026-06-06T12:50:00.000Z
 Stopped at: Phase 18 complete — awaiting verification
 Resume file: .planning/phases/18-robot-examples/18-01-SUMMARY.md
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

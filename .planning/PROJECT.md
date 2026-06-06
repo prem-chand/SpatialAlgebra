@@ -2,7 +2,7 @@
 
 **Project Code:** SA  
 **Project Title:** Spatial Vector Algebra Library for Robotics  
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-06-06
 
 ---
 
@@ -23,15 +23,13 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - CI pipeline with 4-matrix build ✓
 - Formal conventions documented ✓
 
-## Current Milestone: v1.2 Production Quality
+## Current Milestone: v1.3 TBD
 
-**Goal:** Close all remaining gaps — fix multi-link dynamics consistency (BF-02), establish performance benchmarks vs RBDL/Pinocchio, add Eigen 5.x to CI matrix, and provide real-world robot examples.
+**Goal:** Fix remaining ABA multi-link consistency bug (BF-02) and add RBDL comparison benchmarks.
 
 **Target features:**
 - Fix CR-02 bug in ABA inward pass — make all 4 multi-link consistency tests pass
-- Performance benchmarks vs RBDL/Pinocchio (3+ link serial chains)
-- Eigen 5.x compatibility in CI matrix
-- Real-world robot examples (2-link planar, 3-link spatial arm)
+- RBDL comparison benchmarks (3+ link serial chains)
 
 ## Requirements
 
@@ -56,13 +54,16 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - ✓ **v1.1:** CMake FetchContent fallback for GTest
 - ✓ **v1.1:** MATHEMATICAL_CONVENTIONS.md — formal cross-product, gravity, conventions
 - ✓ **v1.1:** Edge case and release-mode stability tests
+- ✓ **v1.2:** Eigen 5.x CI matrix with 8-job build (2 OS × 2 compilers × 2 Eigen versions)
+- ✓ **v1.2:** Google Benchmark v1.9.5 integration via FetchContent with `SA_BUILD_BENCHMARKS` guard
+- ✓ **v1.2:** Full benchmark infrastructure (ModelFactory, RandomState, 80 registered benchmarks)
+- ✓ **v1.2:** 18 core microbenchmarks (Plücker, cross, inertia) plus ABA/RNEA DOF sweep (n=1..20)
+- ✓ **v1.2:** Real-world robot examples (2-link Z-Z planar, 3-link Z-Y-Z spatial) with UR5 parameters
 
-### Active (Next Milestone)
+### Active (v1.3)
 
-- [ ] Multi-link RNEA↔ABA consistency for 3+ link chains (BF-02)
-- [ ] Performance benchmarks vs RBDL/Pinocchio
-- [ ] Additional real-world robot examples (2-link planar, 3-link spatial arm)
-- [ ] Eigen 5.x compatibility in CI matrix
+- [ ] Multi-link RNEA↔ABA consistency for 3+ link chains (BF-02) — Phase 14
+- [ ] RBDL comparison benchmarks — Phase 19
 
 ### Out of Scope
 
@@ -122,6 +123,11 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 | OpenMP removal from LowerTriangular | Eliminates hidden linkage dependency | No performance impact for target use cases |
 | Namespace cleanup (Vector3d into SpatialAlgebra) | Eliminates ODR hazard | Backward compatible via `using namespace` |
 | GitHub Actions CI with 4-matrix build | Automated build verification | Coverage upload on ubuntu+g++ |
+| Eigen 5.x CI matrix expansion | Validate forward compatibility | 8-job CI matrix, zero warnings |
+| Google Benchmark via FetchContent | No system dependency for benchmarks | Self-contained benchmark build |
+| UR5-derived parameters in examples | Realistic robot dynamics | Masses 3.7/8.393/2.33 kg verified |
+| Cross-validation as solver consistency check | FD(ID(0,g),g) ≈ 0 gold standard | 2-link passes, 3-link reveals ABA bug |
+| Honest documentation of solver bugs | Users see actual library state | Both ABA bug and RNEA limitation documented in examples |
 
 ## Evolution
 
@@ -135,7 +141,7 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-05-30 before v1.2 milestone*
+*Last updated: 2026-06-06 after v1.2 milestone*
 
 ---
 
@@ -163,6 +169,9 @@ This document evolves at phase transitions and milestone boundaries.
 
 </details>
 
+<details>
+<summary>v1.1 Current State (Archived)</summary>
+
 ## Current State (v1.1)
 
 **Shipped:** 2026-05-17  
@@ -185,3 +194,27 @@ This document evolves at phase transitions and milestone boundaries.
 **Known Gaps (BF-02 deferred):**
 - Multi-link RNEA↔ABA consistency: CR-02 bug in ABA inward pass (3 tests)
 - Performance benchmarks and additional examples deprioritized
+
+</details>
+
+## Current State (v1.2)
+
+**Shipped:** 2026-06-06  
+**Phases:** 4 (15-18)  
+**Plans:** 8  
+**Files Modified:** ~30  
+**Test Count:** 11 CTest (all passing), 80 Google Benchmark registrations  
+
+**Delivered:**
+- Eigen 5.x CI: 8-job matrix (2 OS × 2 compilers × 2 Eigen versions), version range syntax, zero warnings
+- Google Benchmark v1.9.5 FetchContent integration with `SA_BUILD_BENCHMARKS` guard (default OFF)
+- Full benchmark infrastructure: ModelFactory, RandomState, `bench_all` with 80 registered benchmarks
+- 18 core microbenchmarks (8 Plücker, 3 cross, 7 inertia) + ABA/RNEA DOF sweep (n=1..20)
+- Two robot dynamics executables with UR5-derived parameters:
+  - 2-link Z-Z planar arm: full FD, ID gravity, cross-validation passing
+  - 3-link Z-Y-Z spatial RRR arm: FD, ID gravity, cross-validation documenting ABA/RNEA limitations
+
+**Known Gaps (deferred to v1.3):**
+- CR-02 ABA bug: multi-link ID→FD round-trip fails for non-zero COM
+- RNEA fixed-transform limitation: X does not update with joint q
+- RBDL comparison benchmarks not started

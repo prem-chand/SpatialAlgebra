@@ -1,5 +1,20 @@
 # SpatialAlgebra Milestones
 
+## v1.2 Production Quality (Shipped: 2026-06-06)
+
+**Phases completed:** 5 phases, 9 plans, 13 tasks
+
+**Key accomplishments:**
+
+- Plan:
+- Expanded CI matrix from 4 to 8 jobs with Eigen version range syntax, verified zero-error compilation and all 11 tests passing under Eigen 5.0.1
+- Google Benchmark v1.9.5 FetchContent integration, SA_BUILD_BENCHMARKS guard (default OFF), and full benchmarks/ directory structure with per-domain CMakeLists.txt files
+- Shared benchmark utilities: ModelFactory for n-DOF solver construction and RandomState for deterministic random joint state generation
+- Programmatic RegisterBenchmark DOF sweep stubs for ABA, RNEA, and core microbenchmarks, producing a linkable bench_all executable with 80 registered benchmarks
+- Two robot dynamics executables (2-link Z-Z and 3-link Z-Y-Z arms) with UR5-derived parameters, cross-validation revealing two pre-existing solver limitations: ABA multi-link COM propagation bug and RNEA fixed-transform limitation
+
+---
+
 ## v1.1 — Bug Fixes & Stability
 
 **Shipped:** 2026-05-17
