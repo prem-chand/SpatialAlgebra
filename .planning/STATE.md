@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Production Quality
 status: verifying
-stopped_at: Phase 18 context gathered
-last_updated: "2026-06-06T07:20:36.249Z"
-last_activity: 2026-06-05 -- Phase 17 complete
+stopped_at: Phase 18 complete — awaiting verification
+last_updated: "2026-06-06T12:50:00.000Z"
+last_activity: 2026-06-06
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
-  percent: 67
+  completed_phases: 5
+  total_plans: 9
+  completed_plans: 9
+  percent: 83
 ---
 
 # SpatialAlgebra State
 
-**Last Updated:** 2026-06-05  
+**Last Updated:** 2026-06-06  
 **Current Milestone:** v1.2 Production Quality 🚧
 
 ---
@@ -26,17 +26,17 @@ progress:
 **See:** .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** Complete, well-tested spatial algebra library — achieved with both v1.0 and v1.1  
-**Current focus:** Phase 17 — benchmark-implementation (complete, ready for Phase 18)
+**Current focus:** Phase 18 — robot-examples (complete)
 
 ---
 
 ## Current Position
 
-Phase: 17 — COMPLETE
-Plan: 3 of 3
-Plans: 3 plans (2 waves)
-Status: All 3 plans executed and verified
-Last activity: 2026-06-05 -- Phase 17 complete
+Phase: 18 — COMPLETE
+Plan: 1 of 1
+Plans: 1 plan (1 wave)
+Status: Phase complete — ready for verification
+Last activity: 2026-06-06
 
 Progress: [██████████] 100%
 
@@ -56,7 +56,7 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | v1.0 (Phases 1-10) | 25 | Complete | — |
 | v1.1 (Phases 11-13) | 9 | Complete | — |
-| v1.2 (Phases 14-19) | 3 | In planning | — |
+| v1.2 (Phases 14-19) | 9 | 9 complete | — |
 
 ---
 
@@ -68,10 +68,13 @@ Progress: [██████████] 100%
 - **Phase ordering**: CR-02 fix (Phase 14) blocks benchmarks/examples; Eigen 5.x (Phase 15) parallel
 - **Research finding**: CR-02 root cause is bias forces (pa) computed with I_i instead of I_A in ABA inward pass — must restructure as single pass per Featherstone Algorithm 7.3
 - **Zero core library changes**: All v1.2 work in `benchmarks/` and `examples/` — no modifications to `include/`, `src/`, or `tests/`
+- **ABA bug discovered**: ForwardDynamics has incorrect force propagation for multi-link chains with non-zero COM — ID→FD round-trip fails
+- **RNEA fixed-transform limitation**: InverseDynamics uses fixed X transforms that don't update with joint position q — valid only at home configuration
 
 ### Pending Todos
 
-None yet.
+- **Fix ABA bug** (ForwardDynamics.cpp): ID→FD round-trip fails for multi-link chains with non-zero COM
+- **Add transform update** (InverseDynamics.cpp): X must recompute from joint position q for non-home configurations
 
 ### Blockers/Concerns
 
@@ -92,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-06T07:20:36.230Z
-Stopped at: Phase 18 context gathered
-Resume file: .planning/phases/18-robot-examples/18-CONTEXT.md
+Last session: 2026-06-06T12:50:00.000Z
+Stopped at: Phase 18 complete — awaiting verification
+Resume file: .planning/phases/18-robot-examples/18-01-SUMMARY.md
