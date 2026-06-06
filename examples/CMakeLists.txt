@@ -21,3 +21,11 @@ target_link_libraries(example_inertia SpatialAlgebra Eigen3::Eigen)
 # Dynamics example (ABA)
 add_executable(example_dynamics dynamics.cpp)
 target_link_libraries(example_dynamics SpatialAlgebra Eigen3::Eigen)
+
+# Robot example: 2-link Z-Z planar arm
+add_executable(example_robot_2link example_robot_2link.cpp)
+target_link_libraries(example_robot_2link SpatialAlgebra Eigen3::Eigen)
+
+# Robot example: 3-link Z-Y-Z spatial arm
+add_executable(example_robot_3link example_robot_3link.cpp)
+target_link_libraries(example_robot_3link SpatialAlgebra Eigen3::Eigen)
