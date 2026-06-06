@@ -538,17 +538,15 @@ EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], 1e-8);
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **What poses to use for each example?**
+1. **What poses to use for each example?** (RESOLVED by 18-01-PLAN.md)
    - What we know: 2-link arm zero position (both q=0) and one rotated pose; 3-link arm with horizontal extension
-   - What's unclear: exact angles for "interesting" poses
-   - Recommendation: At least 2 poses per example — one at all-zeros, one with non-zero joint angles showing FD acceleration response
+   - Resolution: 2-link uses q=[0,0] and q=[π/4, π/3]; 3-link uses q=[0,0,0] (horizontal) and q=[0,π/4,0] (45°)
 
-2. **How many torque configurations per example?**
+2. **How many torque configurations per example?** (RESOLVED by 18-01-PLAN.md)
    - What we know: existing dynamics.cpp shows 3 torque configurations
-   - What's unclear: same number for new examples?
-   - Recommendation: 3 test cases: (1) ID with gravity, (2) FD with arbitrary torques, (3) FD+ID cross-validation
+   - Resolution: 2 FD tests + 1 ID gravity test + 1 cross-validation test per example, matching the 3 torque configurations from dynamics.cpp plus the dedicated gravity section
 
 ---
 
