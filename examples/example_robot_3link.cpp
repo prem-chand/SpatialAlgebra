@@ -374,23 +374,21 @@ int main() {
         std::cout << "    Joint 3 (elbow Z):   tau_g = " << tau_g(2) << " N·m" << std::endl;
         std::cout << std::endl;
         std::cout << "  Physical interpretation:" << std::endl;
-        std::cout << "    Joint 1 (Z-axis): tau ≈ 0 N·m — gravity acts along Z, which is" << std::endl;
-        std::cout << "    parallel to the joint axis. No torque required about Z." << std::endl;
+        std::cout << "    Joint 1 (Z-axis): tau_g ~ 0 N·m — gravity acts along Z," << std::endl;
+        std::cout << "    which is parallel to the waist yaw axis. No torque required." << std::endl;
         std::cout << std::endl;
-        std::cout << "    Joint 2 (Y-axis, shoulder): tau ≈ 30.7 N·m — the arm extends" << std::endl;
-        std::cout << "    horizontally, so gravity acts perpendicular to the moment arm." << std::endl;
-        std::cout << "    The approximate calculation:" << std::endl;
-        std::cout << "      m2*g*x2 + m3*g*(L2+x3) =" << std::endl;
-        std::cout << "      8.393*9.81*0.2125 + 2.33*9.81*(0.425+0.15) =" << std::endl;
-        std::cout << "      17.5 + 13.2 = 30.7 N·m" << std::endl;
-        std::cout << "    This is the torque the shoulder must provide to hold the arm up." << std::endl;
+        std::cout << "    Joint 2 (Y-axis, shoulder): tau_g = " << tau_g(1) << " N·m — the" << std::endl;
+        std::cout << "    arm extends horizontally, so gravity acts perpendicular to the" << std::endl;
+        std::cout << "    shoulder pitch axis. This is the torque holding up the full arm." << std::endl;
+        std::cout << "    The Featherstone sign convention gives a negative value (gravity" << std::endl;
+        std::cout << "    torque in the negative Y-rotation direction)." << std::endl;
         std::cout << std::endl;
-        std::cout << "    Joint 3 (Z-axis): tau ≈ 0 N·m — gravity parallel to joint axis." << std::endl;
-        std::cout << "    The elbow roll axis is also Z, so no gravity torque." << std::endl;
+        std::cout << "    Joint 3 (Z-axis, elbow): tau_g ~ 0 N·m — gravity is parallel to" << std::endl;
+        std::cout << "    the elbow roll axis, so no gravity compensation torque needed." << std::endl;
         std::cout << std::endl;
     }
 
-    // Test 2: Arm at 45° q=[0, pi/4, 0]
+    // Test 2: Same computation at non-zero q — shows solver limitation
     {
         id.links[0].q = 0.0;
         id.links[1].q = M_PI / 4.0;
@@ -401,19 +399,19 @@ int main() {
 
         Eigen::VectorXd qddot_zero = Eigen::VectorXd::Zero(3);
 
-        std::cout << "ID Gravity Test 2: Static pose q = [0, pi/4, 0] rad (arm at 45° angle)" << std::endl;
+        std::cout << "ID Gravity Test 2: Same computation at q = [0, pi/4, 0] (arm at 45°)" << std::endl;
+        std::cout << "  NOTE: The RNEA solver uses fixed transforms X (set at model setup)." << std::endl;
+        std::cout << "  It does not recalculate transforms as a function of q. Results shown" << std::endl;
+        std::cout << "  are for the home configuration only." << std::endl;
 
         Eigen::VectorXd tau_g = id.computeTorques(qddot_zero, gravity);
 
-        std::cout << "  Gravity compensation torques:" << std::endl;
+        std::cout << "  Gravity compensation torques (same as Test 1 — X is unchanged):" << std::endl;
         std::cout << "    Joint 1 (waist Z):   tau_g = " << tau_g(0) << " N·m" << std::endl;
         std::cout << "    Joint 2 (shoulder Y): tau_g = " << tau_g(1) << " N·m" << std::endl;
         std::cout << "    Joint 3 (elbow Z):   tau_g = " << tau_g(2) << " N·m" << std::endl;
-        std::cout << "  Physical interpretation:" << std::endl;
-        std::cout << "    Joint 2 torque is reduced by factor sin(pi/2 - pi/4) = sin(pi/4)" << std::endl;
-        std::cout << "    relative to the horizontal case, because the arm is at 45°" << std::endl;
-        std::cout << "    and the gravitational moment arm is shorter." << std::endl;
-        std::cout << "    Joints 1 and 3 remain near zero (gravity parallel to Z axes)." << std::endl;
+        std::cout << "  This is a known solver limitation: transforms must be updated for" << std::endl;
+        std::cout << "  non-zero joint configurations (a future library enhancement)." << std::endl;
         std::cout << std::endl;
     }
 
@@ -424,9 +422,30 @@ int main() {
     std::cout << "Verifying solver consistency: feed gravity torques from ID into FD" << std::endl;
     std::cout << "and verify that the arm stays at rest (qddot = 0)." << std::endl;
     std::cout << std::endl;
-    std::cout << "Cross-validation identity:" << std::endl;
+    std::cout << "Cross-validation identity (should hold for consistent RNEA/ABA):" << std::endl;
     std::cout << "  tau_g = ID(q, 0, 0, g)  -- gravity compensation torques" << std::endl;
     std::cout << "  qddot = FD(tau_g, g)   -- should produce zero acceleration" << std::endl;
+    std::cout << std::endl;
+    std::cout << "This cross-validation tests the gravity compensation identity:" << std::endl;
+    std::cout << "  FD(ID(qddot=0, g), g) should ≈ 0" << std::endl;
+    std::cout << "  i.e., feeding gravity-compensation torques into the forward" << std::endl;
+    std::cout << "  dynamics produces zero acceleration (arm stays at rest)." << std::endl;
+    std::cout << std::endl;
+    std::cout << "LIBRARY FINDINGS:" << std::endl;
+    std::cout << "  1. ABA bug (ForwardDynamics.cpp):" << std::endl;
+    std::cout << "     - ID→FD round-trip fails for multi-link chains with non-zero COM" << std::endl;
+    std::cout << "     - Single Y-axis joint with COM offset under gravity: round-trip FAILS" << std::endl;
+    std::cout << "     - Single joint with zero COM: round-trip PASSES (degenerate case)" << std::endl;
+    std::cout << "     - Tests pass only because multi-link test cases use identity inertia" << std::endl;
+    std::cout << "       and zero COM (degenerate case)" << std::endl;
+    std::cout << "  2. RNEA limitation (InverseDynamics.cpp):" << std::endl;
+    std::cout << "     - Transforms X do not update with joint position q" << std::endl;
+    std::cout << "     - Results are valid only at the home configuration" << std::endl;
+    std::cout << "     - Non-zero q positions require transform recomputation" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Here tau_g is non-zero on the Y-axis shoulder joint, which exercises" << std::endl;
+    std::cout << "both issues. The ID solver correctly computes gravity torques at the" << std::endl;
+    std::cout << "home configuration, but the ABA solver fails to reproduce the identity." << std::endl;
     std::cout << std::endl;
 
     // Test 1: arm at [0, 0, 0]
@@ -459,7 +478,9 @@ int main() {
         if (pass) {
             std::cout << "  All |qddot| < 1e-10 → solvers are consistent." << std::endl;
         } else {
-            std::cout << "  WARNING: |qddot| >= 1e-10 — possible solver mismatch." << std::endl;
+            std::cout << "  FAIL: qddot_J2 = " << fd.links[1].qddot << " rad/s^2 (expected 0)" << std::endl;
+            std::cout << "  Pre-existing ABA bug: the FD solver incorrectly propagates" << std::endl;
+            std::cout << "  forces for multi-link chains with non-zero COM offsets." << std::endl;
         }
         std::cout << std::endl;
     }
@@ -493,6 +514,9 @@ int main() {
         std::cout << "  Cross-validation: " << (pass ? "PASS" : "FAIL") << std::endl;
         if (pass) {
             std::cout << "  All |qddot| < 1e-10 → solvers are consistent." << std::endl;
+        } else {
+            std::cout << "  FAIL: qddot_J2 = " << fd.links[1].qddot << " rad/s^2 (expected 0)" << std::endl;
+            std::cout << "  Same bug as above — consistent failure on the Y-axis joint." << std::endl;
         }
         std::cout << std::endl;
     }
@@ -504,18 +528,37 @@ int main() {
     std::cout << std::endl;
     std::cout << "This example demonstrated:" << std::endl;
     std::cout << "  1. Forward Dynamics (ABA): qddot = FD(tau)" << std::endl;
-    std::cout << "     — Computed joint accelerations from applied torques" << std::endl;
-    std::cout << "  2. Inverse Dynamics (RNEA): tau_g = ID(0, g)" << std::endl;
-    std::cout << "     — Computed gravity compensation torques at static pose" << std::endl;
+    std::cout << "     — Computes joint accelerations from torques (works for single" << std::endl;
+    std::cout << "       configuration at home position)" << std::endl;
+    std::cout << "  2. Inverse Dynamics (RNEA): tau_g = ID(qddot, g)" << std::endl;
+    std::cout << "     — Computes gravity compensation torques at home configuration." << std::endl;
     std::cout << "  3. Cross-validation: FD(ID(0, g), g) = 0" << std::endl;
-    std::cout << "     — Verified solver consistency: all |qddot| < 1e-10" << std::endl;
+    std::cout << "     — Fails for multi-link chains with non-zero COM (ABA bug)." << std::endl;
     std::cout << std::endl;
-    std::cout << "Key physics results for the Z-Y-Z anthropomorphic arm:" << std::endl;
-    std::cout << "  - Joint 1 (Z-axis waist yaw):  tau_g ≈ 0 N·m (gravity parallel to axis)" << std::endl;
-    std::cout << "  - Joint 2 (Y-axis shoulder):   tau_g ≈ 30.7 N·m (gravity perpendicular" << std::endl;
-    std::cout << "    to moment arm, arm horizontal) — bears the full gravity load." << std::endl;
-    std::cout << "  - Joint 3 (Z-axis elbow roll): tau_g ≈ 0 N·m (gravity parallel to axis)" << std::endl;
+    std::cout << "Library limitations revealed:" << std::endl;
+    std::cout << "  - ABA (ForwardDynamics) has incorrect force propagation for" << std::endl;
+    std::cout << "    multi-link chains with non-zero COM offsets." << std::endl;
+    std::cout << "  - RNEA (InverseDynamics) uses fixed X transforms — results are" << std::endl;
+    std::cout << "    valid only at the home configuration (q=0 for all joints)." << std::endl;
+    std::cout << "  - These are pre-existing issues, not caused by this example." << std::endl;
     std::cout << std::endl;
+
+    {
+        // Compute gravity torque at horizontal pose for display in summary
+        id.links[0].q = 0.0; id.links[1].q = 0.0; id.links[2].q = 0.0;
+        id.links[0].qdot = 0.0; id.links[1].qdot = 0.0; id.links[2].qdot = 0.0;
+        Eigen::VectorXd tau_g_0 = id.computeTorques(Eigen::VectorXd::Zero(3), gravity);
+
+        std::cout << "Key physics results for the Z-Y-Z anthropomorphic arm:" << std::endl;
+        std::cout << "  - Joint 1 (Z-axis waist yaw):  tau_g = " << tau_g_0(0) << " N·m" << std::endl;
+        std::cout << "    (gravity parallel to joint axis — no torque needed)" << std::endl;
+        std::cout << "  - Joint 2 (Y-axis shoulder):   tau_g = " << tau_g_0(1) << " N·m" << std::endl;
+        std::cout << "    (at q=[0,0,0], arm horizontal — bears the full gravity load)" << std::endl;
+        std::cout << "  - Joint 3 (Z-axis elbow roll): tau_g = " << tau_g_0(2) << " N·m" << std::endl;
+        std::cout << "    (gravity parallel to joint axis — no torque needed)" << std::endl;
+        std::cout << std::endl;
+    }
+
     std::cout << "The Z-Y-Z arm is a standard anthropomorphic configuration where only" << std::endl;
     std::cout << "the Y-axis joint (shoulder pitch) bears gravity load. This matches" << std::endl;
     std::cout << "real-world robot behavior: the shoulder does the heavy lifting." << std::endl;
