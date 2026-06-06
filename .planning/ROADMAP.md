@@ -29,7 +29,7 @@
 - [x] **Phase 14: CR-02 Bug Fix** — Fixed cross product formulas, multi-link consistency (2026-06-05)
 - [ ] **Phase 15: Eigen 5.x CI** — Version range syntax + CI matrix expansion
 - [ ] **Phase 16: Benchmark Infrastructure** — Google Benchmarks FetchContent, `benchmarks/` dir
-- [ ] **Phase 17: Benchmark Implementation** — ABA/RNEA timing with DOF sweep, microbenchmarks
+- [x] **Phase 17: Benchmark Implementation** — ABA/RNEA timing with DOF sweep, microbenchmarks
 - [ ] **Phase 18: Robot Examples** — 2-link planar and 3-link spatial arm examples
 - [ ] **Phase 19: RBDL Comparison** — Optional RBDL dependency and comparison benchmarks
 
@@ -117,16 +117,16 @@ Plans:
 **Depends on**: Phase 16 (requires benchmark infrastructure)
 **Requirements**: BENCH-01, BENCH-02, BENCH-03
 **Success Criteria** (what must be TRUE):
-   1. `bench_all --benchmark_filter="BM_ABA"` runs DOF sweep n=1..20 and outputs timing results with statistical rigor
-   2. `bench_all --benchmark_filter="BM_RNEA"` runs DOF sweep n=1..20 and outputs timing results
-   3. 19 core microbenchmark functions produce stable per-operation timing (8 Plücker, 4 cross, 7 inertia)
-   4. Each iteration generates fresh random torques/accelerations via zero-alloc fill to avoid warm-state bias
+    1. `bench_all --benchmark_filter="BM_ABA"` runs DOF sweep n=1..20 and outputs timing results with statistical rigor
+    2. `bench_all --benchmark_filter="BM_RNEA"` runs DOF sweep n=1..20 and outputs timing results
+    3. 18 core microbenchmark functions produce stable per-operation timing (8 Plücker, 3 cross, 7 inertia)
+    4. Each iteration generates fresh random torques/accelerations via zero-alloc fill to avoid warm-state bias
 **Plans**: 3 plans
 
 Plans:
-- [ ] 17-01-PLAN.md — Shared benchmark infrastructure (RandomState extensions, bench_all.cpp registration)
-- [ ] 17-02-PLAN.md — Core microbenchmarks (19 operations: Plücker, cross, inertia)
-- [ ] 17-03-PLAN.md — Solver benchmarks (ABA, RNEA with DOF sweep)
+- [x] 17-01-PLAN.md — Shared benchmark infrastructure (RandomState extensions, bench_all.cpp registration)
+- [x] 17-02-PLAN.md — Core microbenchmarks (18 operations: Plücker, cross, inertia)
+- [x] 17-03-PLAN.md — Solver benchmarks (ABA, RNEA with DOF sweep)
 
 ### Phase 18: Robot Examples
 **Goal**: Real-world robot examples demonstrating correct physics
@@ -136,7 +136,10 @@ Plans:
   1. `example_robot_2link` compiles, runs, and prints physically correct forward/inverse dynamics for a Z-Z planar arm
   2. `example_robot_3link` compiles, runs, and prints physically correct dynamics for a Z-Y-Z spatial RRR arm
   3. Both examples demonstrate gravity-compensated torque output that matches expected static equilibrium
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 18-01-PLAN.md — 2-link Z-Z planar arm and 3-link Z-Y-Z spatial arm with UR5 parameters, FD+ID cross-validation
 
 ### Phase 19: RBDL Comparison
 **Goal**: Optional RBDL-based comparison benchmarks with numerical identity verification
@@ -171,8 +174,8 @@ Plans:
 | 14. CR-02 Bug Fix | v1.2 | 0/1 | Not started | - |
 | 15. Eigen 5.x CI | v1.2 | 1/1 | Complete   | 2026-06-05 |
 | 16. Benchmark Infrastructure | v1.2 | 3/3 | Complete   | 2026-06-05 |
-| 17. Benchmark Implementation | v1.2 | 0/3 | Not started | - |
-| 18. Robot Examples | v1.2 | 0/0 | Not started | - |
+| 17. Benchmark Implementation | v1.2 | 3/3 | Complete   | 2026-06-05 |
+| 18. Robot Examples | v1.2 | 1/0 | In planning | - |
 | 19. RBDL Comparison | v1.2 | 0/0 | Not started | - |
 
 ---
@@ -230,9 +233,9 @@ Plans:
 | BINF-01 | Phase 16 | Pending |
 | BINF-02 | Phase 16 | Pending |
 | BINF-03 | Phase 16 | Pending |
-| BENCH-01 | Phase 17 | Pending |
-| BENCH-02 | Phase 17 | Pending |
-| BENCH-03 | Phase 17 | Pending |
+| BENCH-01 | Phase 17 | Complete |
+| BENCH-02 | Phase 17 | Complete |
+| BENCH-03 | Phase 17 | Complete |
 | EX-01 | Phase 18 | Pending |
 | EX-02 | Phase 18 | Pending |
 | RBDL-01 | Phase 19 | Pending |
