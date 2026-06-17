@@ -51,7 +51,7 @@
 
 ### 🚧 v1.3 TBD (Planned)
 
-- [ ] Phase 14: CR-02 Bug Fix — fix ABA multi-link consistency (1 plan)
+- [ ] Phase 14: CR-02 Bug Fix — gap closure: fix ABA multi-link consistency (2 plans)
 - [ ] Phase 19: RBDL Comparison — comparison benchmarks vs RBDL (TBD plans)
 
 ---
@@ -68,10 +68,12 @@
    3. ABA inward pass restructured to single tip-to-base sweep per Featherstone Algorithm 7.3 (no Phase 3 correction)
    4. All 11 test executables pass with zero regressions (existing zero-COM tests + new non-zero COM tests)
    5. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
-**Plans**: 1 plan (3 TDD tasks: RED tests → GREEN fix → VERIFY)
+**Plans**: 3 plans (1 completed cross product fix + 2 gap closure)
 
 Plans:
-- [ ] 14-01-PLAN.md — TDD: non-zero COM tests + inwardPass() single sweep + full regression
+- [x] 14-01-PLAN.md — Cross product fixes (SpatialUtils.h) — completed 2026-06-04 (partial: tests pass but only with zero COM)
+- [ ] 14-02-PLAN.md — RED: Add non-zero COM tests that FAIL (closes SC1, SC2)
+- [ ] 14-03-PLAN.md — GREEN+VERIFY: Restructure inwardPass + Doxygen + full regression (closes SC3, SC4, SC5)
 
 ### Phase 19: RBDL Comparison
 **Goal**: Optional RBDL-based comparison benchmarks with numerical identity verification
@@ -103,7 +105,7 @@ Plans:
 | 11. ABI Transform Fixes | v1.1 | 1/1 | Complete | 2026-05-16 |
 | 12. Dynamics Consistency | v1.1 | 1/1 | Complete | 2026-05-16 |
 | 13. Production Readiness | v1.1 | 7/7 | Complete | 2026-05-17 |
-| 14. CR-02 Bug Fix | v1.3 | 0/1 | Deferred | - |
+| 14. CR-02 Bug Fix | v1.3 | 0/3 | Gap Closure | - |
 | 15. Eigen 5.x CI | v1.2 | 1/1 | Complete | 2026-06-05 |
 | 16. Benchmark Infrastructure | v1.2 | 3/3 | Complete | 2026-06-05 |
 | 17. Benchmark Implementation | v1.2 | 3/3 | Complete | 2026-06-05 |
