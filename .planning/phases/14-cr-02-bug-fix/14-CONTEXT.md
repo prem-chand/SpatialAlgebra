@@ -1,12 +1,14 @@
 # Phase 14: CR-02 Bug Fix - Context
 
-**Gathered:** 2026-05-30
+**Gathered:** 2026-06-17
 **Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
 
-Correct forward dynamics for chains with 3+ joints by implementing the missing articulation (condensation) step from Featherstone Algorithm 7.3 in the ABA inward pass. All 4 multi-link consistency tests must pass, and all 156 existing tests must continue to pass with no regressions.
+Correct forward dynamics for chains with 3+ joints by implementing the missing articulation (condensation) step from Featherstone Algorithm 7.3 in the ABA inward pass. All 4 multi-link consistency tests must pass, and all 11 test executables must pass with no regressions.
+
+**Confirmed by v1.2 (Phase 18):** Robot examples with UR5-derived parameters demonstrated that the ABA bug manifests as ID→FD round-trip failure specifically for multi-link chains with non-zero COM. The 2-link Z-Z arm passes cross-validation, the 3-link Z-Y-Z arm fails — isolating the issue to chains with 3+ joints.
 
 </domain>
 
@@ -16,55 +18,103 @@ Correct forward dynamics for chains with 3+ joints by implementing the missing a
 ### Condensation Implementation Approach
 - Condensation math implemented inline in `inwardPass()` — single-use, tightly coupled to ABA
 - Use existing `Ia.apply(S)` to compute `IaS` (no new method needed on ArticulatedBodyInertia)
-- Compute `D = S^T * IaS` as scalar (1-DOF joints), use `1/D` for inversion
+- Compute `D = S^T * IaS` as scalar via free function `dot(MotionVector, ForceVector)` (1-DOF joints, revolute), use `1/D` for inversion
 
 ### Inward Pass Restructuring
-- Single tip-to-base sweep: initialize Ia/pa, accumulate children contributions, compute qddot, condense Ia/pa, pass to parent
-- Keep gravity as `c = -g` on base link bias acceleration (already correct per Featherstone D-07)
+- Single tip-to-base sweep replacing the current 3-phase design. For each link (tip to base):
+  1. **Accumulate** — children's condensed Ia/pa already added in prior iterations
+  2. **Solve qddot** — `qddot = (tau - S^T*pa) / (S^T*Ia*S)` — this IS the final answer, no correction step
+  3. **Condense** — remove joint DOF: `Ia -= (Ia*S)*inv(D)*(Ia*S)^T`, `pa += Ia*S*qddot`
+  4. **Pass to parent** — transform condensed Ia/pa to parent frame via `transformInertiaToParent` (kept, computes `X^T*Ia*X`) and `inverseTransformForce`
 - Skip condensation for base link (parent == -1) — no parent to pass to
+- Keep gravity as `c[0] = -g` on base link bias acceleration (already correct per Featherstone D-07)
+- **Forward spatial acceleration pass** lives inside `inwardPass()` after the tip-to-base sweep: `a[i] = X*a_parent + c[i] + S[i]*qddot[i]` — no correction term
+- **Critical ordering:** Accumulate BEFORE solving qddot. Solve BEFORE condensing. Condense BEFORE passing to parent.
+
+### Include File Boundary
+- **Header changes permitted:** Only `include/ForwardDynamics.h` — Doxygen comment updates on `inwardPass()`, `computeAccelerations()`, and class-level docs to reflect the single sweep design
+- Zero changes to `include/ArticulatedBodyInertia.h`, `include/SpatialUtils.h`, `include/LowerTriangular.h`, `include/PluckerTransform.h`, or any other header
+- `transformInertiaToParent` helper in anonymous namespace (src/ForwardDynamics.cpp:22-53) is kept — it computes `X^T * Ia * X`, the correct child-to-parent inertia transform for ABA. Do NOT replace with `invtformABI()`
 
 ### Test Strategy
-- Update `ThreeLinkNumericalValidation` with exact expected qddot values after fix
-- Add condensation unit test: 3-link chain, verify condensed Ia norm < uncondensed Ia norm
-- Add test with specific tau=[1,0,0] on 3-link chain, verify qddot[0] < qddot[2]
+- Existing condensation tests (CondensationReducesInertiaNorm, ThreeLinkSingleTorque) are already written and expected to pass after fix — no test code changes needed
+- `ThreeLinkNumericalValidation` test expected values may need updating — the plan handles this
+- 3 previously-failing round-trip tests (ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTripWithGravity) expected to move from FAIL to PASS
+- No new test files needed — existing test suite covers the fix
 
 ### the agent's Discretion
-All implementation details not covered above are at the agent's discretion.
+- Exact qddot expected values in ThreeLinkNumericalValidation (compute from algorithm output or validate round-trip property)
+- Doxygen wording specifics (within "single tip-to-base sweep with condensation" description)
+- Loop variable naming and intermediate variable naming within the restructured inwardPass()
 
 </decisions>
+
+<canonical_refs>
+## Canonical References
+
+**Downstream agents MUST read these before planning or implementing.**
+
+### Mathematical Reference
+- Featherstone, R. (2008). Rigid Body Dynamics Algorithms. **Chapter 7, Algorithm 7.3** — Articulated Body Algorithm with condensation step.
+- `.planning/phases/14-cr-02-bug-fix/14-RESEARCH.md` — Full research: condensation formula derivation, Featherstone algorithm trace, reference implementation pseudocode, pitfalls.
+- `.planning/phases/12-dynamics-consistency/12-01-SUMMARY.md` — Prior fix context: ABA gravity support, cross-product unification.
+
+### Source Files — Primary Modification Target
+- `src/ForwardDynamics.cpp` lines 82-179 — Current inwardPass() with 3-phase structure (initialize → partial qdd with condensation → correct qdd). Replace with single sweep.
+- `src/ForwardDynamics.cpp` lines 22-53 — `transformInertiaToParent()` helper (KEEP — computes `X^T * Ia * X`, correct for child-to-parent ABA propagation)
+
+### Source Files — Read Only (API Reference)
+- `include/ForwardDynamics.h` — Link struct fields (Ia, pa, S, parent, X, c, v, f, qddot), class Doxygen to update
+- `include/ArticulatedBodyInertia.h` — `apply(const MotionVector&)` → ForceVector, `operator+`, `operator*`
+- `include/SpatialUtils.h` — `dot(MotionVector, ForceVector)` → double (free function)
+- `include/LowerTriangular.h` — `fromFullMatrix(const Eigen::MatrixXd&)` → LowerTriangular
+- `include/PluckerTransform.h` — `transformMotion()`, `inverseTransformForce()`, `invtformABI()`
+
+### Test Files
+- `tests/TestForwardDynamics.cpp` — 15 tests including CondensationReducesInertiaNorm, ThreeLinkSingleTorque, ThreeLinkNumericalValidation
+- `tests/TestDynamicsConsistency.cpp` — 7 tests including ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTripWithGravity
+
+### Cross-Validation Reference
+- `.planning/phases/18-robot-examples/18-01-SUMMARY.md` — v1.2 confirmation: 2-link passes cross-validation, 3-link fails — isolates bug to chains with 3+ joints and non-zero COM
+
+</canonical_refs>
 
 <code_context>
 ## Existing Code Insights
 
 ### Reusable Assets
 - `ArticulatedBodyInertia::apply(const MotionVector&)` returns `ForceVector` — used for `IaS = Ia.apply(S)`
-- `cross(v, IaV)` free function in SpatialUtils.h — used for velocity-product bias forces
+- `cross(MotionVector, ForceVector)` free function in SpatialUtils.h — used for velocity-product bias forces
 - `PluckerTransform::invtformABI(const ArticulatedBodyInertia&)` — transforms child Ia to parent frame
 - `PluckerTransform::inverseTransformForce(const ForceVector&)` — transforms child pa to parent frame
-- Existing `dot(MotionVector, ForceVector)` free function — used for S^T * pa and S^T * IaS
-- `LowerTriangular` has `add(const LowerTriangular&)`, `scale(double)`, `subtract(const LowerTriangular&)`
+- Existing `dot(MotionVector, ForceVector)` free function — used for `S^T * IaS` and `S^T * pa`
+- `LowerTriangular::fromFullMatrix()` — wraps `t * t.transpose()` outer products into LT storage
 
 ### Established Patterns
-- ABA algorithm in `src/ForwardDynamics.cpp` — `outwardPass()` and `inwardPass(const VectorXd& tau)`
-- Three-phase inward pass: initialize (base-to-tip), accumulate (tip-to-base), solve (tip-to-base)
-- GTest for all tests, `EXPECT_DOUBLE_EQ` for floats, `EXPECT_NE` for inequality
+- ABA algorithm in `src/ForwardDynamics.cpp` — `outwardPass()` (lines 57-80) and `inwardPass(const VectorXd& tau)` (lines 82-179)
+- Current inward pass: Phase 1 initializes Ia/pa (base→tip), Phase 2 accumulates+condenses+propagates (tip→base), Phase 3 corrects qddot (base→tip)
+- GTest for all tests, `EXPECT_DOUBLE_EQ` for exact values, `EXPECT_NEAR` with EPSILON=1e-8 for computed values
 - Link struct holds both rigid body inertia (I) and articulated body inertia (Ia) simultaneously
+- `computeAccelerations()` (lines 182-209) calls outwardPass then inwardPass — unchanged by fix
 
 ### Integration Points
-- `inwardPass()` in `ForwardDynamics.cpp` lines 53-126 — primary modification target
-- `ThreeLinkNumericalValidation` test at TestForwardDynamics.cpp lines 261-312 — update expected values
-- `TestDynamicsConsistency.cpp` — multi-link round-trip tests will auto-verify after fix (no changes needed)
-- `ArticulatedBodyInertia.h` — no changes needed, existing API sufficient for condensation math
+- `inwardPass()` in `src/ForwardDynamics.cpp` lines 82-179 — primary modification target, replace with single sweep
+- `outwardPass()` in `src/ForwardDynamics.cpp` lines 57-80 — NO changes, gravity handling is correct
+- `computeAccelerations()` in `src/ForwardDynamics.cpp` lines 182-209 — NO changes, calls restructured inwardPass
+- `include/ForwardDynamics.h` — Doxygen updates only, NO struct or API changes
+- `tests/TestForwardDynamics.cpp` — ThreeLinkNumericalValidation expected values may need updating
+- `tests/TestDynamicsConsistency.cpp` — multi-link round-trip tests auto-verify after fix, no changes needed
 
 </code_context>
 
 <specifics>
 ## Specific Ideas
 
-- The condensation formula: `I_A -= (I_A*S) * inv(S^T*I_A*S) * (I_A*S)^T` then `p_A += I_A * S * qddot + (I_A*S) * inv(S^T*I_A*S) * (tau - S^T*p_A)`
-- For 1-DOF joints, `inv(S^T*I_A*S)` is simply `1/D` where `D = S^T * I_A * S`
-- The condensation reduces reflected inertia at the parent — without it, the parent overestimates mass
-- Phase restructuring: merge the 3-phase inward pass into a single tip-to-base sweep
+- The condensation formula: `I_A -= (I_A*S) * inv(S^T*I_A*S) * (I_A*S)^T` then `p_A += I_A*S * qddot + (I_A*S) * inv(S^T*I_A*S) * (tau - S^T*p_A)`
+- For 1-DOF revolute joints, `inv(S^T*I_A*S)` is simply `1/D` where `D = S^T * I_A * S`
+- The current Phase 3 correction `S^T * Ia_unc * (a_parent + c)` algebraically double-counts: the term `S^T * Ia_unc * c` is already included in `pa` (initialized as `Ia*c + cross(v, Ia*v) + f`), so it gets subtracted twice
+- The single sweep eliminates this by computing qddot from fully accumulated Ia/pa only — no correction needed per Featherstone Algorithm 7.3
+- Remove storage for `Ia_unc` (vector<ArticulatedBodyInertia>) and `D_store` (vector<double>) — no longer needed without correction step
 
 </specifics>
 
@@ -73,4 +123,13 @@ All implementation details not covered above are at the agent's discretion.
 
 None — discussion stayed within phase scope.
 
+### Related Bugs (separate phases)
+- **RNEA fixed-transform limitation** (Phase 19 or future): InverseDynamics uses fixed X transforms that don't update with joint position q — valid only at home configuration. Documented but not fixed.
+- **RNEA non-zero qdot tests** (Phase 13, done): RNEA tests with known non-zero qdot values already exist, validating Coriolis/centrifugal computation.
+
 </deferred>
+
+---
+
+*Phase: 14-cr-02-bug-fix*
+*Context gathered: 2026-06-17*
