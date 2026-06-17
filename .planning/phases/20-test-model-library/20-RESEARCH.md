@@ -888,7 +888,7 @@ private:
 
 **If this table is empty:** All claims in this research were verified or cited — no user confirmation needed.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`forwardKinematics()` auto-call vs explicit call**
    - What we know: D-02 specifies `forwardKinematics()` as part of the API. Pinocchio recomputes transforms on every `computeTorques`/`computeAccelerations` call. SA currently does NOT recompute transforms (known limitation).
