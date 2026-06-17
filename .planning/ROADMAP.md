@@ -9,8 +9,8 @@
 
 - ✅ **v1.0 MVP / Core Library** — Phases 1-10 (shipped 2026-05-16)
 - ✅ **v1.1 Bug Fixes & Stability** — Phases 11-13 (shipped 2026-05-17)
-- ✅ **v1.2 Production Quality** — Phases 15-18 (shipped 2026-06-06); Phases 14, 19 deferred
-- 🚧 **v1.3 TBD** — Phases 14, 19 (planned)
+- ✅ **v1.2 Production Quality** — Phases 15-18 (shipped 2026-06-06); Phase 14 completed 2026-06-17
+- 🚧 **v1.3 Pinocchio Cross-Validation** — Phases 20-24 (active)
 
 ## Phases
 
@@ -192,3 +192,89 @@ Plans:
 *See `.planning/milestones/v1.0-ROADMAP.md` for v1.0 details.*
 *See `.planning/milestones/v1.1-ROADMAP.md` for v1.1 details.*
 *See `.planning/milestones/v1.2-ROADMAP.md` for v1.2 details.*
+
+---
+
+## 🚧 v1.3 Pinocchio Cross-Validation (Phases 20-24)
+
+**Goal:** Extract all test models into a zero-dependency Eigen-only library with adapter interfaces, refine test coverage and precision, and build Pinocchio C++/Python comparison benchmarks with result reporting.
+
+| # | Phase | Goal | Requirements | Status |
+|---|-------|------|--------------|--------|
+| 20 | Test Model Library | Extract all 11 test domains into header-only Eigen-only library with adapter interface | TML-01..05 | Pending |
+| 21 | Test Refinement | Better variety, precision, documentation, edge cases | TST-01..04 | Pending |
+| 22 | Pinocchio C++ Comparison | C++ adapter and comparison benchmarks | PCC-01..04 | Pending |
+| 23 | Pinocchio Python Harness | Python comparison script and JSON output | PCP-01..04 | Pending |
+| 24 | Result Reporting | Cross-library comparison tables with regression tracking | RPT-01..03 | Pending |
+
+### Phase Details
+
+**Phase 20: Test Model Library**
+- Goal: Create standalone header-only library with zero SA dependency, adapter interface, and all kinematic model definitions
+- Requirements: TML-01, TML-02, TML-03, TML-04, TML-05
+- Success criteria:
+  1. `tests/test-models/` directory with `<test-models/*.h>` headers using only Eigen types
+  2. Adapter interface `DynamicsSolver` with pure virtual `computeTorques()` and `computeAccelerations()`
+  3. SpatialAlgebra adapter wrapping existing InverseDynamics/ForwardDynamics classes
+  4. CMake library target `TestModels` compiles without any SpatialAlgebra headers
+  5. All 11 test domains represented (vectors, transforms, rotation, LT, RBI, ABI, utils, ID, FD, consistency, spatial ops)
+
+**Phase 21: Test Refinement**
+- Goal: Improve test model variety, numerical precision analysis, docstrings, and edge case coverage
+- Requirements: TST-01, TST-02, TST-03, TST-04
+- Success criteria:
+  1. 3+ new kinematic configurations (prismatic joints, mixed types, high-DOF chains)
+  2. Relative error reporting alongside absolute EXPECT_NEAR assertions
+  3. Every test model struct/class has Doxygen docstring with Featherstone reference
+  4. Edge case tests pass: near-zero mass, singular configs, n>10 DOF, non-identity rotations
+
+**Phase 22: Pinocchio C++ Comparison**
+- Goal: Build Pinocchio adapter and comparison benchmark executable
+- Requirements: PCC-01, PCC-02, PCC-03, PCC-04
+- Success criteria:
+  1. Pinocchio C++ adapter passes all test models through adapter interface
+  2. CMake `SA_BUILD_PINOCCHIO_BENCHMARKS` guard works (default OFF)
+  3. Comparison executable runs all models through both adapters
+  4. Per-joint relative error < 1e-6 for ABA/RNEA equivalence
+
+**Phase 23: Pinocchio Python Harness**
+- Goal: Python comparison script using pinocchio Python bindings
+- Requirements: PCP-01, PCP-02, PCP-03, PCP-04
+- Success criteria:
+  1. `pip install pin` works and Python harness runs successfully
+  2. Python models mirror all C++ kinematic chain definitions
+  3. Round-trip RNEA↔ABA consistency within 1e-6 for all models
+  4. JSON output file with comparison results generated
+
+**Phase 24: Result Reporting**
+- Goal: Cross-library comparison tables, error analysis, CI integration
+- Requirements: RPT-01, RPT-02, RPT-03
+- Success criteria:
+  1. Cross-library comparison table (SA C++ vs Pinocchio C++ vs Pinocchio Python)
+  2. Per-joint relative error analysis with max/mean error per model
+  3. CI test passes/fails based on tolerance thresholds
+
+### Requirement Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| TML-01 | Phase 20 | Pending |
+| TML-02 | Phase 20 | Pending |
+| TML-03 | Phase 20 | Pending |
+| TML-04 | Phase 20 | Pending |
+| TML-05 | Phase 20 | Pending |
+| TST-01 | Phase 21 | Pending |
+| TST-02 | Phase 21 | Pending |
+| TST-03 | Phase 21 | Pending |
+| TST-04 | Phase 21 | Pending |
+| PCC-01 | Phase 22 | Pending |
+| PCC-02 | Phase 22 | Pending |
+| PCC-03 | Phase 22 | Pending |
+| PCC-04 | Phase 22 | Pending |
+| PCP-01 | Phase 23 | Pending |
+| PCP-02 | Phase 23 | Pending |
+| PCP-03 | Phase 23 | Pending |
+| PCP-04 | Phase 23 | Pending |
+| RPT-01 | Phase 24 | Pending |
+| RPT-02 | Phase 24 | Pending |
+| RPT-03 | Phase 24 | Pending |

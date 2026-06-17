@@ -23,13 +23,15 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - CI pipeline with 4-matrix build ✓
 - Formal conventions documented ✓
 
-## Current Milestone: v1.3 TBD
+## Current Milestone: v1.3 Pinocchio Cross-Validation
 
-**Goal:** Fix remaining ABA multi-link consistency bug (BF-02) and add RBDL comparison benchmarks.
+**Goal:** Extract all 11 test suites into a zero-dependency test model library, refine tests with better variety, precision, documentation and edge cases, and build Pinocchio C++/Python comparison benchmarks.
 
 **Target features:**
-- Fix CR-02 bug in ABA inward pass — make all 4 multi-link consistency tests pass
-- RBDL comparison benchmarks (3+ link serial chains)
+- Standalone test model library (Eigen-only, zero SpatialAlgebra dependency) covering all 11 test domains
+- Refined tests: better model variety, numerical precision, docstrings, and edge case coverage
+- Pinocchio C++ comparison benchmarks for ABA/RNEA round-trip consistency
+- Pinocchio Python comparison harness with equivalent numerical validation
 
 ## Requirements
 
@@ -62,8 +64,11 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 
 ### Active (v1.3)
 
-- [ ] Multi-link RNEA↔ABA consistency for 3+ link chains (BF-02) — Phase 14
-- [ ] RBDL comparison benchmarks — Phase 19
+- [ ] Standalone test model library — Eigen-only types, zero SpatialAlgebra dependency, covering all 11 test domains (vectors, transforms, inertia, dynamics, consistency)
+- [ ] Test refinement — better model variety (URDF-derived, different joint types), tighter numerical tolerances with error analysis, comprehensive Doxygen-style docstrings, edge case coverage (zero-mass, singular, near-singular)
+- [ ] Pinocchio C++ comparison benchmarks — link against libpinocchio, run equivalent RNEA/ABA/consistency tests
+- [ ] Pinocchio Python comparison harness — equivalent numerical validation via pinocchio Python bindings
+- [ ] Benchmark result reporting — cross-library comparison tables with relative error analysis
 
 ### Out of Scope
 
@@ -78,14 +83,19 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 
 **v1.1 Shipped:** May 17, 2026 — ~9,450 LOC C++17, 189+ GTest tests, CI pipeline.
 
+**v1.2 Shipped:** 2026-06-06 — 5 phases (15-18), 9 plans, ~30 files modified, 11 CTest passing, 80 benchmarks.
+
+**CR-02 Fixed (Phase 14, 2026-06-17):** ABA inward pass Phase 3 correction double-counting resolved — 3-link non-zero COM round-trip passes, all 11 CTest green.
+
 **State:**
 - All core classes implemented and verified with tests
 - Forward dynamics (ABA) and inverse dynamics (RNEA) with gravity support
-- 156/158 tests passing (98.7%) — 3 pre-existing CR-02 multi-link failures
+- All 11 CTest executables passing (8 consistency + 15 FD tests)
 - NaN/Inf debug-mode guards on core operations
 - Cross-product operations unified to single canonical implementation
 - Production-hardened with edge case tests and release-mode stability verification
-- GitHub Actions CI with 4-matrix build and code coverage
+- GitHub Actions CI with 8-matrix build (Eigen 3.4 + 5.x)
+- Google Benchmark v1.9.5 with 80 registered benchmarks
 - Formal mathematical conventions documented
 - Independent gravity invariant test oracles for both solvers
 
@@ -141,7 +151,7 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-06-06 after v1.2 milestone*
+*Last updated: 2026-06-17 after starting v1.3 milestone*
 
 ---
 
