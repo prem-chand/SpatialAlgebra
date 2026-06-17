@@ -308,14 +308,14 @@ void ForwardDynamics::inwardPass(const Eigen::VectorXd& tau)
 
 No assumptions were made — all claims are verified against the existing codebase (read and inspected) and against Featherstone Algorithm 7.3 (standard textbook knowledge verified by the mathematical derivation).
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Exact expected qddot values for ThreeLinkNumericalValidation after fix**
+1. **Exact expected qddot values for ThreeLinkNumericalValidation after fix** — RESOLVED
    - What we know: `tau=[1, 0.5, 0.25]`, 3 links with identity inertias, transforms along X, revolute Z joints, q=0, qdot=0. After condensation, the tip joint should have qdd=0.25 (only its own inertia). Joint 1 should have intermediate acceleration (own inertia + condensed tip inertia). Joint 0 should have the lowest acceleration (all three inertias).
    - What's unclear: The exact numerical values depend on the Plücker transform of the condensed inertia through the chain. The key invariant is `qddot[0] < qddot[2]` (base accelerates least, tip most).
    - Recommendation: Use round-trip consistency (ABA(RNEA(qddot_input)) ≈ qddot_input) as the authoritative check. The ThreeLinkNumericalValidation test should verify `qddot[0] < qddot[2]` and positivity/finiteness, not specific numerical values.
 
-2. **Contribution ordering for branching trees with a child of the base**
+2. **Contribution ordering for branching trees with a child of the base** — RESOLVED
    - What we know: The tip-to-base loop processes links in index order. For branching (base=0, children=1,2), when i=2 (child of 0), it condenses and adds to parent=0. When i=1 (child of 0), same. When i=0 (base), Ia[0] includes contributions from both children's condensed inertias.
    - What's unclear: Since both children add to the same parent, does the order of child processing matter? In theory, no — addition of inertias is commutative. But in practice, floating-point order might produce small differences.
    - Recommendation: The order is deterministic (reverse index order). The symmetric branch test (BranchingKinematicTree) verifies that children 1 and 2 produce equal accelerations, which holds because their inputs are symmetric.

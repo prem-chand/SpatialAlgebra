@@ -59,31 +59,42 @@
 ## Phase Details
 
 ### Phase 14: CR-02 Bug Fix
+
 **Goal**: Correct forward dynamics for chains with 3+ joints and non-zero COM — TDD with Red→Green→Verify cycle
 **Depends on**: Phase 13 (previous milestone; Phase 14-01 cross product fix already completed); independent of Phase 15
 **Requirements**: BFIX-01
 **Success Criteria** (what must be TRUE):
+
    1. All multi-link consistency tests with non-zero COM pass: ThreeLinkSerialChainNonZeroCOM, BranchingYNonZeroCOM, TwoLinkGravityNonZeroCOM
    2. ThreeLinkNumericalValidation updated with non-zero COM round-trip check — passes within EPSILON=1e-8
    3. ABA inward pass restructured to single tip-to-base sweep per Featherstone Algorithm 7.3 (no Phase 3 correction)
    4. All 11 test executables pass with zero regressions (existing zero-COM tests + new non-zero COM tests)
    5. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
+
 **Plans**: 3 plans (1 completed cross product fix + 2 gap closure)
 
 Plans:
+**Wave 1**
+
 - [x] 14-01-PLAN.md — Cross product fixes (SpatialUtils.h) — completed 2026-06-04 (partial: tests pass but only with zero COM)
 - [ ] 14-02-PLAN.md — RED: Add non-zero COM tests that FAIL (closes SC1, SC2)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 14-03-PLAN.md — GREEN+VERIFY: Restructure inwardPass + Doxygen + full regression (closes SC3, SC4, SC5)
 
 ### Phase 19: RBDL Comparison
+
 **Goal**: Optional RBDL-based comparison benchmarks with numerical identity verification
 **Depends on**: Phase 17, Phase 18 (requires benchmarks and examples)
 **Requirements**: RBDL-01, RBDL-02, RBDL-03
 **Success Criteria** (what must be TRUE):
+
    1. `cmake/FindRBDL.cmake` locates RBDL v3.3.1 installation; comparison benchmarks guarded by `SA_BUILD_COMPARISON_BENCHMARKS` (default OFF)
    2. Numerical identity verified between SpatialAlgebra and RBDL for single-link dynamics to 1e-12
    3. ABA/RNEA timing comparison executable runs for 3+ link serial chains
    4. Frame convention mapping documented (transform directions, joint screw conventions)
+
 **Plans**: TBD
 
 ---
