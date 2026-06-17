@@ -177,6 +177,86 @@ TEST(ConsistencyTest, ThreeLinkSerialChain) {
 }
 
 /**
+ * @brief Three-link serial chain round-trip with non-zero COM
+ * @details Three-link serial chain with COM offset [0.1, 0, 0] on each link,
+ *          creating non-block-diagonal articulated inertia matrices that require
+ *          correct condensation in the ABA inward pass (Phase 14 CR-02).
+ *          This test MUST FAIL with the current 3-phase inwardPass.
+ */
+TEST(ConsistencyTest, ThreeLinkSerialChainNonZeroCOM) {
+    InverseDynamics id;
+
+    InverseDynamicsLink id_link0;
+    id_link0.parent = -1;
+    id_link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    id_link0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_link0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link0.q = 0.0;
+    id_link0.qdot = 0.0;
+    id.links.push_back(id_link0);
+
+    InverseDynamicsLink id_link1;
+    id_link1.parent = 0;
+    id_link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_link1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_link1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link1.q = 0.0;
+    id_link1.qdot = 0.0;
+    id.links.push_back(id_link1);
+
+    InverseDynamicsLink id_link2;
+    id_link2.parent = 1;
+    id_link2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_link2.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_link2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link2.q = 0.0;
+    id_link2.qdot = 0.0;
+    id.links.push_back(id_link2);
+
+    Eigen::VectorXd qddot_input(3);
+    qddot_input[0] = 1.0;
+    qddot_input[1] = 0.5;
+    qddot_input[2] = 0.25;
+
+    Eigen::VectorXd tau = id.computeTorques(qddot_input);
+
+    ForwardDynamics fd;
+
+    ForwardDynamicsLink fd_link0;
+    fd_link0.parent = -1;
+    fd_link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    fd_link0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    fd_link0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link0.q = 0.0;
+    fd_link0.qdot = 0.0;
+    fd.links.push_back(fd_link0);
+
+    ForwardDynamicsLink fd_link1;
+    fd_link1.parent = 0;
+    fd_link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    fd_link1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    fd_link1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link1.q = 0.0;
+    fd_link1.qdot = 0.0;
+    fd.links.push_back(fd_link1);
+
+    ForwardDynamicsLink fd_link2;
+    fd_link2.parent = 1;
+    fd_link2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    fd_link2.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    fd_link2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link2.q = 0.0;
+    fd_link2.qdot = 0.0;
+    fd.links.push_back(fd_link2);
+
+    fd.computeAccelerations(tau);
+
+    EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], EPSILON);
+    EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], EPSILON);
+    EXPECT_NEAR(fd.links[2].qddot, qddot_input[2], EPSILON);
+}
+
+/**
  * @brief Consistency test for branching Y-configuration
  * 
  * Verifies RNEA and ABA produce consistent results for branching tree
@@ -257,6 +337,88 @@ TEST(ConsistencyTest, BranchingYConfiguration) {
     EXPECT_NEAR(fd.links[2].qddot, qddot_input[2], EPSILON);
     
     // Verify symmetric branches have same acceleration
+    EXPECT_NEAR(fd.links[1].qddot, fd.links[2].qddot, EPSILON);
+}
+
+/**
+ * @brief Branching Y-configuration round-trip with non-zero COM
+ * @details Branching Y with non-zero COM [0.05, 0, 0] on base and children,
+ *          verifying condensation correctness for multi-child parents with
+ *          non-block-diagonal articulated inertias. This test MUST FAIL with
+ *          the current 3-phase inwardPass.
+ */
+TEST(ConsistencyTest, BranchingYNonZeroCOM) {
+    InverseDynamics id;
+
+    InverseDynamicsLink id_link0;
+    id_link0.parent = -1;
+    id_link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    id_link0.I = RigidBodyInertia(1.0, Vector3d(0.05, 0, 0), lt::Identity(3));
+    id_link0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link0.q = 0.0;
+    id_link0.qdot = 0.0;
+    id.links.push_back(id_link0);
+
+    InverseDynamicsLink id_link1;
+    id_link1.parent = 0;
+    id_link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_link1.I = RigidBodyInertia(0.5, Vector3d(0.05, 0, 0), lt::Identity(3) * 0.5);
+    id_link1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link1.q = 0.0;
+    id_link1.qdot = 0.0;
+    id.links.push_back(id_link1);
+
+    InverseDynamicsLink id_link2;
+    id_link2.parent = 0;
+    id_link2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(-1, 0, 0));
+    id_link2.I = RigidBodyInertia(0.5, Vector3d(0.05, 0, 0), lt::Identity(3) * 0.5);
+    id_link2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_link2.q = 0.0;
+    id_link2.qdot = 0.0;
+    id.links.push_back(id_link2);
+
+    Eigen::VectorXd qddot_input(3);
+    qddot_input[0] = 1.0;
+    qddot_input[1] = 0.5;
+    qddot_input[2] = 0.5;
+
+    Eigen::VectorXd tau = id.computeTorques(qddot_input);
+
+    ForwardDynamics fd;
+
+    ForwardDynamicsLink fd_link0;
+    fd_link0.parent = -1;
+    fd_link0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    fd_link0.I = RigidBodyInertia(1.0, Vector3d(0.05, 0, 0), lt::Identity(3));
+    fd_link0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link0.q = 0.0;
+    fd_link0.qdot = 0.0;
+    fd.links.push_back(fd_link0);
+
+    ForwardDynamicsLink fd_link1;
+    fd_link1.parent = 0;
+    fd_link1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    fd_link1.I = RigidBodyInertia(0.5, Vector3d(0.05, 0, 0), lt::Identity(3) * 0.5);
+    fd_link1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link1.q = 0.0;
+    fd_link1.qdot = 0.0;
+    fd.links.push_back(fd_link1);
+
+    ForwardDynamicsLink fd_link2;
+    fd_link2.parent = 0;
+    fd_link2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(-1, 0, 0));
+    fd_link2.I = RigidBodyInertia(0.5, Vector3d(0.05, 0, 0), lt::Identity(3) * 0.5);
+    fd_link2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_link2.q = 0.0;
+    fd_link2.qdot = 0.0;
+    fd.links.push_back(fd_link2);
+
+    fd.computeAccelerations(tau);
+
+    EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], EPSILON);
+    EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], EPSILON);
+    EXPECT_NEAR(fd.links[2].qddot, qddot_input[2], EPSILON);
+
     EXPECT_NEAR(fd.links[1].qddot, fd.links[2].qddot, EPSILON);
 }
 
@@ -359,6 +521,67 @@ TEST(ConsistencyTest, TwoLinkRoundTripWithGravity) {
     
     fd.computeAccelerations(tau, gravity);
     
+    EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], EPSILON);
+    EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], EPSILON);
+}
+
+/**
+ * @brief Two-link round-trip consistency with gravity and non-zero COM
+ * @details Two-link serial chain with COM offset [0.1, 0, 0] on both links and
+ *          gravity=(0,0,-9.81). Gravity x COM coupling exercises condensation with
+ *          non-zero bias forces. This test MUST FAIL with the current inwardPass.
+ */
+TEST(ConsistencyTest, TwoLinkGravityNonZeroCOM) {
+    Vector3d gravity(0, 0, -9.81);
+
+    InverseDynamics id;
+
+    InverseDynamicsLink id_l0;
+    id_l0.parent = -1;
+    id_l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    id_l0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_l0.q = 0.0;
+    id_l0.qdot = 0.0;
+    id.links.push_back(id_l0);
+
+    InverseDynamicsLink id_l1;
+    id_l1.parent = 0;
+    id_l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_l1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_l1.q = 0.0;
+    id_l1.qdot = 0.0;
+    id.links.push_back(id_l1);
+
+    Eigen::VectorXd qddot_input(2);
+    qddot_input[0] = 1.0;
+    qddot_input[1] = 0.5;
+
+    Eigen::VectorXd tau = id.computeTorques(qddot_input, gravity);
+
+    ForwardDynamics fd;
+
+    ForwardDynamicsLink fd_l0;
+    fd_l0.parent = -1;
+    fd_l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    fd_l0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    fd_l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_l0.q = 0.0;
+    fd_l0.qdot = 0.0;
+    fd.links.push_back(fd_l0);
+
+    ForwardDynamicsLink fd_l1;
+    fd_l1.parent = 0;
+    fd_l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    fd_l1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    fd_l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    fd_l1.q = 0.0;
+    fd_l1.qdot = 0.0;
+    fd.links.push_back(fd_l1);
+
+    fd.computeAccelerations(tau, gravity);
+
     EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], EPSILON);
     EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], EPSILON);
 }

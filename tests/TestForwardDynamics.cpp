@@ -1,4 +1,5 @@
 #include "ForwardDynamics.h"
+#include "InverseDynamics.h"
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 
@@ -257,48 +258,77 @@ TEST(ForwardDynamicsTest, LargeTorqueProportionalAcceleration) {
  *          torque because it carries reflected inertias from all descendants.
  */
 TEST(ForwardDynamicsTest, ThreeLinkNumericalValidation) {
+    Eigen::VectorXd qddot_input(3);
+    qddot_input[0] = 1.0;
+    qddot_input[1] = 0.5;
+    qddot_input[2] = 0.25;
+
+    InverseDynamics id;
+
+    InverseDynamicsLink id_l0;
+    id_l0.parent = -1;
+    id_l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    id_l0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_l0.q = 0.0; id_l0.qdot = 0.0;
+    id.links.push_back(id_l0);
+
+    InverseDynamicsLink id_l1;
+    id_l1.parent = 0;
+    id_l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_l1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_l1.q = 0.0; id_l1.qdot = 0.0;
+    id.links.push_back(id_l1);
+
+    InverseDynamicsLink id_l2;
+    id_l2.parent = 1;
+    id_l2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    id_l2.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
+    id_l2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
+    id_l2.q = 0.0; id_l2.qdot = 0.0;
+    id.links.push_back(id_l2);
+
+    Eigen::VectorXd tau = id.computeTorques(qddot_input);
+
     ForwardDynamics fd;
-    
-    // Link 0 (base) — Z-axis revolute
+
     Link l0;
     l0.parent = -1;
     l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
-    l0.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l0.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
     l0.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
     l0.q = 0.0; l0.qdot = 0.0;
     l0.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
     fd.links.push_back(l0);
-    
-    // Link 1 — Z-axis revolute, offset along X
+
     Link l1;
     l1.parent = 0;
     l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
-    l1.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l1.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
     l1.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
     l1.q = 0.0; l1.qdot = 0.0;
     l1.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
     fd.links.push_back(l1);
-    
-    // Link 2 (tip) — Z-axis revolute, offset along X
+
     Link l2;
     l2.parent = 1;
     l2.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
-    l2.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l2.I = RigidBodyInertia(1.0, Vector3d(0.1, 0, 0), lt::Identity(3));
     l2.S = MotionVector(Vector3d(0, 0, 1), Vector3d::Zero());
     l2.q = 0.0; l2.qdot = 0.0;
     l2.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
     fd.links.push_back(l2);
-    
-    Eigen::VectorXd tau(3);
-    tau[0] = 1.0;
-    tau[1] = 0.5;
-    tau[2] = 0.25;
-    
+
     fd.computeAccelerations(tau);
-    
-    for (int i = 0; i < 3; i++) {
-        EXPECT_TRUE(std::isfinite(fd.links[i].qddot));
-    }
+
+    EXPECT_NEAR(fd.links[0].qddot, qddot_input[0], 1e-8);
+    EXPECT_NEAR(fd.links[1].qddot, qddot_input[1], 1e-8);
+    EXPECT_NEAR(fd.links[2].qddot, qddot_input[2], 1e-8);
+
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    EXPECT_TRUE(std::isfinite(fd.links[1].qddot));
+    EXPECT_TRUE(std::isfinite(fd.links[2].qddot));
     EXPECT_LT(fd.links[0].qddot, fd.links[2].qddot);
 }
 
