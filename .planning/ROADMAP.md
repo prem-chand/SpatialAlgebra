@@ -201,7 +201,7 @@ Plans:
 
 | # | Phase | Goal | Requirements | Status |
 |---|-------|------|--------------|--------|
-| 20 | Test Model Library | 4/4 | Complete   | 2026-06-17 |
+| 20 | Test Model Library | 4/4 | Complete    | 2026-06-17 |
 | 21 | Test Refinement | Better variety, precision, documentation, edge cases | TST-01..04 | Pending |
 | 22 | Pinocchio C++ Comparison | C++ adapter and comparison benchmarks | PCC-01..04 | Pending |
 | 23 | Pinocchio Python Harness | Python comparison script and JSON output | PCP-01..04 | Pending |
