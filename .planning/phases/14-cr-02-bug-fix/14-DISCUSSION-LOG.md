@@ -5,26 +5,35 @@
 
 **Date:** 2026-06-17
 **Phase:** 14-cr-02-bug-fix
-**Areas discussed:** None (skipped — user chose to replan directly)
+**Areas discussed:** Test strategy
 
 ---
 
-## Context Update (not a full discussion)
+## Test Strategy
 
-The existing CONTEXT.md (gathered 2026-05-30) was comprehensive and well-aligned with the existing plan (14-01-PLAN.md) and research (14-RESEARCH.md). The user elected to skip detailed discussion and proceed directly to replanning.
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Update context and replan | Update CONTEXT.md with the finding, add non-zero COM test requirements, then replan | |
+| Run Phase 14 fix as-is | The fix is still valid, just the test baseline was wrong. Execute existing plan, verify with robot examples | |
+| Update tests first | TDD: add non-zero COM multi-link tests that fail (red), then fix the code (green), then verify | ✓ |
 
-### Updates Applied
-- Added v1.2 cross-validation findings from Phase 18 robot examples confirming the ABA bug on 3-link chains with non-zero COM
-- Resolved Doxygen scope ambiguity: ForwardDynamics.h Doxygen updates are permitted (original "zero include/ changes" was too restrictive)
-- Clarified forward spatial acceleration pass location: inside inwardPass(), inline after the tip-to-base sweep
-- Confirmed `transformInertiaToParent` helper is kept (computes X^T*Ia*X, not replaceable with invtformABI)
+**User's choice:** Update tests first (TDD approach)
+**Notes:** User chose to add failing tests with non-zero COM before implementing the fix. This ensures the fix is validated against tests that actually exercise the bug (existing tests all use zero COM and pass with the buggy code).
+
+---
+
+## Key Finding (pre-discussion)
+
+All 22 existing ABA/FD/consistency tests pass with the current buggy 3-phase code because every multi-link test sets COM to `Vector3d::Zero()`. With zero COM, `skew(com)*mass = 0`, the inertia is block-diagonal, and the Phase 3 correction double-counting bug is not triggered.
+
+The v1.2 robot examples (Phase 18) use non-zero COM (UR5-derived parameters) and correctly demonstrate the bug on 3-link chains.
 
 ## the agent's Discretion
 
-- Exact qddot expected values in ThreeLinkNumericalValidation (compute from algorithm output or validate round-trip property)
+- Exact non-zero COM values for new test models
+- ThreeLinkNumericalValidation: use round-trip ID→FD check instead of hardcoded expected values
 - Doxygen wording specifics
-- Loop variable naming within restructured inwardPass()
 
 ## Deferred Ideas
 
-None. Phase scope is tightly bounded to single-file ABA fix.
+None.
