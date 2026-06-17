@@ -54,6 +54,9 @@ endif()
 # Build tests
 enable_testing()
 
+# Test model library (zero SpatialAlgebra dependency)
+add_subdirectory(tests/test-models)
+
 # Add test executables
 add_executable(TestSpatialVector tests/TestSpatialVector.cpp)
 add_executable(TestPluckerTransform tests/TestPluckerTransform.cpp)
