@@ -201,7 +201,7 @@ Plans:
 
 | # | Phase | Goal | Requirements | Status |
 |---|-------|------|--------------|--------|
-| 20 | Test Model Library | Extract all 11 test domains into header-only Eigen-only library with adapter interface | TML-01..05 | Pending |
+| 20 | Test Model Library | Extract all 11 test domains into header-only Eigen-only library with adapter interface | TML-01..05 | Planned (4 plans) |
 | 21 | Test Refinement | Better variety, precision, documentation, edge cases | TST-01..04 | Pending |
 | 22 | Pinocchio C++ Comparison | C++ adapter and comparison benchmarks | PCC-01..04 | Pending |
 | 23 | Pinocchio Python Harness | Python comparison script and JSON output | PCP-01..04 | Pending |
@@ -212,12 +212,19 @@ Plans:
 **Phase 20: Test Model Library**
 - Goal: Create standalone header-only library with zero SA dependency, adapter interface, and all kinematic model definitions
 - Requirements: TML-01, TML-02, TML-03, TML-04, TML-05
+- **Plans:** 4 plans
 - Success criteria:
   1. `tests/test-models/` directory with `<test-models/*.h>` headers using only Eigen types
-  2. Adapter interface `DynamicsSolver` with pure virtual `computeTorques()` and `computeAccelerations()`
+  2. Adapter interface `RobotSolver` with pure virtual `computeTorques()` and `computeAccelerations()` (per D-06)
   3. SpatialAlgebra adapter wrapping existing InverseDynamics/ForwardDynamics classes
-  4. CMake library target `TestModels` compiles without any SpatialAlgebra headers
+  4. CMake INTERFACE library target `test_models` compiles without any SpatialAlgebra headers
   5. All 11 test domains represented (vectors, transforms, rotation, LT, RBI, ABI, utils, ID, FD, consistency, spatial ops)
+
+Plans:
+- [ ] 20-01-PLAN.md — Core data types (RobotModel, RobotSolver) + CMake infrastructure (INTERFACE test_models)
+- [ ] 20-02-PLAN.md — Model factory functions: 7 simple-domain chains (spatial_vectors through spatial_utils)
+- [ ] 20-03-PLAN.md — Model factory functions: 4 dynamics-domain chains (inverse_dynamics, forward_dynamics, consistency, spatial_operations)
+- [ ] 20-04-PLAN.md — SpatialAlgebra adapter (PIMPL) + compile_smoke_test zero-dependency verification
 
 **Phase 21: Test Refinement**
 - Goal: Improve test model variety, numerical precision analysis, docstrings, and edge case coverage
