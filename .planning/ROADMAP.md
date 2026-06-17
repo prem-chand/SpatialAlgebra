@@ -59,18 +59,19 @@
 ## Phase Details
 
 ### Phase 14: CR-02 Bug Fix
-**Goal**: Correct forward dynamics for chains with 3+ joints — all 4 multi-link consistency tests pass
-**Depends on**: Phase 13 (previous milestone; independent of Phase 15)
+**Goal**: Correct forward dynamics for chains with 3+ joints and non-zero COM — TDD with Red→Green→Verify cycle
+**Depends on**: Phase 13 (previous milestone; Phase 14-01 cross product fix already completed); independent of Phase 15
 **Requirements**: BFIX-01
 **Success Criteria** (what must be TRUE):
-   1. All 4 multi-link consistency tests pass: ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTrip, ThreeLinkNumericalValidation
-   2. ABA forward dynamics produces bitwise-consistent results with RNEA∘Inverse round-trip for 3+ link chains
-   3. All 156 existing tests continue to pass (no regressions)
-   4. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
-**Plans**: 1 plan
+   1. All multi-link consistency tests with non-zero COM pass: ThreeLinkSerialChainNonZeroCOM, BranchingYNonZeroCOM, TwoLinkGravityNonZeroCOM
+   2. ThreeLinkNumericalValidation updated with non-zero COM round-trip check — passes within EPSILON=1e-8
+   3. ABA inward pass restructured to single tip-to-base sweep per Featherstone Algorithm 7.3 (no Phase 3 correction)
+   4. All 11 test executables pass with zero regressions (existing zero-COM tests + new non-zero COM tests)
+   5. Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3
+**Plans**: 1 plan (3 TDD tasks: RED tests → GREEN fix → VERIFY)
 
 Plans:
-- [ ] 14-01-PLAN.md — Restructure ABA inward pass with condensation, update tests
+- [ ] 14-01-PLAN.md — TDD: non-zero COM tests + inwardPass() single sweep + full regression
 
 ### Phase 19: RBDL Comparison
 **Goal**: Optional RBDL-based comparison benchmarks with numerical identity verification
