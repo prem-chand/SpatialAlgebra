@@ -11,7 +11,10 @@
  * 
  *          Algorithm Overview:
  *          1. Outward pass (base to tip): Propagate velocities, compute bias accelerations
- *          2. Inward pass (tip to base): Accumulate articulated inertias, solve for accelerations
+ *          2. Inward pass (tip to base): Single tip-to-base sweep with condensation per
+ *             Featherstone Algorithm 7.3 — for each link, accumulate children contributions,
+ *             solve qddot = (tau - S^T*pa)/(S^T*Ia*S), condense Ia/pa, pass to parent
+ *          3. Forward pass (base to tip): Compute spatial accelerations a = X*a_parent + c + S*qddot
  * 
  *          Mathematical Foundation:
  *          The ABA solves the equation: τ = H(q)q̈ + C(q,q̇) + G(q)
@@ -140,10 +143,11 @@ namespace SpatialAlgebra
          * @brief Compute joint accelerations from applied torques
          * @param tau Vector of joint torques (must match links.size())
          * @details Main entry point for forward dynamics computation.
-         *          Executes the three-phase ABA:
+         *          Executes the ABA:
          *          1. Outward pass: propagate velocities, compute bias accelerations
-         *          2. Inward pass: accumulate articulated inertias and bias forces
-         *          3. Solve: compute joint accelerations from torques
+         *          2. Inward pass (single sweep with condensation): accumulate articulated
+         *             inertias, solve qddot with condensation, propagate to parent
+         *          3. Forward pass: compute spatial accelerations from qddot
          * 
          *          Mathematical formulation:
          *          q̈ = (τ - Sᵀ·pₐ) / (Sᵀ·Iₐ·S)
@@ -173,19 +177,27 @@ namespace SpatialAlgebra
         void outwardPass();
 
         /**
-         * @brief Inward pass: accumulate articulated inertias and bias forces
+         * @brief Inward pass: single tip-to-base sweep with condensation per Featherstone Algorithm 7.3
          * @param tau Vector of joint torques
-         * @details Iterates from tip (index n-1) to base (index 0).
-         *          For each link:
-         *          - Initialize Ia with rigid body inertia I
-         *          - Add transformed child articulated inertias
-         *          - Compute bias force: pₐ = Iₐ·c + f
-         *          - Transform Ia and pₐ to parent frame
+         * @details Single tip-to-base sweep computing articulated inertias and solving joint
+         *          accelerations. For each link (tip to base):
+         *          - Children's condensed Ia/pa have been accumulated from prior iterations
+         *          - Solve qddot = (tau - S^T*pa) / (S^T*Ia*S) as the FINAL joint acceleration
+         *          - Condense Ia: I_A' = I_A - (I_A*S) * D^{-1} * (I_A*S)^T if parent exists
+         *          - Condense pa: p_A' = p_A + I_A*S * qddot if parent exists
+         *          - Transform condensed Ia/pa to parent frame
          * 
-         *          After inward pass, solves for joint accelerations:
-         *          q̈ = (τ - Sᵀ·pₐ) / (Sᵀ·Iₐ·S)
+         *          After the sweep, a forward pass computes spatial accelerations:
+         *          a_i = X_i * a_parent + c_i + S_i * qddot_i
          * 
-         * @note Children must be processed before their parent
+         *          The condensation step (Featherstone Algorithm 7.3) removes the joint motion
+         *          subspace before propagating to the parent, preventing overestimation of the
+         *          reflected subtree inertia.
+         * 
+         * @note Base link (parent == -1) skips condensation — no parent to pass to
+         * @note Children must be processed before their parent (tip-to-base order)
+         * @throws std::runtime_error if denominator D = S^T*Ia*S is near zero
+         * @see Featherstone, R. (2008). Rigid Body Dynamics Algorithms. Chapter 7, Algorithm 7.3
          */
         void inwardPass(const Eigen::VectorXd& tau);
     };

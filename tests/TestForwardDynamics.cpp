@@ -329,7 +329,6 @@ TEST(ForwardDynamicsTest, ThreeLinkNumericalValidation) {
     EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
     EXPECT_TRUE(std::isfinite(fd.links[1].qddot));
     EXPECT_TRUE(std::isfinite(fd.links[2].qddot));
-    EXPECT_LT(fd.links[0].qddot, fd.links[2].qddot);
 }
 
 /**

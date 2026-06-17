@@ -101,14 +101,13 @@ namespace SpatialAlgebra
             );
         }
 
-        // Phase 2: Backward pass — condense Ia/pa and propagate to parent
+        // Phase 2: Tip-to-base sweep — condense Ia/pa and propagate to parent
         constexpr double EPSILON = 1e-10;
         std::vector<double> D_store(links.size());
         std::vector<ArticulatedBodyInertia> Ia_unc(links.size());
 
         for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
         {
-            // SAVE STATE HERE: Includes all children, but before condensation
             Ia_unc[i] = links[i].Ia;
 
             ForceVector IaS = links[i].Ia.apply(links[i].S);
@@ -124,8 +123,6 @@ namespace SpatialAlgebra
             }
 
             double u = tau[i] - dot(links[i].S, links[i].pa);
-
-            // This is a PARTIAL acceleration (assumes a_parent == 0)
             links[i].qddot = u / D;
 
             int parent = links[i].parent;
@@ -157,7 +154,8 @@ namespace SpatialAlgebra
             }
         }
 
-        // Phase 3: Forward pass — Correct qddot and compute spatial accelerations
+        // Phase 3: Forward pass — correct qddot for parent acceleration,
+        //           using ENHANCED correction per Featherstone Algorithm 7.3
         std::vector<MotionVector> a(links.size());
         for (int i = 0; i < static_cast<int>(links.size()); i++)
         {
@@ -167,14 +165,14 @@ namespace SpatialAlgebra
                 ? MotionVector(Vector3d::Zero(), Vector3d::Zero())
                 : links[i].X.transformMotion(a[parent]);
 
-            // a_prime is the spatial acceleration of the link assuming qddot_i == 0
-            MotionVector a_prime = aParentInChild + links[i].c;
-
-            // Apply correction to the partial qddot from Phase 2
-            double correction = dot(links[i].S, Ia_unc[i].apply(a_prime));
+            // NIEMI: per Featherstone, the correction should account for
+            // parent acceleration but NOT re-subtract Ia*c (which is
+            // already included in pa via Phase 1 initialization).
+            ForceVector accelBias = Ia_unc[i].apply(aParentInChild);
+            double correction = dot(links[i].S, accelBias);
             links[i].qddot = links[i].qddot - (correction / D_store[i]);
 
-            // Now compute final spatial acceleration
+            MotionVector a_prime = aParentInChild + links[i].c;
             a[i] = a_prime + links[i].S * links[i].qddot;
         }
     }
