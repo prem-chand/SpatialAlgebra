@@ -300,4 +300,83 @@ inline RobotModel makeSingleLinkXAxisWithCOMOffset()
     return model;
 }
 
+/**
+ * @brief Single-link Z-prismatic chain. mass=1, COM at origin.
+ *        First prismatic test model in the library.
+ * @details Constructs a 1-DOF robot with a single Z-axis prismatic joint,
+ *          unit mass, zero COM offset, and identity rotational inertia.
+ *          The joint axis is Z (translation along Z).
+ *
+ *          Chain layout:
+ *          - Link 0: root link, Z-prismatic, mass=1.0, COM=[0,0,0],
+ *            inertia=I_3x3, parentToJoint=I_4x4
+ *
+ *          Prismatic joints produce force along the axis direction rather
+ *          than torque. The expected behavior for qddot=1.0 is tau=1.0
+ *          (m * qddot).
+ *
+ * @return RobotModel containing a 1-link Z-prismatic chain
+ */
+inline RobotModel makeSinglePrismaticChain()
+{
+    RobotModel model;
+    JointSpec link;
+    link.parent = -1;
+    link.parentToJoint = Eigen::Matrix4d::Identity();
+    link.jointAxis = Eigen::Vector3d::UnitZ();
+    link.type = JointType::PRISMATIC;
+    link.mass = 1.0;
+    link.com = Eigen::Vector3d::Zero();
+    link.inertia = Eigen::Matrix3d::Identity();
+    link.name = "prismatic_base";
+    model.joints.push_back(link);
+    return model;
+}
+
+/**
+ * @brief Two-link mixed revolute+prismatic chain.
+ *        First mixed-type test model.
+ * @details Link 0 is Z-axis revolute, link 1 is X-axis prismatic at
+ *          1m X offset from link 0. Tests mixed joint type handling
+ *          in RNEA, FK, and mass matrix computation.
+ *
+ *          Chain layout:
+ *          - Link 0: root, Z-revolute, mass=1.0, COM=[0,0,0],
+ *            parentToJoint=I_4x4, name="revolute_base"
+ *          - Link 1: child of 0, X-prismatic, mass=1.0, COM=[0,0,0],
+ *            parentToJoint=translate(1,0,0), name="prismatic_tip"
+ *
+ * @return RobotModel containing a 2-link mixed chain
+ */
+inline RobotModel makeMixedRevolutePrismaticChain()
+{
+    RobotModel model;
+
+    JointSpec link0;
+    link0.parent = -1;
+    link0.parentToJoint = Eigen::Matrix4d::Identity();
+    link0.jointAxis = Eigen::Vector3d::UnitZ();
+    link0.type = JointType::REVOLUTE;
+    link0.mass = 1.0;
+    link0.com = Eigen::Vector3d::Zero();
+    link0.inertia = Eigen::Matrix3d::Identity();
+    link0.name = "revolute_base";
+    model.joints.push_back(link0);
+
+    JointSpec link1;
+    link1.parent = 0;
+    Eigen::Matrix4d T1 = Eigen::Matrix4d::Identity();
+    T1.topRightCorner<3, 1>() = Eigen::Vector3d(1.0, 0.0, 0.0);
+    link1.parentToJoint = T1;
+    link1.jointAxis = Eigen::Vector3d::UnitX();
+    link1.type = JointType::PRISMATIC;
+    link1.mass = 1.0;
+    link1.com = Eigen::Vector3d::Zero();
+    link1.inertia = Eigen::Matrix3d::Identity();
+    link1.name = "prismatic_tip";
+    model.joints.push_back(link1);
+
+    return model;
+}
+
 } // namespace test_models

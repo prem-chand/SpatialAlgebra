@@ -86,8 +86,14 @@ namespace SpatialAlgebra
         {
             double mass = links[i].I.getMass();
             Vector3d com = links[i].I.getCom();
+            // Compute inertia about the joint origin (parallel axis theorem):
+            // I_joint = I_cm + m*(|c|²*I₃ - c*c^T)
+            Eigen::Matrix3d I_cm = links[i].I.getInertiaMatrixLT().getSymmetricMatrix();
+            Eigen::Matrix3d I_joint = I_cm + mass * (
+                com.dot(com) * Eigen::Matrix3d::Identity() - com * com.transpose()
+            );
             links[i].Ia = ArticulatedBodyInertia(
-                links[i].I.getInertiaMatrixLT(),
+                lt::fromFullMatrix(I_joint),
                 skew(com) * mass,
                 lt::Identity(3) * mass
             );

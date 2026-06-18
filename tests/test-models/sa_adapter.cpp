@@ -363,9 +363,14 @@ Eigen::Matrix4d SpatialAlgebraAdapter::getJointTransform(int idx) const {
     const_cast<SpatialAlgebraAdapter*>(this)->autoFK();
 
     const auto& worldX = impl_->worldX_[static_cast<size_t>(idx)];
+    const Eigen::Matrix3d& R = worldX.getRotation();
+    const Vector3d& t = worldX.getTranslation();
     Eigen::Matrix4d T = Eigen::Matrix4d::Identity();
-    T.topLeftCorner<3, 3>() = worldX.getRotation();
-    T.topRightCorner<3, 1>() = worldX.getTranslation();
+    T.topLeftCorner<3, 3>() = R;
+    // Convert Plücker translation to standard homogeneous translation:
+    // t_homog = R * t_pluck (t_pluck is vector from this→reference in this frame;
+    // t_homog is vector from reference→this in reference frame)
+    T.topRightCorner<3, 1>() = R * t;
     return T;
 }
 
@@ -378,11 +383,19 @@ Eigen::MatrixXd SpatialAlgebraAdapter::computeMassMatrix() {
 
     Eigen::MatrixXd H = Eigen::MatrixXd::Zero(dof_, dof_);
 
-    // Save original qddot values
+    // Save original qddot and qdot values
     std::vector<double> savedQddot(static_cast<size_t>(dof_));
+    std::vector<double> savedQdot(static_cast<size_t>(dof_));
     for (int i = 0; i < dof_; ++i) {
         savedQddot[static_cast<size_t>(i)] =
             impl_->id_.links[static_cast<size_t>(i)].qddot;
+        savedQdot[static_cast<size_t>(i)] =
+            impl_->id_.links[static_cast<size_t>(i)].qdot;
+    }
+
+    // Zero velocity — mass matrix is a function of position only
+    for (int k = 0; k < dof_; ++k) {
+        impl_->id_.links[static_cast<size_t>(k)].qdot = 0.0;
     }
 
     // For each DOF, set unit acceleration and compute torque column
@@ -402,10 +415,12 @@ Eigen::MatrixXd SpatialAlgebraAdapter::computeMassMatrix() {
         H.col(j) = tau_col;
     }
 
-    // Restore original qddot values
+    // Restore original qddot and qdot values
     for (int i = 0; i < dof_; ++i) {
         impl_->id_.links[static_cast<size_t>(i)].qddot =
             savedQddot[static_cast<size_t>(i)];
+        impl_->id_.links[static_cast<size_t>(i)].qdot =
+            savedQdot[static_cast<size_t>(i)];
     }
 
     return H;
@@ -493,12 +508,14 @@ Eigen::Vector3d SpatialAlgebraAdapter::getLinkCOM(int idx) const {
 
     const auto& rbi = impl_->fd_.links[static_cast<size_t>(idx)].I;
     const auto& worldX = impl_->worldX_[static_cast<size_t>(idx)];
-
-    // Transform local COM to world: worldCOM = R * localCOM + t
     const Eigen::Matrix3d& R = worldX.getRotation();
     const Vector3d& t = worldX.getTranslation();
 
-    return R * rbi.getCom() + t;
+    // Transform local COM to world: worldCOM = R * (localCOM + t_pluck)
+    // where t_pluck is the Plücker translation (vector from this→reference in this frame).
+    // The standard homogeneous offset is t_homog = R * t_pluck, so:
+    // worldCOM = R * localCOM + t_homog = R * localCOM + R * t_pluck = R * (localCOM + t_pluck)
+    return R * (rbi.getCom() + t);
 }
 
 // =========================================================================

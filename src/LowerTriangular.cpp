@@ -9,6 +9,7 @@ Eigen::VectorXd LowerTriangular::operator*(const Eigen::VectorXd &v) const
     if (n != v.size())
         throw std::invalid_argument("Dimension mismatch in LowerTriangular-vector multiplication");
     
+    // Pure lower triangular multiplication (upper triangle is zero)
     Eigen::VectorXd result(n);
     for (int i = 0; i < n; ++i)
     {

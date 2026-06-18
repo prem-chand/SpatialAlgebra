@@ -2,6 +2,7 @@
 #include "InverseDynamics.h"
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
+#include "test_helpers.h"
 
 using namespace SpatialAlgebra;
 
@@ -579,9 +580,11 @@ TEST(ForwardDynamicsTest, GravityEffectScalesWithMass) {
     EXPECT_TRUE(std::isfinite(qddot_m2));
     EXPECT_LT(qddot_m2, 0.0);  // More mass = more negative acceleration
     
-    // Invariant: qddot scales with mass (I_cm provides constant inertia base)
-    // Ratio = qddot(m=2) / qddot(m=1) = 2.0
-    EXPECT_NEAR(qddot_m2 / qddot_m1, 2.0, 1e-10);
+    // Invariant: gravity-accelerated qddot scales as m/I_joint(m)
+    // I_joint = I_cm + m*(|com|²*I₃ - com*com^T)
+    // For com=(0,1,0), I_cm=I: I_joint_xx = 1 + m
+    // qddot = -m*g / (1+m) → ratio = (2/3)/(1/2) = 4/3 ≈ 1.3333
+    EXPECT_NEAR(qddot_m2 / qddot_m1, 4.0/3.0, 1e-10);
     
     // Without gravity, zero torque produces zero acceleration
     ForwardDynamics fd_no_grav;
@@ -730,6 +733,229 @@ TEST(ForwardDynamicsTest, ZeroMassEdgeCase) {
     }
     // If an exception was thrown, the test passes (no crash on degenerate input).
     EXPECT_TRUE(threw || std::isfinite(fd.links[0].qddot));
+}
+
+// =========================================================================
+// Phase 21: Test Refinement — new kinematic configurations and edge cases
+// =========================================================================
+
+/**
+ * @brief Test ABA on single prismatic joint (Z-axis)
+ * @details Verifies prismatic joint dynamics: tau = m * qddot for
+ *          a single Z-axis prismatic joint with zero gravity and velocity.
+ *          A prismatic joint produces force along the axis direction,
+ *          so with mass=1 and qddot=1.0, expected tau=1.0.
+ *
+ *          Relative error is reported alongside absolute error per TST-02.
+ */
+TEST(ForwardDynamicsTest, SinglePrismaticJoint) {
+    ForwardDynamics fd;
+
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link.S = MotionVector(Vector3d::Zero(), Vector3d::UnitZ());  // Prismatic Z
+    link.q = 0.0;
+    link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+
+    Eigen::VectorXd tau(1);
+    tau[0] = 1.0;  // 1 N force along Z
+
+    fd.computeAccelerations(tau);
+
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    // For prismatic Z with m=1: qddot = tau / m = 1.0
+    double relErr = std::abs(fd.links[0].qddot - 1.0) / 1.0;
+    EXPECT_NEAR(fd.links[0].qddot, 1.0, 1e-10)
+        << "  rel_err=" << std::scientific << std::setprecision(2) << relErr;
+}
+
+/**
+ * @brief Test ABA on mixed revolute+prismatic chain
+ * @details 2-link chain: link 0 = Z-revolute, link 1 = X-prismatic.
+ *          Tests mixed-type joint handling in the ABA. With zero velocity
+ *          and gravity, applies torque on revolute and force on prismatic.
+ *
+ *          Chain layout:
+ *          - Link 0: Z-revolute, mass=1, at origin
+ *          - Link 1: X-prismatic, mass=1, at X=1 from link 0
+ */
+TEST(ForwardDynamicsTest, MixedRevolutePrismatic) {
+    ForwardDynamics fd;
+
+    // Link 0: Z-revolute
+    Link l0;
+    l0.parent = -1;
+    l0.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    l0.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l0.S = MotionVector(Vector3d::UnitZ(), Vector3d::Zero());
+    l0.q = 0.0; l0.qdot = 0.0;
+    l0.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(l0);
+
+    // Link 1: X-prismatic, offset 1m X from link 0
+    Link l1;
+    l1.parent = 0;
+    l1.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d(1, 0, 0));
+    l1.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    l1.S = MotionVector(Vector3d::Zero(), Vector3d::UnitX());
+    l1.q = 0.0; l1.qdot = 0.0;
+    l1.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(l1);
+
+    // Apply unit torques/forces
+    Eigen::VectorXd tau(2);
+    tau[0] = 1.0;  // 1 Nm torque on revolute
+    tau[1] = 1.0;  // 1 N force on prismatic
+
+    fd.computeAccelerations(tau);
+
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    EXPECT_TRUE(std::isfinite(fd.links[1].qddot));
+
+    // Mass matrix at q=0: M[0,0]=3 (revolute + prismatic parallel axis),
+    // M[1,1]=1 (prismatic mass), M[0,1]=M[1,0]=0 (no coupling at COM=0)
+    // qddot = M^{-1} * tau = [1/3, 1.0]
+    double relErr0 = test_helpers::relativeError(fd.links[0].qddot, 1.0/3.0);
+    double relErr1 = test_helpers::relativeError(fd.links[1].qddot, 1.0);
+    EXPECT_NEAR(fd.links[0].qddot, 1.0/3.0, 1e-8)
+        << "  rel_err=" << relErr0;
+    EXPECT_NEAR(fd.links[1].qddot, 1.0, 1e-8)
+        << "  rel_err=" << relErr1;
+}
+
+/**
+ * @brief Test ABA on high-DOF chain (n=12)
+ * @details 12-DOF Z-revolute serial chain. Tests scalability and numerical
+ *          stability of ABA for n > 10 DOF. Applies random torques and
+ *          verifies that all qddot values are finite.
+ *
+ *          Chain: 12 links, each Z-revolute, mass=1, 1m X spacing.
+ *          Relies on the makeHighDOFChain factory from forward_dynamics.h.
+ */
+TEST(ForwardDynamicsTest, HighDOFChain) {
+    const int n = 12;
+    ForwardDynamics fd;
+
+    for (int i = 0; i < n; ++i) {
+        Link link;
+        link.parent = i - 1;
+        if (i > 0) {
+            link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()),
+                                       Vector3d(1.0, 0.0, 0.0));
+        } else {
+            link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()),
+                                       Vector3d::Zero());
+        }
+        link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+        link.S = MotionVector(Vector3d::UnitZ(), Vector3d::Zero());
+        link.q = 0.0; link.qdot = 0.0;
+        link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+        fd.links.push_back(link);
+    }
+
+    // Random torques
+    Eigen::VectorXd tau(n);
+    for (int i = 0; i < n; ++i) {
+        tau[i] = (i % 2 == 0) ? 1.0 : -1.0;
+    }
+
+    fd.computeAccelerations(tau);
+
+    for (int i = 0; i < n; ++i) {
+        EXPECT_TRUE(std::isfinite(fd.links[i].qddot))
+            << "link[" << i << "] qddot is not finite";
+    }
+
+    // Verify each link's acceleration is finite and non-NaN
+    // The exact values depend on the mass matrix, but all must be finite
+    for (int i = 0; i < n; ++i) {
+        EXPECT_FALSE(std::isnan(fd.links[i].qddot))
+            << "link[" << i << "] qddot is NaN";
+    }
+}
+
+/**
+ * @brief Test ABA on near-zero mass single link
+ * @details Edge case (TST-04): single Z-revolute joint with mass=1e-6.
+ *          Verifies the solver produces finite output without numerical
+ *          blowup. For m -> 0, the mass matrix approaches the rotational
+ *          inertia (I_cm = 1e-6 * I_3x3), so qddot ≈ tau / I_cm.
+ *          The key requirement is stability, not exact numerical match.
+ */
+TEST(ForwardDynamicsTest, NearZeroMass) {
+    ForwardDynamics fd;
+
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero());
+    link.I = RigidBodyInertia(1e-6, Vector3d::Zero(),
+                               lt::Identity(3) * 1e-6);
+    link.S = MotionVector(Vector3d::UnitZ(), Vector3d::Zero());
+    link.q = 0.0; link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+
+    Eigen::VectorXd tau(1);
+    tau[0] = 1.0;
+
+    bool threw = false;
+    try {
+        fd.computeAccelerations(tau);
+    } catch (const std::exception&) {
+        threw = true;
+    }
+
+    if (!threw) {
+        EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+    }
+    // Either a graceful exception or finite output — no crash
+    EXPECT_TRUE(threw || std::isfinite(fd.links[0].qddot));
+}
+
+/**
+ * @brief Test ABA on single link with non-identity parentToJoint rotation
+ * @details Edge case (TST-04): Z-revolute joint with 45° X-axis rotation
+ *          in parentToJoint. Verifies that the solver correctly handles
+ *          non-trivial fixed rotations in the joint placement.
+ *          The mass matrix should differ from the identity case because
+ *          the spatial inertia is rotated.
+ */
+TEST(ForwardDynamicsTest, NonIdentityRotation) {
+    ForwardDynamics fd;
+
+    // 45° rotation about X axis
+    Eigen::Matrix3d R;
+    double c = std::sqrt(2.0) / 2.0;
+    R << 1.0, 0.0, 0.0,
+         0.0,  c,  -c,
+         0.0,  c,   c;
+
+    Link link;
+    link.parent = -1;
+    link.X = PluckerTransform(Rotation(R), Vector3d::Zero());
+    link.I = RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3));
+    link.S = MotionVector(Vector3d::UnitZ(), Vector3d::Zero());
+    link.q = 0.0; link.qdot = 0.0;
+    link.f = ForceVector(Vector3d::Zero(), Vector3d::Zero());
+    fd.links.push_back(link);
+
+    Eigen::VectorXd tau(1);
+    tau[0] = 1.0;
+
+    fd.computeAccelerations(tau);
+
+    EXPECT_TRUE(std::isfinite(fd.links[0].qddot));
+
+    // With rotation, the effective inertia about Z in the world frame
+    // is R^T * I_cm * R projected to Z. Since I_cm = I_3x3 and
+    // it's a rotation (orthogonal), R^T * I * R = I. So qddot = 1.0.
+    double relErr = test_helpers::relativeError(fd.links[0].qddot, 1.0);
+    EXPECT_NEAR(fd.links[0].qddot, 1.0, 1e-10)
+        << "  rel_err=" << std::scientific << std::setprecision(2) << relErr;
 }
 
 int main(int argc, char **argv) {

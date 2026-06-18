@@ -249,4 +249,108 @@ inline RobotModel makeTwoLinkWith90DegreeRotation()
     return model;
 }
 
+/**
+ * @brief High-DOF serial chain of Z-revolute joints.
+ *        Tests scalability with n > 10 DOF.
+ * @details Constructs an n-DOF serial chain where each link is a Z-axis
+ *          revolute joint with unit mass, zero COM, and identity inertia.
+ *          Each link is spaced 1m along the X axis from its parent.
+ *          Designed to test computational scalability and mass matrix
+ *          structure for high-DOF systems.
+ *
+ *          Chain layout:
+ *          - Link 0: root, Z-revolute, mass=1.0, COM=[0,0,0], I=I_3x3
+ *          - Link i (i>0): child of i-1, Z-revolute, mass=1.0, COM=zero,
+ *            parentToJoint=translate(1,0,0)
+ *
+ * @param n Number of joints (DOF). Must be >= 1.
+ * @return RobotModel containing an n-link serial chain
+ */
+inline RobotModel makeHighDOFChain(int n)
+{
+    RobotModel model;
+    for (int i = 0; i < n; ++i) {
+        JointSpec link;
+        link.parent = i - 1;
+        if (i > 0) {
+            Eigen::Matrix4d T = Eigen::Matrix4d::Identity();
+            T.topRightCorner<3, 1>() = Eigen::Vector3d(1.0, 0.0, 0.0);
+            link.parentToJoint = T;
+        }
+        link.jointAxis = Eigen::Vector3d::UnitZ();
+        link.type = JointType::REVOLUTE;
+        link.mass = 1.0;
+        link.com = Eigen::Vector3d::Zero();
+        link.inertia = Eigen::Matrix3d::Identity();
+        link.name = "link" + std::to_string(i);
+        model.joints.push_back(link);
+    }
+    return model;
+}
+
+/**
+ * @brief Single-link near-zero mass chain for edge case testing.
+ *        Tests stability at m -> 0.
+ * @details Single Z-revolute joint with mass = 1e-6. Verifies that
+ *          the dynamics solvers handle near-zero mass without numerical
+ *          instability (NaN, Inf, or division by near-zero).
+ *
+ *          Chain layout:
+ *          - Link 0: root, Z-revolute, mass=1e-6, COM=[0,0,0],
+ *            inertia=I_3x3 * 1e-6, parentToJoint=I_4x4
+ *
+ * @return RobotModel containing a near-zero mass single link
+ */
+inline RobotModel makeNearZeroMassChain()
+{
+    RobotModel model;
+    JointSpec link;
+    link.parent = -1;
+    link.parentToJoint = Eigen::Matrix4d::Identity();
+    link.jointAxis = Eigen::Vector3d::UnitZ();
+    link.type = JointType::REVOLUTE;
+    link.mass = 1e-6;
+    link.com = Eigen::Vector3d::Zero();
+    link.inertia = Eigen::Matrix3d::Identity() * 1e-6;
+    link.name = "near_zero_mass";
+    model.joints.push_back(link);
+    return model;
+}
+
+/**
+ * @brief Single-link chain with non-identity parentToJoint rotation.
+ *        Tests FK with non-trivial fixed rotation offsets.
+ * @details Single Z-revolute joint with parentToJoint rotated 45° about
+ *          the X axis. This creates a non-trivial fixed rotation between
+ *          the parent and child frames, testing FK and dynamics correctness
+ *          with non-identity initial transforms.
+ *
+ *          Chain layout:
+ *          - Link 0: root, Z-revolute, mass=1.0, COM=[0,0,0],
+ *            parentToJoint=rotate_X(45°), name="rotated_base"
+ *
+ * @return RobotModel containing a rotated single link
+ */
+inline RobotModel makeNonIdentityRotationChain()
+{
+    RobotModel model;
+    JointSpec link;
+    link.parent = -1;
+    // 45° rotation about X axis
+    Eigen::Matrix4d T = Eigen::Matrix4d::Identity();
+    double c = std::sqrt(2.0) / 2.0;
+    T.topLeftCorner<3, 3>() << 1.0, 0.0, 0.0,
+                               0.0, c, -c,
+                               0.0, c, c;
+    link.parentToJoint = T;
+    link.jointAxis = Eigen::Vector3d::UnitZ();
+    link.type = JointType::REVOLUTE;
+    link.mass = 1.0;
+    link.com = Eigen::Vector3d::Zero();
+    link.inertia = Eigen::Matrix3d::Identity();
+    link.name = "rotated_base";
+    model.joints.push_back(link);
+    return model;
+}
+
 } // namespace test_models

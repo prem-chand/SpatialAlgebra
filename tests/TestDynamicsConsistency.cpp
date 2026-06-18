@@ -500,7 +500,9 @@ TEST(ConsistencyTest, RoundTripABA_RNEA_DirectComparison) {
     
     Eigen::VectorXd tau = id.computeTorques(qddot_input, Vector3d::Zero());
     EXPECT_TRUE(std::isfinite(tau[0]));
-    EXPECT_NEAR(tau[0], 1.0, 1e-10);  // With identity inertia, τ = I·a = qddot
+    // With COM=(0,0.5,0), mass=1, X-axis revolute:
+    // I_joint_xx = I_cm_xx + m*(|c|² - c_x²) = 1 + 1*(0.25-0) = 1.25
+    EXPECT_NEAR(tau[0], 1.25, 1e-10);
     
     // ABA: tau -> qddot (same link structure)
     ForwardDynamics fd;

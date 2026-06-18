@@ -133,8 +133,9 @@ TEST(RigidBodyInertiaTest, OperatorAdd)
     // Check mass addition
     EXPECT_DOUBLE_EQ(combined.getMass(), 5.0);
     
-    // Check COM addition
-    Vector3d expectedCom(1.0, 1.0, 0.0);
+    // Check mass-weighted COM: com = (m1*c1 + m2*c2) / (m1+m2)
+    // = (2*(1,0,0) + 3*(0,1,0)) / 5 = (0.4, 0.6, 0)
+    Vector3d expectedCom(0.4, 0.6, 0.0);
     Vector3d actualCom = combined.getCom();
     EXPECT_DOUBLE_EQ(actualCom.x(), expectedCom.x());
     EXPECT_DOUBLE_EQ(actualCom.y(), expectedCom.y());
@@ -200,11 +201,12 @@ TEST(RigidBodyInertiaApplyTest, PureRotation)
     // Pure rotation around Z: ω = (0, 0, 1), v = (0, 0, 0)
     MotionVector mv(Vector3d(0, 0, 1), Vector3d::Zero());
     
-    // Expected result:
-    // torque = I*ω + com×v = I*(0,0,1) + com×(0,0,0) = (0, 0, 5) + (0, 0, 0) = (0, 0, 5)
-    // force = m*v - com×ω = 2*(0,0,0) - (1,0,0)×(0,0,1) = (0, 0, 0) - (0, -1, 0) = (0, 1, 0)
-    Vector3d expectedTorque(0.0, 0.0, 5.0);
-    Vector3d expectedForce(0.0, 1.0, 0.0);
+    // Expected result (correct Featherstone spatial inertia formula):
+    // torque = I*ω + m*com×v + m*(|com|²ω - (com·ω)com)
+    //       = (0,0,5) + 0 + 2*(1*(0,0,1) - 0) = (0,0,7)
+    // force = m*v - m*com×ω = 0 - 2*(0,-1,0) = (0,2,0)
+    Vector3d expectedTorque(0.0, 0.0, 7.0);
+    Vector3d expectedForce(0.0, 2.0, 0.0);
     
     ForceVector result = rbi.apply(mv);
     
@@ -237,10 +239,11 @@ TEST(RigidBodyInertiaApplyTest, PureTranslation)
     // Pure translation along X: ω = (0, 0, 0), v = (2, 0, 0)
     MotionVector mv(Vector3d::Zero(), Vector3d(2.0, 0.0, 0.0));
     
-    // Expected result:
-    // torque = I*ω + com×v = 0 + (0,1,0)×(2,0,0) = (0, 0, -2)
-    // force = m*v - com×ω = 3*(2,0,0) - 0 = (6, 0, 0)
-    Vector3d expectedTorque(0.0, 0.0, -2.0);
+    // Expected result (correct Featherstone spatial inertia formula):
+    // torque = I*ω + m*com×v + m*(|com|²ω - (com·ω)com)
+    //       = 0 + 3*(0,0,-2) + 0 = (0,0,-6)
+    // force = m*v - m*com×ω = 3*(2,0,0) - 0 = (6, 0, 0)
+    Vector3d expectedTorque(0.0, 0.0, -6.0);
     Vector3d expectedForce(6.0, 0.0, 0.0);
     
     ForceVector result = rbi.apply(mv);
@@ -274,14 +277,16 @@ TEST(RigidBodyInertiaApplyTest, CombinedMotion)
     // Combined motion: ω = (0, 1, 0), v = (0, 0, 1)
     MotionVector mv(Vector3d(0.0, 1.0, 0.0), Vector3d(0.0, 0.0, 1.0));
     
-    // Expected result:
-    // I*ω = (2,0,0,0,2,0,0,0,2) * (0,1,0) = (0, 2, 0)
-    // com×v = (1,0,0)×(0,0,1) = (0, -1, 0)
-    // torque = I*ω + com×v = (0, 2, 0) + (0, -1, 0) = (0, 1, 0)
-    // m*v = 1*(0,0,1) = (0, 0, 1)
-    // com×ω = (1,0,0)×(0,1,0) = (0, 0, 1)
-    // force = m*v - com×ω = (0, 0, 1) - (0, 0, 1) = (0, 0, 0)
-    Vector3d expectedTorque(0.0, 1.0, 0.0);
+    // Expected result (correct Featherstone spatial inertia formula):
+    // torque = I*ω + m*com×v + m*(|com|²ω - (com·ω)com)
+    // I*ω = (2,0,0;0,2,0;0,0,2)*(0,1,0) = (0,2,0)
+    // com×v = (1,0,0)×(0,0,1) = (0,-1,0), m*com×v = (0,-1,0)
+    // (|com|²ω - (com·ω)com) = (0,1,0) - 0 = (0,1,0), m*... = (0,1,0)
+    // torque = (0,2,0) + (0,-1,0) + (0,1,0) = (0,2,0)
+    // force = m*v - m*com×ω
+    // m*v = (0,0,1), com×ω = (1,0,0)×(0,1,0) = (0,0,1), m*com×ω = (0,0,1)
+    // force = (0,0,1) - (0,0,1) = (0,0,0)
+    Vector3d expectedTorque(0.0, 2.0, 0.0);
     Vector3d expectedForce(0.0, 0.0, 0.0);
     
     ForceVector result = rbi.apply(mv);

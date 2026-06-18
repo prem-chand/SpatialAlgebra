@@ -94,15 +94,21 @@ using lt = LowerTriangular;
             }
 #endif
             // rbi = [m, com, I_LT], mv = [ω, v]
-            // rbi.apply(mv) = [Iω + com x v; m*v - com x ω]
+            // rbi.apply(mv) = I_spatial * mv where I_spatial is the 6×6 spatial inertia.
+            // Correct Featherstone formula:
+            //   torque = I_cm*ω + m*com×v + m*com×(ω×com)
+            //          = I_cm*ω + m*com×v + m*(|com|²ω - (com·ω)com)
+            //   force  = m*v - m*com×ω
             Vector3d omega = mv.getAngular();
             Vector3d v = mv.getLinear();
             Vector3d comCrossV = com.cross(v);
             Vector3d comCrossOmega = com.cross(omega);
             // Use symmetric multiplication for inertia tensor
             Vector3d Iomega = inertiaMatrixLT.multiplySymmetric(omega);
-            Vector3d force = mass * v - comCrossOmega;
-            Vector3d torque = Iomega + comCrossV;
+            // Parallel axis correction: m * (|com|² * ω - (com·ω) * com)
+            Vector3d parallelAxis = mass * (com.dot(com) * omega - com.dot(omega) * com);
+            Vector3d torque = Iomega + mass * comCrossV + parallelAxis;
+            Vector3d force = mass * v - mass * comCrossOmega;
             return ForceVector(torque, force);
         }
 

@@ -1,5 +1,7 @@
 #include "Rotation.h"
 
+namespace SpatialAlgebra {
+
 // Default constructor
 Rotation::Rotation() : Eigen::Matrix3d(Eigen::Matrix3d::Identity()) {}
 
@@ -51,7 +53,7 @@ Rotation Rotation::inverse() const
 // transpose
 Rotation Rotation::transpose() const
 {
-    return Rotation(Eigen::Matrix3d::transpose());
+    return Rotation(this->Eigen::Matrix3d::transpose());
 }
 
 // operator* for Rotation-Rotation multiplication
@@ -65,3 +67,5 @@ Eigen::Matrix3d Rotation::operator*(const Eigen::Matrix3d &matrix) const
 {
     return static_cast<Eigen::Matrix3d>(*this) * matrix;
 }
+
+} // namespace SpatialAlgebra

@@ -102,7 +102,7 @@ int main() {
     plux X2(R2, Vector3d(0, 1, 0)); // Translate 1 unit along Y
     
     std::cout << "Second transform X2: 45° around X, translate [0, 1, 0]" << std::endl;
-    std::cout << "  Note: Transform chaining via operator* not implemented in this version" << std::endl;
+    std::cout << "  Note: Use multiply() or apply() for transform chaining" << std::endl;
     std::cout << std::endl;
     
     // Demonstrate transform of a wrench with both torque and force

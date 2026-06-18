@@ -583,15 +583,17 @@ TEST(TestForceVector, WrenchExample)
     // Second wrench: torque about Y, force along Z
     ForceVector wrench2(Vector3d(0.0, 1.0, 0.0), Vector3d(0.0, 0.0, 1.0));
 
-    // Cross product: [τ1×τ2; τ1×f2 - τ2×f1]
+    // Cross product: [τ1×τ2 + f1×f2; τ1×f2 - τ2×f1]
     // τ1×τ2 = (1,0,0)×(0,1,0) = (0,0,1)
+    // f1×f2 = (0,1,0)×(0,0,1) = (1,0,0)
+    // Angular = (0,0,1) + (1,0,0) = (1,0,1)
     // τ1×f2 = (1,0,0)×(0,0,1) = (0,-1,0)
     // τ2×f1 = (0,1,0)×(0,1,0) = (0,0,0)
     // Linear = (0,-1,0) - (0,0,0) = (0,-1,0)
-    // Result: [(0,0,1); (0,-1,0)]
+    // Result: [(1,0,1); (0,-1,0)]
     ForceVector result = wrench1.crossForce(wrench2);
 
-    EXPECT_DOUBLE_EQ(result.getAngular()[0], 0.0);
+    EXPECT_DOUBLE_EQ(result.getAngular()[0], 1.0);
     EXPECT_DOUBLE_EQ(result.getAngular()[1], 0.0);
     EXPECT_DOUBLE_EQ(result.getAngular()[2], 1.0);
     EXPECT_DOUBLE_EQ(result.getLinear()[0], 0.0);

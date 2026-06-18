@@ -91,6 +91,18 @@ namespace SpatialAlgebra
         PluckerTransform(const Rotation &rotation, const Vector3d &translation);
 
         /**
+         * @brief Get the rotation component
+         * @return Const reference to the rotation matrix
+         */
+        inline const Rotation &getRotation() const { return rotation; }
+
+        /**
+         * @brief Get the translation component
+         * @return Const reference to the translation vector
+         */
+        inline const Vector3d &getTranslation() const { return translation; }
+
+        /**
          * @brief Transform a motion vector
          * @param vec Input motion vector
          * @return Transformed motion vector
