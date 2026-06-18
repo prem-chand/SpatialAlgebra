@@ -37,6 +37,10 @@ doxygen Doxyfile   # outputs to docs/html/ and docs/latex/
 
 Eigen 5.x (Homebrew) changes CMake version compatibility. If `find_package(Eigen3 REQUIRED)` fails, either remove the version pin in `CMakeLists.txt:13` or pass `-DEigen3_DIR=$(brew --prefix eigen)/share/eigen3/cmake` at configure time.
 
+### Boost / Pinocchio configure failure
+
+Homebrew Boost 1.89.0 makes `boost_system` header-only (no `libboost_system.dylib`). If you enable `-DSA_BUILD_PINOCCHIO_BENCHMARKS=ON` and configure fails with "Could NOT find Boost (missing: system)", the fix is already in `CMakeLists.txt`: pinocchio is located via `find_path`/`find_library` instead of `find_package(pinocchio REQUIRED)`, which bypasses `pinocchioConfig.cmake`'s `find_package(Boost REQUIRED COMPONENTS system)` call. Do not revert to `find_package(pinocchio REQUIRED)`.
+
 ### Coverage build
 
 ```sh

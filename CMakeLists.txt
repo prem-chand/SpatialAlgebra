@@ -51,6 +51,41 @@ if(SA_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif()
 
+# Build Pinocchio cross-validation benchmarks (opt-in, default OFF)
+option(SA_BUILD_PINOCCHIO_BENCHMARKS "Build Pinocchio cross-validation comparison benchmarks" OFF)
+if(SA_BUILD_PINOCCHIO_BENCHMARKS)
+    # Locate Pinocchio headers and library directly (bypass pinocchioConfig.cmake
+    # to avoid its strict Boost CMake dependency chain — boost_system config
+    # is not installed separately on macOS Homebrew Boost installations).
+    find_path(PINOCCHIO_INCLUDE_DIR pinocchio/fwd.hpp
+        HINTS /usr/local/include /opt/homebrew/include
+    )
+    if(NOT PINOCCHIO_INCLUDE_DIR)
+        message(FATAL_ERROR "Pinocchio headers not found. Install pinocchio C++ library.")
+    endif()
+    message(STATUS "Found Pinocchio headers: ${PINOCCHIO_INCLUDE_DIR}")
+
+    find_library(PINOCCHIO_DEFAULT_LIB pinocchio_default
+        HINTS /usr/local/lib /opt/homebrew/lib
+    )
+    if(NOT PINOCCHIO_DEFAULT_LIB)
+        message(FATAL_ERROR "libpinocchio_default not found. Install pinocchio C++ library.")
+    endif()
+    message(STATUS "Found Pinocchio library: ${PINOCCHIO_DEFAULT_LIB}")
+
+    # Build Boost include path (needed by pinocchio headers)
+    find_path(BOOST_INCLUDE_DIR boost/shared_ptr.hpp
+        HINTS /usr/local/include /opt/homebrew/include
+    )
+
+    add_library(pinocchio::pinocchio UNKNOWN IMPORTED)
+    set_target_properties(pinocchio::pinocchio PROPERTIES
+        IMPORTED_LOCATION "${PINOCCHIO_DEFAULT_LIB}"
+        INTERFACE_INCLUDE_DIRECTORIES "${PINOCCHIO_INCLUDE_DIR};${BOOST_INCLUDE_DIR}"
+        INTERFACE_LINK_LIBRARIES "Eigen3::Eigen"
+    )
+endif()
+
 # Build tests
 enable_testing()
 

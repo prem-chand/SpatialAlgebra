@@ -24,6 +24,37 @@ target_link_libraries(sa_test_adapter PUBLIC test_models SpatialAlgebra)
 target_include_directories(sa_test_adapter PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # ---------------------------------------------------------------------------
+# Pinocchio cross-validation adapter: pinocchio_adapter (bridges test_models ↔ Pinocchio)
+# Guarded by SA_BUILD_PINOCCHIO_BENCHMARKS (default OFF, set in root CMakeLists.txt).
+# Requires Pinocchio C++ library from https://stack-of-tasks.github.io/pinocchio/.
+# The pinocchio::pinocchio IMPORTED target is created in root CMakeLists.txt via
+# find_path/find_library (NOT find_package) to bypass pinocchioConfig.cmake's
+# find_package(Boost REQUIRED COMPONENTS system) call, which fails on Homebrew
+# Boost 1.89.0 because boost_system is header-only (no libboost_system.dylib).
+# ---------------------------------------------------------------------------
+if(SA_BUILD_PINOCCHIO_BENCHMARKS)
+    add_library(pinocchio_test_adapter pinocchio_adapter.cpp)
+    target_link_libraries(pinocchio_test_adapter PUBLIC test_models pinocchio::pinocchio)
+    target_include_directories(pinocchio_test_adapter PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+    # Cross-validation comparison benchmark (GTest)
+    add_executable(bench_pinocchio_comparison
+        ${CMAKE_SOURCE_DIR}/tests/bench_pinocchio_comparison.cpp
+    )
+    target_link_libraries(bench_pinocchio_comparison PRIVATE
+        test_models
+        sa_test_adapter
+        pinocchio_test_adapter
+        SpatialAlgebra
+        GTest::GTest
+        GTest::Main
+    )
+    target_include_directories(bench_pinocchio_comparison PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+    )
+    add_test(NAME bench_pinocchio_comparison COMMAND bench_pinocchio_comparison)
+endif()
+# ---------------------------------------------------------------------------
 # Smoke test: verifies zero-dependency guarantee compiles
 # Links ONLY test_models (NOT SpatialAlgebra). If any SA type leaks into
 # the test_models headers, this target fails to build.
