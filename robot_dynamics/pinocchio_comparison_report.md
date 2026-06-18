@@ -1,6 +1,6 @@
 # SpatialAlgebra × Pinocchio — Cross-Validation Report
 
-**Generated**: 2026-06-18T08:31:07.787849Z
+**Generated**: 2026-06-18T12:38:20.756996Z
 **Solver A**: SpatialAlgebra (C++)
 **Solver B**: Pinocchio (C++)
 **Benchmark**: `/Users/premchand/Documents/GitHub/SpatialAlgebra/build/tests/test-models/bench_pinocchio_comparison`

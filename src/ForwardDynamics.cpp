@@ -54,6 +54,32 @@ namespace SpatialAlgebra
 
     }
 
+    void ForwardDynamics::updateKinematics()
+    {
+        for (auto& link : links)
+        {
+            // Skip FIXED joints — X is user-managed
+            if (link.type == JointType::FIXED) continue;
+
+            Rotation jointRot = Rotation(Eigen::Matrix3d::Identity());
+            Vector3d jointTrans = Vector3d::Zero();
+
+            switch (link.type)
+            {
+                case JointType::REVOLUTE:
+                    jointRot = Rotation(Eigen::AngleAxisd(link.q, link.jointAxis));
+                    break;
+                case JointType::PRISMATIC:
+                    jointTrans = link.jointAxis * link.q;
+                    break;
+                default:
+                    break;
+            }
+
+            link.X = link.X0.multiply(PluckerTransform(jointRot, jointTrans));
+        }
+    }
+
     void ForwardDynamics::outwardPass()
     {
         for (int i = 0; i < static_cast<int>(links.size()); i++)
@@ -207,6 +233,9 @@ namespace SpatialAlgebra
 
         this->gravity = gravity;
 
+        
+        // Update kinematics: recompute X transforms from current q values
+        updateKinematics();
         outwardPass();
 
         inwardPass(tau);

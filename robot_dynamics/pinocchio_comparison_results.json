@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-06-18T08:31:07.787849Z",
+  "generated": "2026-06-18T12:38:20.756996Z",
   "toolchain": {
     "benchmark": "/Users/premchand/Documents/GitHub/SpatialAlgebra/build/tests/test-models/bench_pinocchio_comparison",
     "benchmark_type": "C++ GTest",

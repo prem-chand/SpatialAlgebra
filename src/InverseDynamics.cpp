@@ -16,6 +16,31 @@
 
 namespace SpatialAlgebra
 {
+    void InverseDynamics::updateKinematics()
+    {
+        for (auto& link : links)
+        {
+            // Skip FIXED joints — X is user-managed
+            if (link.type == JointType::FIXED) continue;
+
+            Rotation jointRot = Rotation(Eigen::Matrix3d::Identity());
+            Vector3d jointTrans = Vector3d::Zero();
+
+            switch (link.type)
+            {
+                case JointType::REVOLUTE:
+                    jointRot = Rotation(Eigen::AngleAxisd(link.q, link.jointAxis));
+                    break;
+                case JointType::PRISMATIC:
+                    jointTrans = link.jointAxis * link.q;
+                    break;
+                default:
+                    break;
+            }
+
+            link.X = link.X0.multiply(PluckerTransform(jointRot, jointTrans));
+        }
+    }
     void InverseDynamics::outwardPass()
     {
         // Iterate from base (0) to tip (n-1)
@@ -125,6 +150,9 @@ namespace SpatialAlgebra
         
         // Store gravity for use in outward pass
         this->gravity = gravity;
+        
+        // Update kinematics: recompute X transforms from current q values
+        updateKinematics();
         
         // Phase 1: Outward pass - propagate velocities and accelerations
         outwardPass();

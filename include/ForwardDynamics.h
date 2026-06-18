@@ -61,6 +61,7 @@
 #include "ForceVector.h"
 #include "PluckerTransform.h"
 #include "RigidBodyInertia.h"
+#include "SpatialUtils.h"
 #include "ArticulatedBodyInertia.h"
 
 namespace SpatialAlgebra
@@ -89,6 +90,9 @@ namespace SpatialAlgebra
         double q;                       ///< Joint position
         double qdot;                    ///< Joint velocity
         double qddot;                   ///< Joint acceleration (output)
+        JointType type = JointType::FIXED;  ///< Joint type (default FIXED for backward compat)
+        Vector3d jointAxis = Vector3d::Zero();  ///< Joint axis direction (unit vector)
+        PluckerTransform X0;                ///< Reference transform at q=0
         
         MotionVector v;                 ///< Spatial velocity (computed in outward pass)
         MotionVector c;                 ///< Bias acceleration (Coriolis/centrifugal)
@@ -99,18 +103,38 @@ namespace SpatialAlgebra
         
         /**
          * @brief Default constructor
-         * @details Initializes all fields to zero/identity values
+         * @details Initializes all fields to zero/identity values.
+         *          X0 is initialized to same value as X for backward compatibility.
          */
         Link() : parent(-1), 
                  X(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero()),
                  I(1.0, Vector3d::Zero(), lt::Identity(3)),
                  S(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
                  q(0.0), qdot(0.0), qddot(0.0),
+                 X0(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero()),
                  v(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
                  c(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
                  f(ForceVector(Vector3d::Zero(), Vector3d::Zero())),
                  Ia(lt::Identity(3), Eigen::Matrix3d::Zero(), lt::Identity(3)),
                  pa(ForceVector(Vector3d::Zero(), Vector3d::Zero())) {}
+        
+        /**
+         * @brief Non-default constructor with explicit X0 initialization
+         * @details Sets X and X0 to the same initial transform. Call updateKinematics()
+         *          after setting q and joint properties to recompute X from X0.
+         */
+        Link(const PluckerTransform& initialX) : parent(-1),
+                 X(initialX),
+                 I(1.0, Vector3d::Zero(), lt::Identity(3)),
+                 S(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
+                 q(0.0), qdot(0.0), qddot(0.0),
+                 X0(initialX),
+                 v(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
+                 c(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
+                 f(ForceVector(Vector3d::Zero(), Vector3d::Zero())),
+                 Ia(lt::Identity(3), Eigen::Matrix3d::Zero(), lt::Identity(3)),
+                 pa(ForceVector(Vector3d::Zero(), Vector3d::Zero())) {}
+        
     };
 
     // Type alias to distinguish Link type for ForwardDynamics
@@ -158,6 +182,20 @@ namespace SpatialAlgebra
          * @throws std::runtime_error if denominator is near zero (singular configuration)
          */
         void computeAccelerations(const Eigen::VectorXd& tau, const Vector3d& gravity = Vector3d::Zero());
+
+        /**
+         * @brief Update kinematics: recompute all X transforms from current q values
+         * @details For each link with type != FIXED, recomputes the parent-to-child
+         *          Plücker transform X from the reference transform X0 and the current
+         *          joint position q:
+         *          - REVOLUTE: X = X0 * [AngleAxisd(q, axis), 0]
+         *          - PRISMATIC: X = X0 * [I, q*axis]
+         *          - FIXED: X = X0 (no change)
+         * 
+         *          Must be called after changing q on any link with type != FIXED.
+         *          Automatically called at the start of computeAccelerations().
+         */
+        void updateKinematics();
 
     private:
         Vector3d gravity;  ///< Gravity vector (default zero, set by computeAccelerations)

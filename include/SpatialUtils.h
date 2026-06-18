@@ -16,6 +16,19 @@
 namespace SpatialAlgebra {
 
 /**
+ * @brief Joint type for computing configuration-dependent transforms
+ * @details Determines how joint position q affects the parent-to-child Plücker transform X.
+ *          - FIXED: X is constant (no q-dependence)
+ *          - REVOLUTE: X(q) = X0 * X_joint(q) where X_joint is rotation about axis
+ *          - PRISMATIC: X(q) = X0 * X_joint(q) where X_joint is translation along axis
+ */
+enum class JointType : int {
+    FIXED = 0,      ///< No q-dependence (backward-compatible default)
+    REVOLUTE = 1,   ///< Rotational joint: angular motion axis
+    PRISMATIC = 2   ///< Prismatic joint: linear motion axis
+};
+
+/**
  * @brief Creates a 3x3 skew-symmetric matrix from a 3D vector
  * @param v Input 3D vector
  * @return Skew-symmetric matrix representation

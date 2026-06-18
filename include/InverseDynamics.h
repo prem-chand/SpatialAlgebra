@@ -55,9 +55,11 @@
 #include "ForceVector.h"
 #include "PluckerTransform.h"
 #include "RigidBodyInertia.h"
+#include "SpatialUtils.h"
 
 namespace SpatialAlgebra
 {
+
     /**
      * @brief Represents a single link in a kinematic chain for inverse dynamics
      * @details The InverseDynamicsLink structure contains all necessary information for RNEA:
@@ -82,6 +84,11 @@ namespace SpatialAlgebra
         double q;                       ///< Joint position
         double qdot;                    ///< Joint velocity
         double qddot;                   ///< Joint acceleration (input)
+        JointType type = JointType::FIXED;  ///< Joint type (default FIXED for backward compat)
+        Vector3d jointAxis = Vector3d::Zero();  ///< Joint axis direction (unit vector)
+        PluckerTransform X0;                ///< Reference transform at q=0
+
+
         
         MotionVector v;                 ///< Spatial velocity (computed in outward pass)
         MotionVector a;                 ///< Spatial acceleration (computed in outward pass)
@@ -95,6 +102,21 @@ namespace SpatialAlgebra
                  I(1.0, Vector3d::Zero(), lt::Identity(3)),
                  S(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
                  q(0.0), qdot(0.0), qddot(0.0),
+                 X0(Rotation(Eigen::Matrix3d::Identity()), Vector3d::Zero()),
+                 v(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
+                 a(MotionVector(Vector3d::Zero(), Vector3d::Zero())) {}
+        
+        /**
+         * @brief Non-default constructor with explicit X0 initialization
+         * @details Sets X and X0 to the same initial transform. Call updateKinematics()
+         *          after setting q and joint properties to recompute X from X0.
+         */
+        InverseDynamicsLink(const PluckerTransform& initialX) : parent(-1),
+                 X(initialX),
+                 I(1.0, Vector3d::Zero(), lt::Identity(3)),
+                 S(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
+                 q(0.0), qdot(0.0), qddot(0.0),
+                 X0(initialX),
                  v(MotionVector(Vector3d::Zero(), Vector3d::Zero())),
                  a(MotionVector(Vector3d::Zero(), Vector3d::Zero())) {}
     };
@@ -142,6 +164,20 @@ namespace SpatialAlgebra
          * @throws std::invalid_argument if qddot contains NaN or Inf values
          */
         Eigen::VectorXd computeTorques(const Eigen::VectorXd& qddot, const Vector3d& gravity = Vector3d::Zero());
+
+        /**
+         * @brief Update kinematics: recompute all X transforms from current q values
+         * @details For each link with type != FIXED, recomputes the parent-to-child
+         *          Plücker transform X from the reference transform X0 and the current
+         *          joint position q:
+         *          - REVOLUTE: X = X0 * [AngleAxisd(q, axis), 0]
+         *          - PRISMATIC: X = X0 * [I, q*axis]
+         *          - FIXED: X = X0 (no change)
+         * 
+         *          Must be called after changing q on any link with type != FIXED.
+         *          Automatically called at the start of computeTorques().
+         */
+        void updateKinematics();
 
     private:
         Vector3d gravity;  ///< Gravity vector (default zero, set by computeTorques)
