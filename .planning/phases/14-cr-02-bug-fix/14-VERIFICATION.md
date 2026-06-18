@@ -1,322 +1,214 @@
-# Phase 14: CR-02 Bug Fix — Plan Verification
+---
+phase: 14-cr-02-bug-fix
+verified: 2026-06-17T00:00:00Z
+status: gaps_found
+score: 2/10 must-haves verified
+overrides_applied: 0
+overrides: []
+re_verification:
+  previous_status: ISSUES_FOUND
+  previous_blocker: "invtformABI vs transformInertiaToParent (PLAN checker — moot after implementation divergence)"
+  gaps_remaining:
+    - "ROADMAP SC1: No non-zero COM multi-link consistency tests exist"
+    - "ROADMAP SC2: ThreeLinkNumericalValidation not updated for non-zero COM round-trip"
+    - "ROADMAP SC3: inwardPass() still 3-phase with Ia_unc, D_store, Phase 3 correction"
+    - "ROADMAP SC5: pa initialized before child accumulation (Featherstone ordering violation)"
+  regressions: []
+gaps:
+  - truth: "All multi-link consistency tests with non-zero COM pass (ThreeLinkSerialChainNonZeroCOM, BranchingYNonZeroCOM, TwoLinkGravityNonZeroCOM)"
+    status: failed
+    reason: "No non-zero COM multi-link tests exist in TestDynamicsConsistency.cpp or TestForwardDynamics.cpp. All 7 consistency tests + 15 FD tests use Vector3d::Zero() for COM. The bug path (Phase 3 correction double-counting) is only triggered with non-zero COM per CONTEXT.md lines 12-13."
+    artifacts:
+      - path: tests/TestDynamicsConsistency.cpp
+        issue: "8 tests total; ZERO use non-zero COM in multi-link chains"
+      - path: tests/TestForwardDynamics.cpp
+        issue: "16 tests total; 3 single-link tests use non-zero COM (GravityEffectScalesWithMass, GravityProportionalityInvariant, SingleLinkGravityNoZeroCOM); ZERO multi-link tests use non-zero COM"
+    missing:
+      - "Add ThreeLinkSerialChainNonZeroCOM test (3-link serial chain, COM=[0.1,0,0] per link, round-trip ID→FD check)"
+      - "Add BranchingYNonZeroCOM test (branching Y, non-zero COM, round-trip + symmetric branch check)"
+      - "Add TwoLinkGravityNonZeroCOM test (2-link with gravity, non-zero COM, round-trip check)"
 
-**Verified:** 2026-06-04
-**Plans checked:** 1 (14-01-PLAN.md)
-**Status:** ISSUES FOUND — 1 BLOCKER, 1 WARNING, 1 INFO
+  - truth: "ThreeLinkNumericalValidation updated with non-zero COM round-trip check — passes within EPSILON=1e-8"
+    status: failed
+    reason: "ThreeLinkNumericalValidation (TestForwardDynamics.cpp line 265) still uses RigidBodyInertia(1.0, Vector3d::Zero(), lt::Identity(3)) for all 3 links. Test asserts only finiteness and qddot ordering — no round-trip ID→FD check."
+    artifacts:
+      - path: tests/TestForwardDynamics.cpp
+        issue: "ThreeLinkNumericalValidation at line 265: Vector3d::Zero() COM, no round-trip consistency check per PLAN Task 1 requirements"
+    missing:
+      - "Replace Vector3d::Zero() with Vector3d(0.1, 0, 0) on all 3 links"
+      - "Implement round-trip: ID(qddot_input) → tau → FD(tau) → qddot_output → EXPECT_NEAR(qddot_output, qddot_input, 1e-8)"
+      - "Verify qddot[0] < qddot[2] (base carries more reflected inertia)"
+
+  - truth: "ABA inward pass restructured to single tip-to-base sweep per Featherstone Algorithm 7.3 (no Phase 3 correction)"
+    status: failed
+    reason: "inwardPass() in src/ForwardDynamics.cpp retains the 3-phase structure. Ia_unc vector exists at line 107, D_store at line 106, Phase 3 correction loop at lines 160-179. The comment at line 128 reads 'This is a PARTIAL acceleration (assumes a_parent == 0)', confirming the correction-based approach was not replaced."
+    artifacts:
+      - path: src/ForwardDynamics.cpp
+        issue: "Lines 106-107: Ia_unc + D_store storage. Lines 160-179: Phase 3 correction loop (a_prime, correction/D, qddot adjustment). Line 128: 'PARTIAL acceleration' comment."
+    missing:
+      - "Remove Ia_unc vector (line 107) and D_store vector (line 106)"
+      - "Remove Phase 3 correction loop (lines 160-179)"
+      - "Compute FINAL qddot during the tip-to-base sweep (no correction step)"
+      - "Add forward spatial acceleration pass after the sweep: a[i] = X*a_parent + c[i] + S[i]*qddot[i]"
+
+  - truth: "Bias forces (pa) computed after child inertia accumulation per Featherstone Algorithm 7.3"
+    status: failed
+    reason: "Current inwardPass() Phase 1 (lines 84-102) initializes pa for ALL links base-to-tip BEFORE any child accumulation. Featherstone Algorithm 7.3 requires pa computation AFTER children's condensed contributions are accumulated. The single-sweep design (compute pa in the tip-to-base loop after accumulation) resolves this."
+    artifacts:
+      - path: src/ForwardDynamics.cpp
+        issue: "Lines 84-102: Phase 1 initializes Ia and pa for all links before Phase 2 tip-to-base sweep. Per Featherstone, pa should incorporate children's condensed contributions first."
+    missing:
+      - "Move pa initialization into the tip-to-base sweep, after children accumulation"
+      - "Or restructure to single sweep where accumulation, qddot solve, condensation, and pa update happen per link in order"
+
+  - truth: "Cross product formulas in SpatialUtils.h are correct per Featherstone §2.9"
+    status: verified
+    reason: "cross(MotionVector, ForceVector) at SpatialUtils.h:78 computes [ω×τ + v×f; ω×f] — correct per Featherstone §2.9 crf formula. cross(ForceVector, ForceVector) at line 116 computes [τ₁×τ₂ + f₁×f₂; τ₁×f₂ - τ₂×f₁] — includes anti-commutativity term. These were the Phase 14-01 cross product fixes."
+    artifacts:
+      - path: include/SpatialUtils.h
+        issue: ""
+
+  - truth: "All 11 test executables pass with zero regressions (existing tests)"
+    status: verified
+    reason: "ctest --output-on-failure reports 11/11 tests pass, 0 fail, 0 skipped. All existing tests (15 FD + 7 consistency) pass. However, these are zero-COM tests that do not exercise the Phase 3 correction bug path."
+    artifacts:
+      - path: build/ (all test executables)
+        issue: ""
+
+deferred: []
+---
+
+# Phase 14: CR-02 Bug Fix — Re-Verification Report
+
+**Phase Goal (ROADMAP.md):** Correct forward dynamics for chains with 3+ joints and non-zero COM — TDD with Red→Green→Verify cycle
+**Verified:** 2026-06-17
+**Status:** gaps_found
+**Re-verification:** Yes — after divergence from original plan
+
+## Prior Verification Context
+
+The previous VERIFICATION.md (2026-06-04) was a **PLAN CHECKER** — it audited 14-01-PLAN.md before execution. Its only BLOCKER found: the plan proposed replacing `transformInertiaToParent` with `invtformABI`, which are mathematically different transforms.
+
+**What changed:** The 14-01-SUMMARY.md reports that execution DIVERGED from the plan — the ABA `inwardPass()` was NOT restructured. Instead, an independent diagnosis found cross product formula bugs in `SpatialUtils.h` as the root cause. The `invtformABI` replacement was never implemented, making the previous BLOCKER moot (it applied to a plan that was not followed).
+
+**This re-verification checks the ACTUAL codebase against ROADMAP success criteria, not against the superseded plan.**
+
+## Goal Achievement
+
+### Roadmap Success Criteria
+
+| # | Criterion | Status | Evidence |
+|---|-----------|--------|----------|
+| SC1 | All multi-link consistency tests with non-zero COM pass | ✗ FAILED | No non-zero COM multi-link tests exist anywhere in codebase |
+| SC2 | ThreeLinkNumericalValidation updated with non-zero COM round-trip | ✗ FAILED | Still uses `Vector3d::Zero()` for all COM, no round-trip check |
+| SC3 | ABA inward pass restructured to single sweep (no Phase 3 correction) | ✗ FAILED | 3-phase structure intact: Ia_unc (line 107), D_store (line 106), Phase 3 correction (lines 160-179) |
+| SC4 | All 11 test executables pass with zero regressions | ✓ PASSED | ctest: 11/11 passed, 0 failed, 0 skipped |
+| SC5 | Bias forces computed after child accumulation per Featherstone 7.3 | ✗ FAILED | pa initialized Phase 1 (lines 84-102) before any child accumulation in Phase 2 |
+
+**Score:** 1/5 roadmap success criteria met
+
+### Plan Must-Have Truths
+
+| # | Truth | Status | Evidence |
+|---|-------|--------|----------|
+| 1 | Non-zero COM 3-link serial chain round-trip ≈ qddot | ✗ FAILED | No test exists |
+| 2 | Non-zero COM branching Y round-trip ≈ qddot | ✗ FAILED | No test exists |
+| 3 | Non-zero COM 2-link with gravity round-trip ≈ qddot | ✗ FAILED | No test exists |
+| 4 | Non-zero COM 3-link: base qddot < tip qddot | ✗ FAILED | No test exists |
+| 5 | All 11 test executables pass with zero failures | ✓ VERIFIED | 11/11 ctest pass |
+| 6 | inwardPass() is single sweep — no Ia_unc, no D_store, no Phase 3 | ✗ FAILED | All three artifacts present |
+
+**Score:** 1/6 plan must-haves verified
+
+### Overall Score: 2/10 must-haves verified
+
+## What WAS Implemented (Cross Product Fixes)
+
+The following were fixed in Phase 14-01 (cross product root cause fix) and are correctly implemented:
+
+| Fix | File | Line | Status |
+|-----|------|------|--------|
+| `cross(MotionVector, ForceVector)` — crf formula | `include/SpatialUtils.h` | 78 | ✓ Correct: `[ω×τ + v×f; ω×f]` per Featherstone §2.9 |
+| `cross(ForceVector, ForceVector)` — anti-commutativity | `include/SpatialUtils.h` | 116 | ✓ Correct: `[τ₁×τ₂ + f₁×f₂; τ₁×f₂ - τ₂×f₁]` |
+| Virtual destructor on SpatialVector | `include/SpatialVector.h` | — | ✓ Added |
+| Namespace cleanup | `include/LowerTriangular.h`, `include/Rotation.h` | — | ✓ Global `using` removed |
+| InverseDynamics O(n²)→O(n) | `src/InverseDynamics.cpp` | — | ✓ Tip-to-base sweep |
+
+These fixes are necessary but insufficient to meet the ROADMAP goal. They fixed bias force corruption that affected ALL chains, but the Phase 3 correction bug (specific to 3+ joint chains with non-zero COM per CONTEXT.md) was not addressed.
+
+## Required Artifacts
+
+| Artifact | Expected | Status | Details |
+|----------|----------|--------|---------|
+| `tests/TestDynamicsConsistency.cpp` | 9 tests (7 existing + 2 new non-zero COM) | ⚠️ PARTIAL | 8 tests, all zero-COM multi-link; missing ThreeLinkSerialChainNonZeroCOM, BranchingYNonZeroCOM |
+| `tests/TestForwardDynamics.cpp` | 18 tests (16 existing + 2 updated/new non-zero COM) | ⚠️ PARTIAL | 16 tests; ThreeLinkNumericalValidation not updated for non-zero COM; no round-trip check |
+| `src/ForwardDynamics.cpp` | Single sweep inwardPass() (180+ lines) | ✗ NOT DONE | 3-phase structure intact (210 lines); Ia_unc/D_store/Phase 3 present |
+| `include/ForwardDynamics.h` | Updated Doxygen for single sweep | ✗ NOT DONE | Still describes 3-phase ABA |
+
+## Key Link Verification
+
+| From | To | Via | Status | Details |
+|------|----|-----|--------|---------|
+| `inwardPass()` | `Ia.apply(S)` | `ForceVector IaS` | ✓ WIRED | `src/ForwardDynamics.cpp:114` |
+| `inwardPass()` | `dot(S, IaS)` | `SpatialUtils.h:65` | ✓ WIRED | `src/ForwardDynamics.cpp:115` |
+| `inwardPass()` | `cross(MotionVector, ForceVector)` | `SpatialUtils.h:78` | ✓ WIRED | `src/ForwardDynamics.cpp:96` |
+| `inwardPass()` | `transformInertiaToParent` | Anonymous namespace helper | ✓ WIRED | Defined line 22, called line 149 |
+| `inwardPass()` | `lt::fromFullMatrix` | Outer product condensation | ✓ WIRED | `src/ForwardDynamics.cpp:139-141` |
+| `inwardPass()` | `inverseTransformForce` | Pa parent propagation | ✓ WIRED | `src/ForwardDynamics.cpp:152` |
+| New non-zero COM tests → `computeTorques`/`computeAccelerations` | Round-trip ID↔FD | (tests don't exist) | ✗ NOT_WIRED | No non-zero COM multi-link tests to connect |
+
+## Data-Flow Trace (Level 4)
+
+Only existing (zero-COM) data paths are verified. The non-zero COM paths cannot be traced because the tests don't exist.
+
+| Artifact | Data Variable | Source | Produces Real Data | Status |
+|----------|--------------|--------|-------------------|--------|
+| `inwardPass()` qddot | `links[i].qddot` | Phase 3 correction: `u/D - correction/D_store` | ✓ (zero-COM chains) | ⚠️ FLOWING but unvalidated for non-zero COM |
+| `inwardPass()` pa | `links[i].pa` | Phase 1 init + Phase 2 condensation | ✓ (zero-COM chains) | ⚠️ FLOWING but initialized before accumulation (Featherstone ordering violation) |
+| `cross(MotionVector, ForceVector)` | bias force crf term | `pa = Ia*c + cross(v, Ia*v) + f` | ✓ Fixed formula | ✓ FLOWING (Phase 14-01 fix) |
+
+## Anti-Patterns Found
+
+No debt markers (TBD, FIXME, XXX, TODO, HACK) found in any files modified by this phase. No placeholder or stub patterns detected.
+
+## Behavioral Spot-Checks
+
+| Behavior | Command | Result | Status |
+|----------|---------|--------|--------|
+| Build succeeds | `cmake -B build && cmake --build build` | Exit 0, all targets built | ✓ PASS |
+| All 11 test executables pass | `cd build && ctest --output-on-failure` | 11/11 passed, 0 failed | ✓ PASS |
+| ThreeLinkSerialChain (zero-COM) passes | `./TestDynamicsConsistency --gtest_filter=*ThreeLinkSerialChain*` | PASSED | ✓ PASS |
+| BranchingYConfiguration (zero-COM) passes | `./TestDynamicsConsistency --gtest_filter=*Branching*` | PASSED | ✓ PASS |
+| TwoLinkRoundTripWithGravity (zero-COM) passes | `./TestDynamicsConsistency --gtest_filter=*Gravity*` | PASSED | ✓ PASS |
+| Non-zero COM 3-link round-trip | (test does not exist) | N/A | ? SKIP |
+
+## Requirements Coverage
+
+| Requirement | Source | Description | Status | Evidence |
+|-------------|--------|-------------|--------|----------|
+| BFIX-01 | `.planning/milestones/v1.2-REQUIREMENTS.md` | CR-02 ABA inward pass restructured per Featherstone Algorithm 7.3 — all 4 multi-link consistency tests pass | ✗ BLOCKED | inwardPass() not restructured; 4 multi-link tests pass only with zero COM; no non-zero COM tests exist. REQUIREMENTS.md v1.2 still shows BFIX-01 as "Pending" |
+
+## Human Verification Required
+
+No human verification items needed — all gaps are objectively detectable in codebase.
+
+## Gaps Summary
+
+The phase has a **fundamental execution gap**: the ROADMAP.md and PLAN.md both specify a TDD-driven restructuring of the ABA `inwardPass()` with non-zero COM tests, but the implementation treated cross product formula fixes as sufficient. Critical evidence:
+
+1. **No non-zero COM multi-link tests** — The CONTEXT.md (lines 12-13) explicitly states: *"All 22 existing ABA/FD/consistency tests currently pass because every multi-link test uses Vector3d::Zero() for COM. With zero COM, the skew(com)*mass coupling terms are zero, the inertia matrix is block-diagonal, and the Phase 3 correction bug is not triggered."* Without non-zero COM tests, there is no evidence that forward dynamics works for chains with 3+ joints and non-zero COM.
+
+2. **Phase 3 correction intact** — The `inwardPass()` still has the 3-phase structure with `Ia_unc`, `D_store`, and Phase 3 correction. The comment at line 128 reads *"This is a PARTIAL acceleration (assumes a_parent == 0)"* — confirming the correction-based approach was not replaced.
+
+3. **Featherstone ordering violation** — `pa` is initialized for ALL links in Phase 1 (base-to-tip) BEFORE children's contributions are accumulated in Phase 2 (tip-to-base). Featherstone Algorithm 7.3 requires computing pa AFTER accumulation.
+
+**The cross product fixes (SpatialUtils.h) are correct and valuable** — they fixed bias force corruption that would have affected any chain. But they are a prerequisite fix, not the complete solution. The ROADMAP goal requires non-zero COM multi-link tests that pass, which don't exist.
+
+### Root Cause
+
+The 14-01-SUMMARY.md states: *"The original plan's core premise (ABA inward pass needs restructuring) was incorrect. The plan should not be executed — it would undo valid working code."* This conclusion was reached without non-zero COM test evidence. The cross product fix may be sufficient for correctness, or it may not — we cannot tell without the non-zero COM tests that the PLAN specified.
 
 ---
 
-## Goal-Backward Analysis
-
-### Phase Goal (from ROADMAP.md)
-
-> Correct forward dynamics for chains with 3+ joints — all 4 multi-link consistency tests pass (ThreeLinkSerialChain, BranchingYConfiguration, TwoLinkRoundTripWithGravity, ThreeLinkNumericalValidation). All 156 existing tests continue to pass with no regressions.
-
-### What MUST be true for the goal to be achieved:
-
-1. **Condensation step is correctly implemented**: Each link's articulated inertia Ia must have its joint DOF removed (condensed) before being passed to the parent. Formula: `Ia' = Ia - (Ia*S)*(1/D)*(Ia*S)^T`, `pa' = pa + Ia*S*qdd`.
-
-2. **Single sweep eliminates Phase 3 correction**: The 3-phase approach (initialization → partial qdd with condensation → correction) must become a single tip-to-base sweep where qddot is computed as the FINAL value from fully-accumulated Ia/pa.
-
-3. **Child→parent inertia transform is correct**: Condensed Ia must be correctly transformed from child frame to parent frame before accumulation.
-
-4. **No regressions**: All existing tests must continue passing.
-
----
-
-## Dimension 1: Requirement Coverage
-
-| Requirement | Plans | Status |
-|-------------|-------|--------|
-| BFIX-01 | 14-01 | Covered |
-
-**Result: ✅ PASS** — Requirement BFIX-01 is listed in plan 14-01 frontmatter and addressed by both tasks.
-
----
-
-## Dimension 2: Task Completeness
-
-| Task | Type | Files | Action | Verify | Done |
-|------|------|-------|--------|--------|------|
-| 1 | auto | ✅ | ✅ | ✅ | ✅ |
-| 2 | auto | ✅ | ✅ | ✅ | ✅ |
-
-**Result: ✅ PASS** — Both tasks have all required elements. Actions are specific and detailed. Verify commands are runnable. Done criteria are measurable.
-
----
-
-## Dimension 3: Dependency Correctness
-
-Single plan `depends_on: []`, Wave 1. No dependency graph issues.
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 4: Key Links Planned
-
-**Result: ✅ PASS** — All key links are documented:
-- `Ia.apply(S)` → `ForceVector IaS` ✓
-- `dot(S, IaS)` / `dot(S, pa)` via SpatialUtils.h ✓
-- `fromFullMatrix` for outer product corrections ✓
-- `invtformABI` / `inverseTransformForce` for parent propagation ✓
-
----
-
-## Dimension 5: Scope Sanity
-
-1 plan, 2 tasks, ~2 files modified. Well within thresholds.
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 6: Verification Derivation
-
-Truths are user-observable (test outcomes like "ThreeLinkSerialChain passes"), not implementation details. Artifacts map to truths. Key links connect artifacts.
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 7: Context Compliance
-
-### Locked Decisions (from 14-CONTEXT.md)
-
-| Decision | Plan Implementation | Status |
-|----------|-------------------|--------|
-| D-01: Condensation math inline | ✓ Implemented in Task 1 action | ✅ |
-| D-02: Use existing API | ✓ Ia.apply(S), dot(S, IaS) | ✅ |
-| D-03: Single sweep | ✓ Task 1 restructures to single sweep | ✅ |
-| D-04: No Phase 3 correction | ✓ Explicitly removed | ✅ |
-| D-05: Gravity as c=-g | ✓ Unchanged | ✅ |
-| D-06: Skip condensation for base | ✓ parent != -1 guard | ✅ |
-| D-07: No include/ changes | ✓ Only src/ + header Doxygen | ✅ |
-
-**Result: ✅ PASS** — All locked decisions are addressed.
-
----
-
-## Dimension 7b: Scope Reduction Detection
-
-No scope reduction language found. The plan delivers the full condensation step per Featherstone Algorithm 7.3.
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 7c: Architectural Tier Compliance
-
-All changes are in the API/Backend tier (C++ library), matching the Architectural Responsibility Map.
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 8: Nyquist Compliance
-
-VALIDATION.md exists at `.planning/phases/14-cr-02-bug-fix/14-VALIDATION.md`.
-
-### Check 8a — Automated Verify Presence
-
-| Task | Plan | Wave | Automated Command | Status |
-|------|------|------|-------------------|--------|
-| 1 | 14-01 | 1 | `cmake -B build 2>&1 \| tail -3 && cmake --build build 2>&1 \| tail -5` | ✅ |
-| 2 | 14-01 | 1 | `cmake --build build 2>&1 \| tail -3 && cd build && ctest --output-on-failure 2>&1 \| tail -30` | ✅ |
-
-### Check 8b — Feedback Latency
-
-Build commands are fast (~30s). No watch-mode flags.
-
-### Check 8c — Sampling Continuity
-
-Only 2 tasks total, no window of 3 consecutive without verify. ✅
-
-### Check 8d — Wave 0 Completeness
-
-VALIDATION.md lists two Wave 0 test gaps:
-- `*Condensation*` filter — condensation unit test
-- `*TauOrdering*` filter — tau=[1,0,0] ordering test
-
-However, **these tests already exist** in `tests/TestForwardDynamics.cpp`:
-- `CondensationReducesInertiaNorm` (line 310)
-- `ThreeLinkSingleTorque` (line 371)
-
-These were written during a prior phase and are already compiled and passing. They do NOT need Wave 0 creation. The VALIDATION.md markdown has stale "❌ W0" markers that should be updated to "✅", but this is a documentation issue, not a plan issue.
-
-**Result: ✅ PASS** — Nyquist compliance is met. VALIDATION.md frontmatter should be updated (`nyquist_compliant: true`, `wave_0_complete: true`) but this does not block execution.
-
----
-
-## Dimension 9: Cross-Plan Data Contracts
-
-Single plan — no cross-plan data contracts to verify.
-
-**Result: ✅ SKIPPED** (single plan)
-
----
-
-## Dimension 10: AGENTS.md Compliance
-
-From `AGENTS.md`:
-- Build: `cmake -B build && cmake --build build` — plan uses this ✓
-- Test: `cmake --build build && cd build && ctest --output-on-failure` — plan uses this ✓
-- Code conventions: Doxygen comments, `#ifndef` guards, type aliases — plan respects these ✓
-- No CI workflows, linter, formatter — plan doesn't introduce any ✓
-
-**Result: ✅ PASS**
-
----
-
-## Dimension 11: Research Resolution
-
-RESEARCH.md exists. The `## Open Questions` section (lines 311-321) is present but does NOT have the `(RESOLVED)` suffix. While each question has a recommendation, they are not explicitly marked as "RESOLVED":
-
-```markdown
-## Open Questions
-1. **Exact expected qddot values for ThreeLinkNumericalValidation after fix**
-   - Recommendation: Use round-trip consistency...
-2. **Contribution ordering for branching trees...**
-   - Recommendation: The order is deterministic...
-```
-
-The missing `(RESOLVED)` marker is a documentation issue. The questions themselves are addressed (with recommendations and mitigations) in the research.
-
-**Result: ⚠️ WARNING** — Open Questions section lacks `(RESOLVED)` suffix and individual inline `RESOLVED` markers. Fix before research is considered complete, but does not block the plan.
-
----
-
-## Dimension 12: Pattern Compliance
-
-No `PATTERNS.md` exists for Phase 14.
-
-**Result: ✅ SKIPPED** (no PATTERNS.md)
-
----
-
-## ⛔ BLOCKER: `invtformABI` vs `transformInertiaToParent` — Incorrect Transform Replacement
-
-### Issue
-
-The plan replaces the anonymous `transformInertiaToParent` function with `PluckerTransform::invtformABI`, assuming these are equivalent transforms. **They are not.**
-
-### Evidence
-
-**`transformInertiaToParent(X, Ia)`** (ForwardDynamics.cpp lines 22-53):
-- Builds `X_6x6 = [R, 0; -R*r̂, R]` (motion transform parent→child)
-- Computes `X^T * Ia * X`
-
-**`X.invtformABI(Ia)`** (PluckerTransform.cpp lines 165-215):
-- Builds `X_inv_6x6 = [R^T, 0; r̂*R^T, R^T]` (inverse motion transform)
-- Computes `X^{-1} * Ia * X^{-T}`
-
-These formulas are mathematically different. Verified with identity Ia and R=I, r=[1,0,0]:
-
-```
-transformInertiaToParent:  [I - r̂²,  r̂;  -r̂,  I]
-invtformABI:               [I,      -r̂;   r̂,   I - r̂²]
-```
-
-The off-diagonal blocks have opposite signs; diagonal blocks differ between I and I-r̂². These are **not** interchangeable.
-
-### Why This Matters
-
-The current ABA code uses `transformInertiaToParent` for child→parent inertia propagation and passes **all 2-link round-trip tests** (TwoLinkRoundTripWithGravity at EPSILON=1e-8). The custom function was written specifically for this purpose rather than using `invtformABI`, indicating the original developer recognized they are not equivalent.
-
-Replacing it with `invtformABI` will:
-1. **Produce different numerical results** for all chain lengths, including 2-link
-2. **Break the currently-passing 2-link round-trip test** unless the two formulas happen to coincide for the specific test configuration (unlikely given the mathematical difference)
-3. If it happens to produce "correct" results for multi-link, it will do so for the wrong reasons, making future debugging impossible
-
-### Mathematical Derivation of Correct Transform
-
-From Featherstone, the correct child→parent inertia transform is:
-
-**Ia_parent = X^T * Ia_child * X**
-
-where `X` is the motion transform from parent to child (`links[i].X`).
-
-Proof: 
-- `a_child = X * a_parent` (motion transform)
-- `f_child = X^{-T} * f_parent` (force transform)  
-- `f_child = Ia_child * a_child = Ia_child * X * a_parent`
-- `f_parent = X^T * f_child = X^T * Ia_child * X * a_parent`
-- Therefore `Ia_parent = X^T * Ia_child * X`
-
-### Fix
-
-The plan should **keep using `transformInertiaToParent`** (or an equivalent inline computation using `X^T * Ia * X`) for the Ia parent propagation. The anonymous namespace function should be preserved, not removed.
-
-The `invtformABI` call on line 196 of the plan action (step 4 of the single sweep) should be replaced with:
-```cpp
-ArticulatedBodyInertia IaTransformed =
-    transformInertiaToParent(links[i].X, links[i].Ia);
-```
-
-**Do NOT remove the anonymous namespace** in Task 2 since `transformInertiaToParent` is still needed.
-
-Alternatively, if the planner believes `invtformABI` is correct, it must provide mathematical proof and verify that the 2-link round-trip test (TwoLinkRoundTripWithGravity) continues to pass within EPSILON=1e-8 after the switch.
-
----
-
-## Summary
-
-| Dimension | Result |
-|-----------|--------|
-| 1. Requirement Coverage | ✅ PASS |
-| 2. Task Completeness | ✅ PASS |
-| 3. Dependency Correctness | ✅ PASS |
-| 4. Key Links Planned | ✅ PASS |
-| 5. Scope Sanity | ✅ PASS |
-| 6. Verification Derivation | ✅ PASS |
-| 7. Context Compliance | ✅ PASS |
-| 7b. Scope Reduction | ✅ PASS |
-| 7c. Architectural Tier Compliance | ✅ PASS |
-| 8. Nyquist Compliance | ✅ PASS (with VALIDATION.md doc update needed) |
-| 9. Cross-Plan Data Contracts | ⏭️ SKIPPED |
-| 10. AGENTS.md Compliance | ✅ PASS |
-| 11. Research Resolution | ⚠️ WARNING |
-| 12. Pattern Compliance | ⏭️ SKIPPED |
-
----
-
-## Issues
-
-### Blockers (must fix)
-
-**1. [architectural_assumption] `invtformABI` used in place of `transformInertiaToParent`**
-- **Plan:** 14-01
-- **Task:** 1 (child→parent Ia propagation, step 4 of single sweep)
-- **Severity:** BLOCKER
-- **Description:** Plan replaces `transformInertiaToParent(X, Ia)` (computes `X^T * Ia * X`) with `X.invtformABI(Ia)` (computes `X^{-1} * Ia * X^{-T}`). These are mathematically different for Plücker transforms with non-zero translation. The custom function was specifically written for the ABA context and produces correct results for 2-link chains. Replacing it will change numerical results for ALL chain lengths.
-- **Fix:** Revert to using `transformInertiaToParent` for the Ia child→parent transform. Do not remove the anonymous namespace function in Task 2.
-- **Location in plan:** Task 1 action, step 4 ("Pass to parent"): `links[i].X.invtformABI(links[i].Ia)`
-
-### Warnings (should fix)
-
-**1. [research_resolution] Open Questions section not marked RESOLVED**
-- **Plan:** Phase-level (RESEARCH.md)
-- **Severity:** WARNING
-- **Description:** `## Open Questions` section at RESEARCH.md lines 311-321 lacks the `(RESOLVED)` suffix and inline resolution markers. While recommendations are provided, the section should be formally marked resolved.
-- **Fix:** Add `(RESOLVED)` to the section heading and inline `RESOLVED` markers to individual questions.
-
-### Info (suggestions)
-
-**1. [validation_doc] VALIDATION.md has stale Wave 0 gaps**
-- **Plan:** Phase-level (VALIDATION.md)
-- **Severity:** INFO
-- **Description:** VALIDATION.md lists two tests as "❌ W0" (Wave 0 missing), but both tests (`CondensationReducesInertiaNorm`, `ThreeLinkSingleTorque`) already exist in `tests/TestForwardDynamics.cpp`. Update frontmatter: `nyquist_compliant: true`, `wave_0_complete: true`.
-- **Fix:** Update VALIDATION.md frontmatter and per-task verification map.
-
----
-
-## Recommendation
-
-**Return to planner for revision.** The BLOCKER issue must be resolved before execution. The fix is straightforward: keep `transformInertiaToParent` instead of switching to `invtformABI`. Do not remove the anonymous namespace.
-
-### If the planner disagrees and believes `invtformABI` is correct:
-
-The planner must provide:
-1. A mathematical proof that `X^{-1} * Ia * X^{-T} = X^T * Ia * X` for Plücker transforms (unlikely to exist for non-zero translation)
-2. Evidence that TwoLinkRoundTripWithGravity continues to pass at EPSILON=1e-8 after the switch
-3. An explanation for why the original ABA code used a custom function instead of `invtformABI`
+_Verified: 2026-06-17_
+_Verifier: the agent (gsd-verifier)_
