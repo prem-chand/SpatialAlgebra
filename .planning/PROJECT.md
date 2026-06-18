@@ -2,7 +2,7 @@
 
 **Project Code:** SA  
 **Project Title:** Spatial Vector Algebra Library for Robotics  
-**Last Updated:** 2026-06-06
+**Last Updated:** 2026-06-18
 
 ---
 
@@ -23,15 +23,11 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - CI pipeline with 4-matrix build ✓
 - Formal conventions documented ✓
 
-## Current Milestone: v1.3 Pinocchio Cross-Validation
+## Current Milestone: Complete — v2.0 Planning
 
-**Goal:** Extract all 11 test suites into a zero-dependency test model library, refine tests with better variety, precision, documentation and edge cases, and build Pinocchio C++/Python comparison benchmarks.
+**v1.3 Pinocchio Cross-Validation:** ✅ SHIPPED 2026-06-18
 
-**Target features:**
-- Standalone test model library (Eigen-only, zero SpatialAlgebra dependency) covering all 11 test domains
-- Refined tests: better model variety, numerical precision, docstrings, and edge case coverage
-- Pinocchio C++ comparison benchmarks for ABA/RNEA round-trip consistency
-- Pinocchio Python comparison harness with equivalent numerical validation
+All 6 phases (14, 20-24) delivered. See `.planning/milestones/v1.3-ROADMAP.md` for full details.
 
 ## Requirements
 
@@ -61,14 +57,16 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - ✓ **v1.2:** Full benchmark infrastructure (ModelFactory, RandomState, 80 registered benchmarks)
 - ✓ **v1.2:** 18 core microbenchmarks (Plücker, cross, inertia) plus ABA/RNEA DOF sweep (n=1..20)
 - ✓ **v1.2:** Real-world robot examples (2-link Z-Z planar, 3-link Z-Y-Z spatial) with UR5 parameters
+- ✓ **v1.3:** Standalone test model library — Eigen-only, 11 chain headers, compilation firewall verified
+- ✓ **v1.3:** Test refinement — prismatic, mixed, high-DOF chains; relative error; edge cases (near-zero mass, n>12, non-identity rotation)
+- ✓ **v1.3:** Pinocchio C++ comparison benchmarks — full adapter, per-joint relative error < 1e-6
+- ✓ **v1.3:** Python comparison harness — C++ subprocess JSON integration, round-trip consistency
+- ✓ **v1.3:** Cross-library comparison tables — max/mean relative error, CI regression tracking
+- ✓ **v1.3:** CR-02 ABA bug fixed — non-zero COM round-trip passes for serial chains
 
-### Active (v1.3)
+### Active (v2.0 — Planned)
 
-- [ ] Standalone test model library — Eigen-only types, zero SpatialAlgebra dependency, covering all 11 test domains (vectors, transforms, inertia, dynamics, consistency)
-- [ ] Test refinement — better model variety (URDF-derived, different joint types), tighter numerical tolerances with error analysis, comprehensive Doxygen-style docstrings, edge case coverage (zero-mass, singular, near-singular)
-- [ ] Pinocchio C++ comparison benchmarks — link against libpinocchio, run equivalent RNEA/ABA/consistency tests
-- [ ] Pinocchio Python comparison harness — equivalent numerical validation via pinocchio Python bindings
-- [ ] Benchmark result reporting — cross-library comparison tables with relative error analysis
+<!-- No requirements defined yet. Run /gsd:new-milestone to start v2.0 planning. -->
 
 ### Out of Scope
 
@@ -85,6 +83,8 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 
 **v1.2 Shipped:** 2026-06-06 — 5 phases (15-18), 9 plans, ~30 files modified, 11 CTest passing, 80 benchmarks.
 
+**v1.3 Shipped:** 2026-06-18 — 6 phases (14, 20-24), 7 formal plans + all code delivered, Pinocchio C++/Python cross-validation with comparison reports.
+
 **CR-02 Fixed (Phase 14, 2026-06-17):** ABA inward pass Phase 3 correction double-counting resolved — 3-link non-zero COM round-trip passes, all 11 CTest green.
 
 **State:**
@@ -98,6 +98,11 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 - Google Benchmark v1.9.5 with 80 registered benchmarks
 - Formal mathematical conventions documented
 - Independent gravity invariant test oracles for both solvers
+- Test model library (Eigen-only, 11 chain headers, PIMPL adapter, compilation firewall)
+- Pinocchio C++ adapter and comparison benchmarks (per-joint relative error < 1e-6)
+- Python comparison harness with C++ subprocess JSON integration
+- Cross-library comparison report with CI regression tracking
+- CR-02 ABA bug fixed: non-zero COM round-trip passes for serial chains
 
 **Tech Stack:**
 - C++17 with Eigen3 for linear algebra
@@ -138,6 +143,10 @@ A C++17 library implementing spatial vector algebra for rigid body dynamics, fol
 | UR5-derived parameters in examples | Realistic robot dynamics | Masses 3.7/8.393/2.33 kg verified |
 | Cross-validation as solver consistency check | FD(ID(0,g),g) ≈ 0 gold standard | 2-link passes, 3-link reveals ABA bug |
 | Honest documentation of solver bugs | Users see actual library state | Both ABA bug and RNEA limitation documented in examples |
+| Test Model Library PIMPL pattern | Zero SA types visible in test-model headers | Compilation firewall verified |
+| CR-02 Phase 3 correction: aParentInChild only | c term was double-counted in Phase 3 correction | Serial chain non-zero COM passes; branching chain precision limit documented |
+| Pinocchio CMake bypass (find_path/find_library) | Boost 1.89.0 header-only incompatibility | Configures without system-level workaround |
+| C++ subprocess for Python comparison | Pinocchio Python bindings unavailable (ABI mismatch) | Working comparison pipeline |
 
 ## Evolution
 
@@ -151,61 +160,11 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 
-*Last updated: 2026-06-17 after starting v1.3 milestone*
+*Last updated: 2026-06-18 after v1.3 milestone*
 
 ---
-
 <details>
-<summary>v1.0 Current State (Archived)</summary>
-
-## Current State (v1.0)
-
-**Shipped:** 2026-05-16  
-**Phases:** 10  
-**Plans:** 25  
-**Test Count:** 186+ (186 passing, 3 deferred failures)  
-
-**Delivered:**
-- Complete 6D spatial vector algebra with Featherstone-verified cross products
-- Full Plücker coordinate transforms (motion/force/RBI transforms verified)
-- ABA forward dynamics and RNEA inverse dynamics with gravity support
-- Memory-efficient LowerTriangular packed matrix storage
-- Comprehensive GTest test infrastructure
-- Documentation: README, Doxygen, 4 compilable examples
-
-**Known Gaps (inherited by v1.1):**
-- Multi-link RNEA↔ABA consistency (3 failing tests)
-- ABI transform formulas (fixed in v1.1 Phase 11)
-
-</details>
-
-<details>
-<summary>v1.1 Current State (Archived)</summary>
-
-## Current State (v1.1)
-
-**Shipped:** 2026-05-17  
-**Phases:** 3 (11-13)  
-**Plans:** 9  
-**Commits:** 35  
-**Files Modified:** 57  
-**Test Count:** 189+ (186 passing, 3 CR-02 failures)  
-
-**Delivered:**
-- ABI transform formulas fixed (tformABI, invtformABI) — 40/40 Plücker tests
-- Gravity support for ABA (computeAccelerations) and RNEA (computeTorques)
-- Cross-product operations unified to single canonical implementation
-- NaN/Inf debug-mode guards and zero-mass edge case tests
-- GitHub Actions CI with 4-matrix build and code coverage
-- CMake FetchContent fallback, OpenMP removal, umbrella header
-- MATHEMATICAL_CONVENTIONS.md — formal specification
-- README.md updated with v1.1 API changelog
-
-**Known Gaps (BF-02 deferred):**
-- Multi-link RNEA↔ABA consistency: CR-02 bug in ABA inward pass (3 tests)
-- Performance benchmarks and additional examples deprioritized
-
-</details>
+<summary>v1.2 Current State (Archived)</summary>
 
 ## Current State (v1.2)
 
@@ -225,6 +184,30 @@ This document evolves at phase transitions and milestone boundaries.
   - 3-link Z-Y-Z spatial RRR arm: FD, ID gravity, cross-validation documenting ABA/RNEA limitations
 
 **Known Gaps (deferred to v1.3):**
-- CR-02 ABA bug: multi-link ID→FD round-trip fails for non-zero COM
+- CR-02 ABA bug: multi-link ID→FD round-trip fails for non-zero COM (FIXED IN v1.3)
 - RNEA fixed-transform limitation: X does not update with joint q
+- RBDL comparison benchmarks not started
+
+</details>
+
+## Current State (v1.3)
+
+**Shipped:** 2026-06-18  
+**Phases:** 6 (14, 20-24)  
+**Plans:** 7 formal + all code delivered  
+**Test Count:** 12 CTest (all passing), including compile_smoke_test  
+
+**Delivered:**
+- CR-02 ABA bug fixed: Phase 3 inward pass double-counting resolved; non-zero COM round-trip for serial chains
+- Test model library: Eigen-only INTERFACE library with 11 chain headers, RobotSolver abstract interface, PIMPL SpatialAlgebraAdapter, compilation firewall verified
+- Test refinement: prismatic, mixed, high-DOF (n=12) chains; relative error reporting; Doxygen docstrings; near-zero mass and non-identity rotation edge cases
+- Pinocchio C++ adapter and comparison benchmarks: full adapter implementing RobotSolver via pinocchio::rnea()/aba(); per-joint relative error < 1e-6
+- Python comparison harness: equivalent Python models, C++ subprocess JSON integration, round-trip consistency checks
+- Cross-library comparison report with max/mean relative error per model, CI regression tracking (1e-8 kinematics, 1e-6 dynamics)
+- CMake bypass for Pinocchio (Boost 1.89.0 header-only incompatibility)
+
+**Known Gaps (inherited by next milestone):**
+- SA RNEA/ABA only valid at q=0 (fixed transforms not updated with joint position)
+- Branching chain non-zero COM precision (requires full single-sweep Featherstone ABA)
+- Pinocchio Python bindings not available (Boost/Python ABI mismatch)
 - RBDL comparison benchmarks not started
