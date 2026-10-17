@@ -53,14 +53,14 @@ public:
         return result;
     }
 
-    /** @brief Element access — returns symmetric element */
+    /** @brief Element access — (i,j) and (j,i) read the same lower-triangle value */
     inline double operator()(int i, int j) const {
-        return data(i, j);
+        return i >= j ? data(i, j) : data(j, i);
     }
 
-    /** @brief Element write access — lower triangle only */
+    /** @brief Element write access — (i,j) and (j,i) write the same lower-triangle value */
     inline double& operator()(int i, int j) {
-        return data(i, j);
+        return i >= j ? data(i, j) : data(j, i);
     }
 
     /** @brief Access internal Matrix3d (symmetric) */

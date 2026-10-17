@@ -53,21 +53,21 @@ TEST(LowerTriangularTest, PackedStorageIndexing)
  * @brief Test upper triangular elements return zero
  * @details Verifies LTR-01: (i,j) where i<j returns 0.0
  */
-TEST(LowerTriangularTest, UpperTriangularReturnsZero)
+TEST(LowerTriangularTest, UpperMirrorsLower)
 {
     LowerTriangular L(3);
     L(0,0) = 1.0;
     L(1,0) = 2.0; L(1,1) = 3.0;
     L(2,0) = 4.0; L(2,1) = 5.0; L(2,2) = 6.0;
-    
+    L(1,2) = 7.0;
+
     // Use const reference to ensure const operator() is called
     const LowerTriangular& Lconst = L;
-    
-    // Upper triangular elements are independently stored (not mirrored)
-    // They remain zero from initialization
-    EXPECT_DOUBLE_EQ(Lconst(0, 1), 0.0);
-    EXPECT_DOUBLE_EQ(Lconst(0, 2), 0.0);
-    EXPECT_DOUBLE_EQ(Lconst(1, 2), 0.0);
+
+    EXPECT_DOUBLE_EQ(Lconst(0, 1), 2.0);
+    EXPECT_DOUBLE_EQ(Lconst(0, 2), 4.0);
+    EXPECT_DOUBLE_EQ(Lconst(1, 2), 7.0);
+    EXPECT_DOUBLE_EQ(Lconst(2, 1), 7.0);
 }
 
 TEST(LowerTriangularTest, SymmetricViaFromFullMatrix)
