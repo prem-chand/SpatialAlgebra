@@ -56,3 +56,13 @@ Testing/
 # Backups
 *.bak
 *~
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
+
+# MuJoCo Menagerie models. Run scripts/fetch_models.sh to download them.
+/models/menagerie/
+
+# Local debug programs and Claude settings.
+/debug_*
+.claude/settings.local.json
