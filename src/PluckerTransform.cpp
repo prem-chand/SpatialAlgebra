@@ -96,11 +96,13 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::invtformRBI(const RigidBodyIn
     auto h = Ihat.getCom();
     auto I = Ihat.getInertiaMatrixLT();
 
-    auto h_new = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * h + m * translation;
-    auto I1 = static_cast<const Eigen::Matrix3d &>(rotation.transpose())
+    // Concrete types, not auto: rotation.transpose() returns a temporary, and an
+    // auto Eigen expression would keep a dangling reference to it.
+    Vector3d h_new = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * h + m * translation;
+    Eigen::Matrix3d I1 = static_cast<const Eigen::Matrix3d &>(rotation.transpose())
         * I.getSymmetricMatrix() * static_cast<const Eigen::Matrix3d &>(rotation);
-    auto I2 = skew(translation) * skew(h_new);
-    auto I3 = skew(h_new) * skew(translation);
+    Eigen::Matrix3d I2 = skew(translation) * skew(h_new);
+    Eigen::Matrix3d I3 = skew(h_new) * skew(translation);
 
     lt I_new = LowerTriangular::fromFullMatrix(I1 - I2 - I3);
 
