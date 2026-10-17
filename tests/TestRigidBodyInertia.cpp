@@ -141,12 +141,14 @@ TEST(RigidBodyInertiaTest, OperatorAdd)
     EXPECT_DOUBLE_EQ(actualCom.y(), expectedCom.y());
     EXPECT_DOUBLE_EQ(actualCom.z(), expectedCom.z());
     
-    // Check inertia addition
-    lt combinedInertia = combined.getInertiaMatrixLT();
-    Eigen::VectorXd combinedData = combinedInertia.getData();
+    // Each body's COM inertia moves to the combined COM by the parallel axis
+    // theorem: offsets (0.6, -0.6, 0) for body 1 and (-0.4, 0.4, 0) for body 2.
+    Vector6d expectedInertia;
+    expectedInertia << 16.2, 1.2, 16.2, 0.0, 0.0, 17.4;
+    Eigen::VectorXd combinedData = combined.getInertiaMatrixLT().getData();
     for (int i = 0; i < 6; ++i)
     {
-        EXPECT_DOUBLE_EQ(combinedData(i), inertia1Data(i) + inertia2Data(i));
+        EXPECT_NEAR(combinedData(i), expectedInertia(i), 1e-10);
     }
 }
 
