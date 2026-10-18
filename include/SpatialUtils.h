@@ -19,8 +19,8 @@ namespace SpatialAlgebra {
  * @brief Joint type for computing configuration-dependent transforms
  * @details Determines how joint position q affects the parent-to-child Plücker transform X.
  *          - FIXED: X is constant (no q-dependence)
- *          - REVOLUTE: X(q) = X0 * X_joint(q) where X_joint is rotation about axis
- *          - PRISMATIC: X(q) = X0 * X_joint(q) where X_joint is translation along axis
+ *          - REVOLUTE: X(q) = X_J(q) * X0 where X_J is rotation about axis
+ *          - PRISMATIC: X(q) = X_J(q) * X0 where X_J is translation along axis
  */
 enum class JointType : int {
     FIXED = 0,      ///< No q-dependence (backward-compatible default)

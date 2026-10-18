@@ -170,9 +170,11 @@ namespace SpatialAlgebra
          * @details For each link with type != FIXED, recomputes the parent-to-child
          *          Plücker transform X from the reference transform X0 and the current
          *          joint position q:
-         *          - REVOLUTE: X = X0 * [AngleAxisd(q, axis), 0]
-         *          - PRISMATIC: X = X0 * [I, q*axis]
+         *          - REVOLUTE: X = X_J(q) * X0, with X_J = [E, 0; 0, E] and
+         *            E = AngleAxisd(q, axis)ᵀ
+         *          - PRISMATIC: X = X_J(q) * X0, with X_J = [I, 0; -[q·axis]×, I]
          *          - FIXED: X = X0 (no change)
+         *          This is Featherstone's X = X_J · X_T: X0 applies first.
          * 
          *          Must be called after changing q on any link with type != FIXED.
          *          Automatically called at the start of computeTorques().

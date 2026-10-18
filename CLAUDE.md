@@ -119,7 +119,7 @@ CompositeRigidBodyInertia       (CRBA: O(n²) mass matrix H(q); operates on Forw
 
 `CompositeRigidBodyInertia.h` is **not** part of the `SpatialAlgebra.h` umbrella include — include it separately.
 
-**Joint kinematics**: `Link` carries `q`/`qdot`/`qddot`, a `JointType` (`FIXED`/`REVOLUTE`/`PRISMATIC`), `jointAxis`, and a reference transform `X0` (pose at `q=0`). `updateKinematics()` on `ForwardDynamics`/`InverseDynamics` recomputes each link's `X` from `X0` and the current `q` (`X(q) = X0 * X_joint(q)`); it runs automatically at the start of `computeAccelerations()`/`computeTorques()`, and must be called manually before `computeCompositeRigidBodyInertia()`.
+**Joint kinematics**: `Link` carries `q`/`qdot`/`qddot`, a `JointType` (`FIXED`/`REVOLUTE`/`PRISMATIC`), `jointAxis`, and a reference transform `X0` (pose at `q=0`). `updateKinematics()` on `ForwardDynamics`/`InverseDynamics` recomputes each link's `X` from `X0` and the current `q` (`X(q) = X_J(q) · X0`, Featherstone's `X_J · X_T`); it runs automatically at the start of `computeAccelerations()`/`computeTorques()`, and must be called manually before `computeCompositeRigidBodyInertia()`.
 
 **Free functions** in `SpatialUtils.h`: `skew()`, `dot()`, `cross()` (four overloads: mv×mv, mv×fv, fv×mv, fv×fv).
 
@@ -149,6 +149,8 @@ Follows Featherstone (2008) throughout. Key conventions:
 
 - Spatial vectors: `[angular; linear]` — angular component first
 - Transform direction: `X` stored per-link transforms **parent → child**; `v_child = X · v_parent`
+- `PluckerTransform(E, r)`: `E` rotates parent coordinates into child coordinates, so `E = Rᵀ` for a child pose `[R | t]`; `r = t`
+- `a.multiply(b)` applies `b` first
 - Force transforms contravariantly: `f_child = X.transformForce(f)` = X^{-T} · f
 - Inward pass uses `X.inverseTransformForce(f_child)` to propagate forces to parent
 - ABI transform: `X.invtformABI(Ia)` = X^{-1} · Ia · X^{-T}

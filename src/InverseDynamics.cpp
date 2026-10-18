@@ -29,7 +29,7 @@ namespace SpatialAlgebra
             switch (link.type)
             {
                 case JointType::REVOLUTE:
-                    jointRot = Rotation(Eigen::AngleAxisd(link.q, link.jointAxis));
+                    jointRot = Rotation(Eigen::AngleAxisd(-link.q, link.jointAxis));
                     break;
                 case JointType::PRISMATIC:
                     jointTrans = link.jointAxis * link.q;
@@ -38,7 +38,7 @@ namespace SpatialAlgebra
                     break;
             }
 
-            link.X = link.X0.multiply(PluckerTransform(jointRot, jointTrans));
+            link.X = PluckerTransform(jointRot, jointTrans).multiply(link.X0);
         }
     }
     void InverseDynamics::outwardPass()

@@ -544,6 +544,37 @@ TEST(InverseDynamicsTest, ZeroMassEdgeCase) {
     EXPECT_TRUE(std::isfinite(tau[0]));
 }
 
+/**
+ * @brief Gravity torque of a revolute joint with a rotated, offset reference frame
+ * @details The joint frame sits at t with orientation R0 = rot_x(0.3) in the
+ *          world, and the joint turns about its local Y axis. The expected
+ *          value is the hand-computed holding torque -a·(r × m·g), with
+ *          a = R0·ŷ and r = R0·rot_y(q)·c. Under Featherstone's convention,
+ *          X(q) = X_J(q)·X0 and both use E = Rᵀ, so this value is sensitive to
+ *          the sign of q and to the order of composition.
+ */
+TEST(InverseDynamicsTest, RevoluteJointConventionMatchesHandCalculation) {
+    Eigen::Matrix3d R0 = Eigen::AngleAxisd(0.3, Vector3d::UnitX()).toRotationMatrix();
+
+    InverseDynamicsLink link;
+    link.parent = -1;
+    link.X0 = PluckerTransform(Rotation(R0.transpose()), Vector3d(0.1, -0.2, 0.3));
+    link.X = link.X0;
+    link.I = RigidBodyInertia(2.0, Vector3d(0.05, 0.02, -0.1), lt::Identity(3));
+    link.S = MotionVector(Vector3d::UnitY(), Vector3d::Zero());
+    link.type = JointType::REVOLUTE;
+    link.jointAxis = Vector3d::UnitY();
+    link.q = 0.5;
+    link.qdot = 0.0;
+
+    InverseDynamics id;
+    id.links.push_back(link);
+
+    Eigen::VectorXd tau = id.computeTorques(Eigen::VectorXd::Zero(1), Vector3d(0, 0, -9.81));
+
+    EXPECT_NEAR(tau[0], 0.07616364131647323, EPSILON);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

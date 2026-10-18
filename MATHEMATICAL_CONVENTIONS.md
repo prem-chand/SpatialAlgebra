@@ -134,6 +134,15 @@ The Plücker transform `X` stored in each link represents the transform
 
 where `v_parent` is a motion vector expressed in the parent frame.
 
+`PluckerTransform(E, r)` is Featherstone's `X = [E, 0; -E·[r]×, E]`. Here `r`
+is the child origin in parent coordinates. `E` rotates parent coordinates
+into child coordinates. If a homogeneous transform `[R | t]` gives the child
+pose in the parent frame, then `E = Rᵀ` and `r = t`.
+
+`a.multiply(b)` applies `b` first. `updateKinematics()` composes
+`X(q) = X_J(q) · X0`, so the fixed offset `X0` applies before the joint
+motion. For a revolute joint, `X_J` uses `E = AngleAxisd(q, axis)ᵀ`.
+
 ### 5.2 Force Transform
 
 Force vectors transform contravariantly with respect to motion vectors:
@@ -204,6 +213,7 @@ This section documents significant API changes made during development.
 | 2026-05-16 | Removed unused `crossForce`/`crossMotion` overloads from `MotionVector.h`/`ForceVector.h` | Eliminated code duplication |
 | 2026-05-17 | Restructured ABA inward pass into explicit Phase 1 (init) and Phase 2 (accumulate) | Fixed CR-02: child Ia overwriting parent |
 | 2026-05-17 | Changed `RigidBodyInertia::apply()` to use `MotionVector` param and `ForceVector` return | Type-correct spatial inertia application |
+| 2026-10-18 | Changed `updateKinematics()` to compose `X_J(q) · X0` with `E = AngleAxisd(q, axis)ᵀ` | Revolute joints turned the wrong way, and `X0` applied after the joint |
 
 ---
 
