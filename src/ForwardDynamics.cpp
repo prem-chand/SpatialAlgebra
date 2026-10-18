@@ -21,32 +21,48 @@ namespace SpatialAlgebra
 
         ArticulatedBodyInertia transformInertiaToParent(const PluckerTransform &X,
                                                         const ArticulatedBodyInertia &Ia) {
+            // I_parent = X^T · Ia · X  using block 3×3 formulas (avoids 6×6 temp)
+            //
+            // X = [R, 0; -R·skew(t), R]
+            // X^T = [R^T, skew(t)·R^T; 0, R^T]
+            // Ia = [I, H; H^T, M]
+            //
+            // Block result:
+            //   I'_00 = R^T·I·R - R^T·H·R·r̂ + r̂·R^T·H^T·R - r̂·R^T·M·R·r̂
+            //   I'_01 = R^T·H·R + r̂·R^T·M·R
+            //   I'_11 = R^T·M·R
+            // where r̂ = skew(t)
+
             const Eigen::Matrix3d& R = static_cast<const Eigen::Matrix3d &>(X.getRotation());
             Eigen::Matrix3d r_skew = skew(X.getTranslation());
+            Eigen::Matrix3d Rt = R.transpose();
 
-            Eigen::Matrix3d I_full = Ia.getInertia().getSymmetricMatrix();
-            Eigen::Matrix3d M_full = Ia.getM().getSymmetricMatrix();
+            Eigen::Matrix3d I_sym = Ia.getInertia().getSymmetricMatrix();
+            Eigen::Matrix3d M_sym = Ia.getM().getSymmetricMatrix();
             Eigen::Matrix3d H = Ia.getH();
 
-            Eigen::Matrix<double, 6, 6> Ia_6x6;
-            Ia_6x6.block<3,3>(0,0) = I_full;
-            Ia_6x6.block<3,3>(0,3) = H;
-            Ia_6x6.block<3,3>(3,0) = H.transpose();
-            Ia_6x6.block<3,3>(3,3) = M_full;
+            // Precompute rotated blocks
+            Eigen::Matrix3d R_I_Rt = Rt * I_sym * R;      // R^T·I·R
+            Eigen::Matrix3d R_H_Rt = Rt * H * R;           // R^T·H·R
+            Eigen::Matrix3d R_M_Rt = Rt * M_sym * R;       // R^T·M·R
 
-            // Construct X directly based on transformMotion: v_c = X * v_p
-            Eigen::Matrix<double, 6, 6> X_6x6;
-            X_6x6.block<3,3>(0,0) = R;
-            X_6x6.block<3,3>(0,3) = Eigen::Matrix3d::Zero();
-            X_6x6.block<3,3>(3,0) = -R * r_skew;
-            X_6x6.block<3,3>(3,3) = R;
+            // I'_01 = R^T·H·R + r̂·R^T·M·R
+            Eigen::Matrix3d H_new = R_H_Rt + r_skew * R_M_Rt;
 
-            // Transform to parent frame: X^T * Ia * X
-            Eigen::Matrix<double, 6, 6> result = X_6x6.transpose() * Ia_6x6 * X_6x6;
+            // I'_11 = R^T·M·R
+            Eigen::Matrix3d M_new = R_M_Rt;
 
-            Eigen::Matrix3d I_new = 0.5 * (result.block<3,3>(0,0) + result.block<3,3>(0,0).transpose());
-            Eigen::Matrix3d M_new = 0.5 * (result.block<3,3>(3,3) + result.block<3,3>(3,3).transpose());
-            Eigen::Matrix3d H_new = result.block<3,3>(0,3);
+            // I'_00 = R^T·I·R - R^T·H·R·r̂ + r̂·R^T·H^T·R - r̂·R^T·M·R·r̂
+            Eigen::Matrix3d R_H_Rt_skew = R_H_Rt * r_skew;          // R^T·H·R·r̂
+            Eigen::Matrix3d skew_R_Ht_Rt = r_skew * R_H_Rt.transpose(); // r̂·R^T·H^T·R
+            Eigen::Matrix3d skew_R_M_Rt = r_skew * R_M_Rt;           // r̂·R^T·M·R
+            Eigen::Matrix3d skew_R_M_Rt_skew = skew_R_M_Rt * r_skew;  // r̂·R^T·M·R·r̂
+
+            Eigen::Matrix3d I_new = R_I_Rt - R_H_Rt_skew + skew_R_Ht_Rt - skew_R_M_Rt_skew;
+
+            // Symmetrize rotational and mass blocks
+            I_new = 0.5 * (I_new + I_new.transpose());
+            M_new = 0.5 * (M_new + M_new.transpose());
 
             return ArticulatedBodyInertia(
                 lt::fromFullMatrix(I_new), H_new, lt::fromFullMatrix(M_new));
@@ -85,23 +101,19 @@ namespace SpatialAlgebra
         for (int i = 0; i < static_cast<int>(links.size()); i++)
         {
             int parent = links[i].parent;
+            MotionVector vJ = links[i].S * links[i].qdot;
 
             if (parent == -1)
             {
-                links[i].v = links[i].S * links[i].qdot;
-
-                links[i].c = MotionVector(Vector3d::Zero(), -this->gravity);
+                links[i].v = vJ;
             }
             else
             {
                 MotionVector vParent = links[parent].v;
-                links[i].v = links[i].X.transformMotion(vParent) +
-                             links[i].S * links[i].qdot;
-
-                MotionVector cParent = links[parent].c;
-                links[i].c = links[i].X.transformMotion(cParent) +
-                             cross(links[i].v, links[i].S) * links[i].qdot;
+                links[i].v = links[i].X.transformMotion(vParent) + vJ;
             }
+
+            links[i].c = cross(links[i].v, vJ);
         }
     }
 
@@ -125,26 +137,46 @@ namespace SpatialAlgebra
             );
 
             ForceVector IaV = links[i].Ia.apply(links[i].v);
-            links[i].pa = links[i].Ia.apply(links[i].c) + cross(links[i].v, IaV);
+            links[i].pa = cross(links[i].v, IaV);
 
             links[i].pa = ForceVector(
-                links[i].pa.getAngular() + links[i].f.getAngular(),
-                links[i].pa.getLinear() + links[i].f.getLinear()
+                links[i].pa.getAngular() - links[i].f.getAngular(),
+                links[i].pa.getLinear() - links[i].f.getLinear()
             );
         }
 
         // Phase 2: Tip-to-base sweep — condense Ia/pa and propagate to parent
         constexpr double EPSILON = 1e-10;
-        std::vector<double> D_store(links.size());
-        std::vector<ArticulatedBodyInertia> Ia_unc(links.size());
+        struct JointSolveData {
+            ForceVector U;
+            double d;
+            double u;
+        };
+        std::vector<JointSolveData> jointData(links.size());
+        std::vector<int> tauIndex(links.size(), -1);
+        int nextTau = 0;
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (fixedLinksHaveDof || links[i].type != JointType::FIXED)
+                tauIndex[i] = nextTau++;
+        }
 
         for (int i = static_cast<int>(links.size()) - 1; i >= 0; i--)
         {
-            Ia_unc[i] = links[i].Ia;
+            int parent = links[i].parent;
+            if (tauIndex[i] < 0) {
+                links[i].qddot = 0.0;
+                if (parent != -1) {
+                    links[parent].Ia = links[parent].Ia
+                        + transformInertiaToParent(links[i].X, links[i].Ia);
+                    ForceVector paToParent = links[i].X.inverseTransformForce(
+                        links[i].pa + links[i].Ia.apply(links[i].c));
+                    links[parent].pa = links[parent].pa + paToParent;
+                }
+                continue;
+            }
 
             ForceVector IaS = links[i].Ia.apply(links[i].S);
             double D = dot(links[i].S, IaS);
-            D_store[i] = D;
 
             if (std::abs(D) < EPSILON)
             {
@@ -154,10 +186,9 @@ namespace SpatialAlgebra
                 );
             }
 
-            double u = tau[i] - dot(links[i].S, links[i].pa);
-            links[i].qddot = u / D;
+            double u = tau[tauIndex[i]] - dot(links[i].S, links[i].pa);
+            jointData[i] = {IaS, D, u};
 
-            int parent = links[i].parent;
             if (parent != -1)
             {
                 double invD = 1.0 / D;
@@ -169,10 +200,12 @@ namespace SpatialAlgebra
                 Eigen::Matrix3d HCorr = t * f.transpose() * invD;
                 lt massCorr = lt::fromFullMatrix(f * f.transpose()) * invD;
 
-                links[i].Ia = links[i].Ia
+                ArticulatedBodyInertia IaReduced = links[i].Ia
                     + (ArticulatedBodyInertia(inertiaCorr, HCorr, massCorr) * (-1.0));
 
-                links[i].pa = links[i].pa + (IaS * links[i].qddot);
+                links[i].Ia = IaReduced;
+                links[i].pa = links[i].pa + IaReduced.apply(links[i].c)
+                            + (IaS * (u / D));
 
                 ArticulatedBodyInertia IaTransformed =
                     transformInertiaToParent(links[i].X, links[i].Ia);
@@ -186,24 +219,24 @@ namespace SpatialAlgebra
             }
         }
 
-        // Phase 3: Forward pass — correct qddot for parent acceleration,
-        //           using ENHANCED correction per Featherstone Algorithm 7.3
+        // Phase 3: Forward pass — solve joint acceleration using the reduced
+        // articulated quantities retained from the inward pass.
         std::vector<MotionVector> a(links.size());
         for (int i = 0; i < static_cast<int>(links.size()); i++)
         {
             int parent = links[i].parent;
 
             MotionVector aParentInChild = (parent == -1)
-                ? MotionVector(Vector3d::Zero(), Vector3d::Zero())
+                ? links[i].X.transformMotion(
+                    MotionVector(Vector3d::Zero(), -this->gravity))
                 : links[i].X.transformMotion(a[parent]);
 
-            // NIEMI: per Featherstone, the correction should account for
-            // parent acceleration but NOT re-subtract Ia*c (which is
-            // already included in pa via Phase 1 initialization).
-            ForceVector accelBias = Ia_unc[i].apply(aParentInChild);
-            double correction = dot(links[i].S, accelBias);
-            links[i].qddot = links[i].qddot - (correction / D_store[i]);
-
+            if (tauIndex[i] < 0) {
+                links[i].qddot = 0.0;
+            } else {
+                const JointSolveData& solve = jointData[i];
+                links[i].qddot = (solve.u - dot(aParentInChild + links[i].c, solve.U)) / solve.d;
+            }
             MotionVector a_prime = aParentInChild + links[i].c;
             a[i] = a_prime + links[i].S * links[i].qddot;
         }
@@ -211,14 +244,19 @@ namespace SpatialAlgebra
 
     void ForwardDynamics::computeAccelerations(const Eigen::VectorXd& tau, const Vector3d& gravity)
     {
-        if (tau.size() != static_cast<int>(links.size()))
+        int dof = 0;
+        for (const auto& link : links) {
+            if (link.type != JointType::FIXED) ++dof;
+        }
+        if (tau.size() != dof && tau.size() != static_cast<int>(links.size()))
         {
             throw std::invalid_argument(
                 "ForwardDynamics::computeAccelerations: tau size ("
-                + std::to_string(tau.size()) + ") does not match link count ("
-                + std::to_string(links.size()) + ")"
+                + std::to_string(tau.size()) + ") does not match DOF count ("
+                + std::to_string(dof) + ")"
             );
         }
+        fixedLinksHaveDof = tau.size() == static_cast<int>(links.size());
 
         for (int i = 0; i < tau.size(); i++)
         {

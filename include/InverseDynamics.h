@@ -137,7 +137,7 @@ namespace SpatialAlgebra
      *          3. Call computeTorques(qddot) to solve for joint torques
      * 
      * @note Links must be ordered such that parents appear before children
-     * @note For branching trees, all children of a link must have consecutive indices
+     * @note Parent indices must precede child indices; sibling indices need not be consecutive
      */
     class InverseDynamics
     {
@@ -160,7 +160,7 @@ namespace SpatialAlgebra
          *                   τᵢ = fᵢ·Sᵢ
          * 
          * @param gravity Gravity vector (default zero) for gravity-aware dynamics
-         * @throws std::invalid_argument if qddot.size() != links.size()
+         * @throws std::invalid_argument if qddot has neither movable-joint nor legacy link count
          * @throws std::invalid_argument if qddot contains NaN or Inf values
          */
         Eigen::VectorXd computeTorques(const Eigen::VectorXd& qddot, const Vector3d& gravity = Vector3d::Zero());
@@ -181,6 +181,7 @@ namespace SpatialAlgebra
 
     private:
         Vector3d gravity;  ///< Gravity vector (default zero, set by computeTorques)
+        bool fixedLinksHaveDof = false; ///< Legacy per-link input compatibility
 
         /**
          * @brief Outward pass: propagate velocities and accelerations

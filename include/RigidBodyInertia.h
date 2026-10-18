@@ -65,7 +65,16 @@ using lt = LowerTriangular;
             if (newMass > 0.0) {
                 newCom = (mass * com + other.mass * other.com) / newMass;
             }
-            return RigidBodyInertia(newMass, newCom, inertiaMatrixLT + other.inertiaMatrixLT);
+            Vector3d thisOffset = com - newCom;
+            Vector3d otherOffset = other.com - newCom;
+            Eigen::Matrix3d combinedInertia = inertiaMatrixLT.getSymmetricMatrix()
+                + other.inertiaMatrixLT.getSymmetricMatrix()
+                + mass * (thisOffset.squaredNorm() * Eigen::Matrix3d::Identity()
+                          - thisOffset * thisOffset.transpose())
+                + other.mass * (otherOffset.squaredNorm() * Eigen::Matrix3d::Identity()
+                                - otherOffset * otherOffset.transpose());
+            return RigidBodyInertia(
+                newMass, newCom, lt::fromFullMatrix(combinedInertia));
         }
 
         /**

@@ -34,7 +34,7 @@ SpatialVector PluckerTransform::transformForce(const SpatialVector &vec) const
     // Featherstone (2008) Eq 2.44
 
     Vector3d transformedLinear = static_cast<const Eigen::Matrix3d &>(rotation) * vec.getLinear();
-    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) * 
+    Vector3d transformedAngular = static_cast<const Eigen::Matrix3d &>(rotation) *
         (vec.getAngular() - skew(translation) * vec.getLinear());
     return SpatialVector(transformedAngular, transformedLinear);
 }
@@ -76,8 +76,11 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::tformRBI(const RigidBodyInert
     auto y = h - m * translation;  // y = h - m*r = ĥ
     auto h_new = static_cast<const Eigen::Matrix3d &>(rotation) * y;
 
-    auto Z = I + LowerTriangular::fromFullMatrix(skew(translation) * skew(y) + skew(y) * skew(translation));
-    lt I_new = LowerTriangular::fromFullMatrix(static_cast<const Eigen::Matrix3d &>(rotation) * Z * static_cast<const Eigen::Matrix3d &>(rotation).transpose());
+    Eigen::Matrix3d Z = I.getSymmetricMatrix()
+        + skew(translation) * skew(y) + skew(y) * skew(translation);
+    Eigen::Matrix3d I_rotated = static_cast<const Eigen::Matrix3d &>(rotation)
+        * Z * static_cast<const Eigen::Matrix3d &>(rotation).transpose();
+    lt I_new = LowerTriangular::fromFullMatrix(I_rotated);
 
     return RigidBodyInertia(m, h_new, I_new);
 }
@@ -94,7 +97,8 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::invtformRBI(const RigidBodyIn
     auto I = Ihat.getInertiaMatrixLT();
 
     auto h_new = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * h + m * translation;
-    auto I1 = static_cast<const Eigen::Matrix3d &>(rotation.transpose()) * I * static_cast<const Eigen::Matrix3d &>(rotation);
+    auto I1 = static_cast<const Eigen::Matrix3d &>(rotation.transpose())
+        * I.getSymmetricMatrix() * static_cast<const Eigen::Matrix3d &>(rotation);
     auto I2 = skew(translation) * skew(h_new);
     auto I3 = skew(h_new) * skew(translation);
 
@@ -105,113 +109,109 @@ RigidBodyInertia SpatialAlgebra::PluckerTransform::invtformRBI(const RigidBodyIn
 
 ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::tformABI(const ArticulatedBodyInertia &Ia) const
 {
-    // Featherstone (2008) Eq 7.16: I'a = X * Ia * X^T
-    // 
-    // 6x6 block structure: Ia = [I,   H;
-    //                           H^T, M]
-    // where I and M are symmetric (3x3), H is general (3x3)
+    // I' = X * Ia * X^T using block 3×3 formulas (avoids 6×6 temporaries)
     //
-    // Spatial motion transform: X = [R,     0;
-    //                                -R*r̂,  R]
-    // where r̂ = skew(translation)
+    // X = [R, 0; -R·skew(t), R]
+    // Ia = [I, H; H^T, M]
     //
-    // We compute I'a = X * Ia * X^T directly using 6x6 matrices.
-    
-    auto M = Ia.getM();
+    // Block result:
+    //   I'_00 = R·I·R^T
+    //   I'_01 = R·(I·skew(t) + H)·R^T
+    //   I'_11 = R·(-skew(t)·I·skew(t) - skew(t)·H + H^T·skew(t) + M)·R^T
+
+    auto M_lt = Ia.getM();
     auto H = Ia.getH();
-    auto Inertia = Ia.getInertia();
+    auto I_lt = Ia.getInertia();
 
     const Matrix3d& R = static_cast<const Eigen::Matrix3d &>(rotation);
-    Matrix3d r_skew = skew(translation);  // r̂ = skew(t)
-    
-    // Build 6x6 articulated body inertia matrix
-    // I and M are symmetric, so we need to reconstruct the full symmetric matrix
-    // from LowerTriangular storage
-    Matrix3d I_full = Inertia.getSymmetricMatrix();
-    Matrix3d M_full = M.getSymmetricMatrix();
-    
-    // Order: [angular; linear] so Ia = [I, H; H^T, M]
-    MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
-    Ia_6x6.block<3,3>(0,0) = I_full;
-    Ia_6x6.block<3,3>(0,3) = H;
-    Ia_6x6.block<3,3>(3,0) = H.transpose();
-    Ia_6x6.block<3,3>(3,3) = M_full;
-    
-    // Build 6x6 spatial motion transform X = [R, 0; -R*r̂, R]
-    // Featherstone (2008) Eq 2.43: I' = X * Ia * X^T
-    MatrixXd X_6x6 = MatrixXd::Zero(6, 6);
-    X_6x6.block<3,3>(0,0) = R;
-    X_6x6.block<3,3>(0,3) = Matrix3d::Zero();
-    X_6x6.block<3,3>(3,0) = -R * r_skew;  // -R*r̂ (motion transform)
-    X_6x6.block<3,3>(3,3) = R;
-    
-    // Compute I'a = X * Ia * X^T
-    MatrixXd Ia_prime = X_6x6 * Ia_6x6 * X_6x6.transpose();
-    
-    // Extract blocks - I' and M' should be symmetric
-    Matrix3d I_new_full = Ia_prime.block<3,3>(0,0);
-    Matrix3d M_new_full = Ia_prime.block<3,3>(3,3);
-    // Symmetrize to handle numerical errors
-    I_new_full = 0.5 * (I_new_full + I_new_full.transpose());
-    M_new_full = 0.5 * (M_new_full + M_new_full.transpose());
-    
-    lt I_new = LowerTriangular::fromFullMatrix(I_new_full);
-    Matrix3d H_new = Ia_prime.block<3,3>(0,3);
-    lt M_new = LowerTriangular::fromFullMatrix(M_new_full);
-    
-    return ArticulatedBodyInertia(I_new, H_new, M_new);
+    Matrix3d r_skew = skew(translation);  // skew(t)
+    Matrix3d Rt = R.transpose();
+
+    // Get symmetric matrices
+    Matrix3d I_sym = I_lt.getSymmetricMatrix();
+    Matrix3d M_sym = M_lt.getSymmetricMatrix();
+
+    // I'_00 = R·I·R^T
+    Matrix3d I_new = R * I_sym * Rt;
+
+    // I'_01 = R·(I·skew(t) + H)·R^T
+    Matrix3d I_skew = I_sym * r_skew;      // I·skew(t)
+    Matrix3d temp01 = I_skew + H;           // I·skew(t) + H
+    Matrix3d H_new = R * temp01 * Rt;       // R·(I·skew(t)+H)·R^T
+
+    // I'_11 = R·(-skew(t)·I·skew(t) - skew(t)·H + H^T·skew(t) + M)·R^T
+    Matrix3d skew_I = r_skew * I_sym;       // skew(t)·I
+    Matrix3d skew_I_skew = skew_I * r_skew; // skew(t)·I·skew(t)
+    Matrix3d skew_H = r_skew * H;           // skew(t)·H
+    Matrix3d Ht_skew = H.transpose() * r_skew; // H^T·skew(t)
+    Matrix3d temp11 = -skew_I_skew - skew_H + Ht_skew + M_sym;
+    Matrix3d M_new = R * temp11 * Rt;
+
+    // Symmetrize rotational and mass blocks
+    I_new = 0.5 * (I_new + I_new.transpose());
+    M_new = 0.5 * (M_new + M_new.transpose());
+
+    return ArticulatedBodyInertia(
+        LowerTriangular::fromFullMatrix(I_new),
+        H_new,
+        LowerTriangular::fromFullMatrix(M_new));
 }
 
 ArticulatedBodyInertia SpatialAlgebra::PluckerTransform::invtformABI(const ArticulatedBodyInertia &Ia) const
 {
-    // Inverse transform: I' = X^{-1} * Ia * X^{-T}
-    // 
-    // For X = [R, 0; -R*r̂, R], the inverse is:
-    // X^{-1} = [R^T, 0; r̂*R^T, R^T]
-    // and X^{-T} = (X^{-1})^T = [R, -R*r̂; 0, R^T]
+    // I' = X^(-1) * Ia * X^(-T) using block 3×3 formulas
     //
-    // We compute I' = X^{-1} * Ia * X^{-T} directly using 6x6 matrices.
-    
-    auto M = Ia.getM();
+    // X^(-1) = [R^T, 0; skew(t)·R^T, R^T]
+    // X^(-T) = [R, -R·skew(t); 0, R]
+    //
+    // Block result:
+    //   I'_00 = R^T·I·R
+    //   I'_01 = R^T·H·R - R^T·I·R·skew(t)
+    //   I'_11 = -skew(t)·R^T·I·R·skew(t) + skew(t)·R^T·H·R
+    //           - R^T·H^T·R·skew(t) + R^T·M·R
+
+    auto M_lt = Ia.getM();
     auto H = Ia.getH();
-    auto Inertia = Ia.getInertia();
-    
+    auto I_lt = Ia.getInertia();
+
     const Matrix3d& R = static_cast<const Eigen::Matrix3d &>(rotation);
-    Matrix3d r_skew = skew(translation);  // r̂ = skew(t)
-    
-    // Get symmetric matrices from LowerTriangular storage
-    Matrix3d I_full = Inertia.getSymmetricMatrix();
-    Matrix3d M_full = M.getSymmetricMatrix();
-    
-    // Build 6x6 articulated body inertia matrix
-    MatrixXd Ia_6x6 = MatrixXd::Zero(6, 6);
-    Ia_6x6.block<3,3>(0,0) = I_full;
-    Ia_6x6.block<3,3>(0,3) = H;
-    Ia_6x6.block<3,3>(3,0) = H.transpose();
-    Ia_6x6.block<3,3>(3,3) = M_full;
-    
-    // Build 6x6 inverse spatial transform X^{-1} = [R^T, 0; r̂*R^T, R^T]
-    MatrixXd X_inv_6x6 = MatrixXd::Zero(6, 6);
-    X_inv_6x6.block<3,3>(0,0) = R.transpose();
-    X_inv_6x6.block<3,3>(0,3) = Matrix3d::Zero();
-    X_inv_6x6.block<3,3>(3,0) = r_skew * R.transpose();  // r̂*R^T
-    X_inv_6x6.block<3,3>(3,3) = R.transpose();
-    
-    // Compute I' = X^{-1} * Ia * X^{-T}
-    MatrixXd X_inv_T = X_inv_6x6.transpose();
-    MatrixXd Ia_prime = X_inv_6x6 * Ia_6x6 * X_inv_T;
-    
-    // Extract blocks and symmetrize
-    Matrix3d I_new_full = Ia_prime.block<3,3>(0,0);
-    Matrix3d M_new_full = Ia_prime.block<3,3>(3,3);
-    I_new_full = 0.5 * (I_new_full + I_new_full.transpose());
-    M_new_full = 0.5 * (M_new_full + M_new_full.transpose());
-    
-    lt I_new = LowerTriangular::fromFullMatrix(I_new_full);
-    Matrix3d H_new = Ia_prime.block<3,3>(0,3);
-    lt M_new = LowerTriangular::fromFullMatrix(M_new_full);
-    
-    return ArticulatedBodyInertia(I_new, H_new, M_new);
+    Matrix3d r_skew = skew(translation);
+    Matrix3d Rt = R.transpose();
+
+    Matrix3d I_sym = I_lt.getSymmetricMatrix();
+    Matrix3d M_sym = M_lt.getSymmetricMatrix();
+
+    // I'_00 = R^T·I·R
+    Matrix3d I_new = Rt * I_sym * R;
+
+    // Shared intermediate: R^T·I·R (already in I_new)
+    Matrix3d Rt_I_R = I_new;
+
+    // I'_01 = R^T·H·R - R^T·I·R·skew(t)
+    Matrix3d Rt_I_R_skew = Rt_I_R * r_skew;
+    Matrix3d Rt_H_R = Rt * H * R;
+    Matrix3d H_new = Rt_H_R - Rt_I_R_skew;
+
+    // I'_11 = -skew(t)·R^T·I·R·skew(t) + skew(t)·R^T·H·R
+    //         - R^T·H^T·R·skew(t) + R^T·M·R
+    Matrix3d skew_Rt_I_R = r_skew * Rt_I_R;
+    Matrix3d skew_Rt_I_R_skew = skew_Rt_I_R * r_skew;
+    Matrix3d skew_Rt_H_R = r_skew * Rt_H_R;
+    Matrix3d Rt_Ht_R = Rt * H.transpose() * R;
+    Matrix3d Rt_Ht_R_skew = Rt_Ht_R * r_skew;
+    Matrix3d Rt_M_R = Rt * M_sym * R;
+
+    Matrix3d temp11 = -skew_Rt_I_R_skew + skew_Rt_H_R - Rt_Ht_R_skew + Rt_M_R;
+    Matrix3d M_new = temp11;
+
+    // Symmetrize
+    I_new = 0.5 * (I_new + I_new.transpose());
+    M_new = 0.5 * (M_new + M_new.transpose());
+
+    return ArticulatedBodyInertia(
+        LowerTriangular::fromFullMatrix(I_new),
+        H_new,
+        LowerTriangular::fromFullMatrix(M_new));
 }
 
 PluckerTransform PluckerTransform::inverse() const
@@ -219,7 +219,7 @@ PluckerTransform PluckerTransform::inverse() const
     // X = [R, 0; -R[t]x, R]
     // X^{-1} = [R^T, 0; [t]x*R^T, R^T] = [R^T, 0; -R^T*[-R*t]x, R^T]
     // So the inverse has: R_inv = R^T, t_inv = -R*t (not -R^T*t!)
-    
+
     const Matrix3d& R = static_cast<const Matrix3d &>(rotation);
     Rotation invRotation = rotation.transpose();
     Vector3d invTranslation = -R * translation;  // -R*t, not -R^T*t

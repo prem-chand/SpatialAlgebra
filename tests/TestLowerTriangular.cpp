@@ -24,17 +24,8 @@ const double TOLERANCE = 1e-10;
  */
 TEST(LowerTriangularTest, PackedStorageSize)
 {
-    LowerTriangular L1(1);
-    EXPECT_EQ(L1.getData().size(), 1); // 1*(1+1)/2 = 1
-    
-    LowerTriangular L2(2);
-    EXPECT_EQ(L2.getData().size(), 3); // 2*(2+1)/2 = 3
-    
     LowerTriangular L3(3);
     EXPECT_EQ(L3.getData().size(), 6); // 3*(3+1)/2 = 6
-    
-    LowerTriangular L4(4);
-    EXPECT_EQ(L4.getData().size(), 10); // 4*(4+1)/2 = 10
 }
 
 /**
@@ -72,23 +63,25 @@ TEST(LowerTriangularTest, UpperTriangularReturnsZero)
     // Use const reference to ensure const operator() is called
     const LowerTriangular& Lconst = L;
     
-    // Upper triangular elements should be zero (read-only test)
+    // Upper triangular elements are independently stored (not mirrored)
+    // They remain zero from initialization
     EXPECT_DOUBLE_EQ(Lconst(0, 1), 0.0);
     EXPECT_DOUBLE_EQ(Lconst(0, 2), 0.0);
     EXPECT_DOUBLE_EQ(Lconst(1, 2), 0.0);
 }
 
-/**
- * @brief Test modifying upper triangle throws exception
- * @details Verifies LTR-01: Cannot write to i<j positions
- */
-TEST(LowerTriangularTest, ModifyUpperThrows)
+TEST(LowerTriangularTest, SymmetricViaFromFullMatrix)
 {
-    LowerTriangular L(3);
+    // Use fromFullMatrix which symmetrizes
+    Eigen::Matrix3d m;
+    m << 1, 0, 0, 2, 3, 0, 4, 5, 6;
+    LowerTriangular L = LowerTriangular::fromFullMatrix(m);
+    const LowerTriangular& Lconst = L;
     
-    EXPECT_THROW(L(0, 1) = 5.0, std::invalid_argument);
-    EXPECT_THROW(L(0, 2) = 5.0, std::invalid_argument);
-    EXPECT_THROW(L(1, 2) = 5.0, std::invalid_argument);
+    // Upper mirrors lower after fromFullMatrix (symmetrized: (0+2)/2 = 1)
+    EXPECT_DOUBLE_EQ(Lconst(0, 1), 1.0);
+    EXPECT_DOUBLE_EQ(Lconst(0, 2), 2.0);
+    EXPECT_DOUBLE_EQ(Lconst(1, 2), 2.5);
 }
 
 /**

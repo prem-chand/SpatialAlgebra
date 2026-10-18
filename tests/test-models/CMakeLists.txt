@@ -24,36 +24,80 @@ target_link_libraries(sa_test_adapter PUBLIC test_models SpatialAlgebra)
 target_include_directories(sa_test_adapter PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # ---------------------------------------------------------------------------
-# Pinocchio cross-validation adapter: pinocchio_adapter (bridges test_models ↔ Pinocchio)
-# Guarded by SA_BUILD_PINOCCHIO_BENCHMARKS (default OFF, set in root CMakeLists.txt).
-# Requires Pinocchio C++ library from https://stack-of-tasks.github.io/pinocchio/.
-# The pinocchio::pinocchio IMPORTED target is created in root CMakeLists.txt via
-# find_path/find_library (NOT find_package) to bypass pinocchioConfig.cmake's
-# find_package(Boost REQUIRED COMPONENTS system) call, which fails on Homebrew
-# Boost 1.89.0 because boost_system is header-only (no libboost_system.dylib).
+# MuJoCo cross-validation adapter (optional, requires MuJoCo C library)
 # ---------------------------------------------------------------------------
-if(SA_BUILD_PINOCCHIO_BENCHMARKS)
-    add_library(pinocchio_test_adapter pinocchio_adapter.cpp)
-    target_link_libraries(pinocchio_test_adapter PUBLIC test_models pinocchio::pinocchio)
-    target_include_directories(pinocchio_test_adapter PRIVATE ${CMAKE_SOURCE_DIR}/include)
+find_library(MUJOCO_LIBRARY mujoco
+    HINTS /usr/local/lib /opt/homebrew/lib
+)
+find_path(MUJOCO_INCLUDE_DIR mujoco/mujoco.h
+    HINTS /usr/local/include /opt/homebrew/include
+)
 
-    # Cross-validation comparison benchmark (GTest)
-    add_executable(bench_pinocchio_comparison
-        ${CMAKE_SOURCE_DIR}/tests/bench_pinocchio_comparison.cpp
+if(MUJOCO_LIBRARY AND MUJOCO_INCLUDE_DIR)
+    message(STATUS "Found MuJoCo: ${MUJOCO_LIBRARY}")
+    message(STATUS "Found MuJoCo headers: ${MUJOCO_INCLUDE_DIR}")
+
+    add_library(mujoco_test_adapter mujoco_adapter.cpp)
+    target_link_libraries(mujoco_test_adapter PUBLIC test_models)
+    target_link_libraries(mujoco_test_adapter PRIVATE ${MUJOCO_LIBRARY})
+    target_include_directories(mujoco_test_adapter PRIVATE ${MUJOCO_INCLUDE_DIR})
+
+    # MJCF parser library
+    add_library(mjcf_parser mjcf_parser.cpp)
+    target_link_libraries(mjcf_parser PUBLIC test_models)
+    target_link_libraries(mjcf_parser PRIVATE ${MUJOCO_LIBRARY})
+    target_include_directories(mjcf_parser PRIVATE ${MUJOCO_INCLUDE_DIR})
+
+    # MuJoCo adapter smoke test
+    add_executable(test_mujoco_adapter
+        ${CMAKE_SOURCE_DIR}/tests/test_mujoco_adapter.cpp
     )
-    target_link_libraries(bench_pinocchio_comparison PRIVATE
+    target_link_libraries(test_mujoco_adapter PRIVATE
         test_models
         sa_test_adapter
-        pinocchio_test_adapter
+        mujoco_test_adapter
+        mjcf_parser
+        ${MUJOCO_LIBRARY}
         SpatialAlgebra
         GTest::GTest
         GTest::Main
     )
-    target_include_directories(bench_pinocchio_comparison PRIVATE
+    target_include_directories(test_mujoco_adapter PRIVATE
         ${CMAKE_SOURCE_DIR}/include
+        ${MUJOCO_INCLUDE_DIR}
     )
-    add_test(NAME bench_pinocchio_comparison COMMAND bench_pinocchio_comparison)
+    target_compile_definitions(test_mujoco_adapter PRIVATE
+        MODELS_ROOT="${CMAKE_SOURCE_DIR}/models"
+    )
+    add_test(NAME test_mujoco_adapter COMMAND test_mujoco_adapter)
+
+    option(SA_BUILD_MUJOCO_BENCHMARKS "Build the MuJoCo comparison benchmark" OFF)
+    if(SA_BUILD_MUJOCO_BENCHMARKS)
+        add_executable(bench_mujoco_comparison
+            ${CMAKE_SOURCE_DIR}/tests/bench_mujoco_comparison.cpp
+        )
+        target_link_libraries(bench_mujoco_comparison PRIVATE
+            test_models
+            sa_test_adapter
+            mujoco_test_adapter
+            mjcf_parser
+            SpatialAlgebra
+            GTest::GTest
+            GTest::Main
+        )
+        target_include_directories(bench_mujoco_comparison PRIVATE
+            ${CMAKE_SOURCE_DIR}/include
+            ${MUJOCO_INCLUDE_DIR}
+        )
+        target_compile_definitions(bench_mujoco_comparison PRIVATE
+            MODELS_ROOT="${CMAKE_SOURCE_DIR}/models"
+        )
+    endif()
+else()
+    message(STATUS "MuJoCo not found — skipping mujoco adapter build")
+
 endif()
+
 # ---------------------------------------------------------------------------
 # Smoke test: verifies zero-dependency guarantee compiles
 # Links ONLY test_models (NOT SpatialAlgebra). If any SA type leaks into

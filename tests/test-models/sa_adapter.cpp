@@ -8,7 +8,7 @@
  *          kinematics, and a world-frame transform cache.
  *
  *          Conversion patterns follow benchmarks/common/model_factory.cpp:
- *          - Matrix4d → PluckerTransform via Rotation(R) + Vector3d(t)
+ *          - Matrix4d [R | t] → PluckerTransform(Rotation(Rᵀ), t)
  *          - mass+com+dense-inertia → RigidBodyInertia with symmetrization (Pitfall 2)
  *          - Vector3d+JointType → MotionVector screw axis (Pitfall 3 convention)
  *
@@ -48,6 +48,8 @@ struct SpatialAlgebraAdapter::Impl {
     SpatialAlgebra::InverseDynamics id_;       ///< RNEA solver
     std::vector<JointType> jointTypes_;        ///< Joint type per link
     std::vector<Eigen::Vector3d> jointAxes_;   ///< Joint axis per link
+    std::vector<int> dofToLink_;                ///< Link index for each actuated DOF
+    std::vector<int> linkToDof_;                ///< DOF index per link, or -1 when fixed
     std::vector<SpatialAlgebra::PluckerTransform> worldX_; ///< World-frame transforms
 };
 
@@ -59,10 +61,24 @@ namespace {
 
 using Vector3d = Eigen::Vector3d;
 
+// -------------------------------------------------------------------------
+// JointType mapping: test_models::JointType → SpatialAlgebra::JointType
+//   test_models: REVOLUTE=0, PRISMATIC=1, FIXED=2
+//   SpatialAlgebra: FIXED=0, REVOLUTE=1, PRISMATIC=2
+// -------------------------------------------------------------------------
+SpatialAlgebra::JointType mapJointType(test_models::JointType jt) {
+    using SA = SpatialAlgebra::JointType;
+    switch (jt) {
+        case test_models::JointType::REVOLUTE:  return SA::REVOLUTE;
+        case test_models::JointType::PRISMATIC: return SA::PRISMATIC;
+        case test_models::JointType::FIXED:     return SA::FIXED;
+    }
+    return SA::FIXED;
+}
+
 /**
  * @brief Build a ForwardDynamics solver from a RobotModel
  * @param model Kinematic chain description
- * @param dof Number of degrees of freedom
  * @param[out] jointTypes Filled with JointType per link
  * @param[out] jointAxes Filled with joint axis per link
  * @return Fully constructed ForwardDynamics solver object
@@ -71,14 +87,14 @@ using Vector3d = Eigen::Vector3d;
  *          Vector3d+JointType → MotionVector screw axis.
  *          Inertia is symmetrized before conversion per Pitfall 2.
  */
-SpatialAlgebra::ForwardDynamics buildFD(const RobotModel& model, int dof,
+SpatialAlgebra::ForwardDynamics buildFD(const RobotModel& model,
                                          std::vector<JointType>& jointTypes,
                                          std::vector<Eigen::Vector3d>& jointAxes) {
     SpatialAlgebra::ForwardDynamics fd;
-    fd.links.reserve(static_cast<size_t>(dof));
+    fd.links.reserve(model.joints.size());
 
-    for (int i = 0; i < dof; ++i) {
-        const auto& js = model.joints[static_cast<size_t>(i)];
+    for (size_t i = 0; i < model.joints.size(); ++i) {
+        const auto& js = model.joints[i];
         SpatialAlgebra::Link link;
 
         // Parent index
@@ -86,7 +102,7 @@ SpatialAlgebra::ForwardDynamics buildFD(const RobotModel& model, int dof,
 
         // Convert Matrix4d → PluckerTransform per Pitfall 3 convention
         link.X = SpatialAlgebra::PluckerTransform(
-            SpatialAlgebra::Rotation(js.parentToJoint.topLeftCorner<3, 3>()),
+            SpatialAlgebra::Rotation(js.parentToJoint.topLeftCorner<3, 3>().transpose()),
             js.parentToJoint.topRightCorner<3, 1>()
         );
 
@@ -115,6 +131,11 @@ SpatialAlgebra::ForwardDynamics buildFD(const RobotModel& model, int dof,
         link.qdot = 0.0;
         link.f = SpatialAlgebra::ForceVector(Vector3d::Zero(), Vector3d::Zero());
 
+        // Joint metadata for q-dependent kinematics (updateKinematics)
+        link.type = mapJointType(js.type);
+        link.jointAxis = js.jointAxis;
+        link.X0 = link.X;
+
         fd.links.push_back(std::move(link));
 
         // Store metadata for forward kinematics
@@ -128,23 +149,22 @@ SpatialAlgebra::ForwardDynamics buildFD(const RobotModel& model, int dof,
 /**
  * @brief Build an InverseDynamics solver from a RobotModel
  * @param model Kinematic chain description
- * @param dof Number of degrees of freedom
  * @return Fully constructed InverseDynamics solver object
  * @details Same conversion pattern as buildFD() but using InverseDynamicsLink struct.
  */
-SpatialAlgebra::InverseDynamics buildID(const RobotModel& model, int dof) {
+SpatialAlgebra::InverseDynamics buildID(const RobotModel& model) {
     SpatialAlgebra::InverseDynamics id;
-    id.links.reserve(static_cast<size_t>(dof));
+    id.links.reserve(model.joints.size());
 
-    for (int i = 0; i < dof; ++i) {
-        const auto& js = model.joints[static_cast<size_t>(i)];
+    for (size_t i = 0; i < model.joints.size(); ++i) {
+        const auto& js = model.joints[i];
         SpatialAlgebra::InverseDynamicsLink link;
 
         link.parent = js.parent;
 
         // Matrix4d → PluckerTransform
         link.X = SpatialAlgebra::PluckerTransform(
-            SpatialAlgebra::Rotation(js.parentToJoint.topLeftCorner<3, 3>()),
+            SpatialAlgebra::Rotation(js.parentToJoint.topLeftCorner<3, 3>().transpose()),
             js.parentToJoint.topRightCorner<3, 1>()
         );
 
@@ -172,6 +192,11 @@ SpatialAlgebra::InverseDynamics buildID(const RobotModel& model, int dof) {
         link.q = 0.0;
         link.qdot = 0.0;
         link.qddot = 0.0;
+
+        // Joint metadata for q-dependent kinematics (updateKinematics)
+        link.type = mapJointType(js.type);
+        link.jointAxis = js.jointAxis;
+        link.X0 = link.X;
 
         id.links.push_back(std::move(link));
     }
@@ -201,10 +226,18 @@ std::unique_ptr<SpatialAlgebraAdapter> SpatialAlgebraAdapter::build(
     adapter->impl_ = std::make_unique<Impl>();
 
     // Build both solvers from the same RobotModel
-    adapter->impl_->fd_ = buildFD(model, dof,
+    adapter->impl_->fd_ = buildFD(model,
                                    adapter->impl_->jointTypes_,
                                    adapter->impl_->jointAxes_);
-    adapter->impl_->id_ = buildID(model, dof);
+    adapter->impl_->id_ = buildID(model);
+    adapter->impl_->linkToDof_.resize(model.joints.size(), -1);
+    for (size_t link = 0; link < model.joints.size(); ++link) {
+        if (model.joints[link].type != JointType::FIXED) {
+            adapter->impl_->linkToDof_[link] =
+                static_cast<int>(adapter->impl_->dofToLink_.size());
+            adapter->impl_->dofToLink_.push_back(static_cast<int>(link));
+        }
+    }
 
     // Initialize FK dirty flag
     adapter->fkDirty_ = true;
@@ -239,10 +272,11 @@ void SpatialAlgebraAdapter::setState(const Eigen::VectorXd& q,
 
     // Copy to both FD and ID solvers
     for (int i = 0; i < dof_; ++i) {
-        impl_->fd_.links[static_cast<size_t>(i)].q = q[i];
-        impl_->fd_.links[static_cast<size_t>(i)].qdot = qdot[i];
-        impl_->id_.links[static_cast<size_t>(i)].q = q[i];
-        impl_->id_.links[static_cast<size_t>(i)].qdot = qdot[i];
+        size_t link = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)]);
+        impl_->fd_.links[link].q = q[i];
+        impl_->fd_.links[link].qdot = qdot[i];
+        impl_->id_.links[link].q = q[i];
+        impl_->id_.links[link].qdot = qdot[i];
     }
 
     fkDirty_ = true;
@@ -265,7 +299,8 @@ Eigen::VectorXd SpatialAlgebraAdapter::computeTorques(
 
     // Copy qddot to ID link structs
     for (int i = 0; i < dof_; ++i) {
-        impl_->id_.links[static_cast<size_t>(i)].qddot = qddot[i];
+        size_t link = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)]);
+        impl_->id_.links[link].qddot = qddot[i];
     }
 
     autoFK();
@@ -296,7 +331,8 @@ Eigen::VectorXd SpatialAlgebraAdapter::computeAccelerations(
     // Extract resulting qddot from FD link structs
     Eigen::VectorXd result(dof_);
     for (int i = 0; i < dof_; ++i) {
-        result[i] = impl_->fd_.links[static_cast<size_t>(i)].qddot;
+        size_t link = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)]);
+        result[i] = impl_->fd_.links[link].qddot;
     }
     return result;
 }
@@ -307,9 +343,9 @@ Eigen::VectorXd SpatialAlgebraAdapter::computeAccelerations(
 
 void SpatialAlgebraAdapter::forwardKinematics() {
     impl_->worldX_.clear();
-    impl_->worldX_.reserve(static_cast<size_t>(dof_));
+    impl_->worldX_.reserve(impl_->fd_.links.size());
 
-    for (int i = 0; i < dof_; ++i) {
+    for (size_t i = 0; i < impl_->fd_.links.size(); ++i) {
         const auto& link = impl_->fd_.links[static_cast<size_t>(i)];
         JointType jt = impl_->jointTypes_[static_cast<size_t>(i)];
         const Vector3d& axis = impl_->jointAxes_[static_cast<size_t>(i)];
@@ -322,7 +358,7 @@ void SpatialAlgebraAdapter::forwardKinematics() {
         switch (jt) {
             case JointType::REVOLUTE:
                 jointRot = SpatialAlgebra::Rotation(
-                    Eigen::AngleAxisd(qi, axis));
+                    Eigen::AngleAxisd(-qi, axis));
                 break;
             case JointType::PRISMATIC:
                 jointTrans = axis * qi;
@@ -334,17 +370,14 @@ void SpatialAlgebraAdapter::forwardKinematics() {
 
         SpatialAlgebra::PluckerTransform X_joint(jointRot, jointTrans);
 
-        // Compose: X_link = link.X * X_joint(q) — joint displacement first
-        SpatialAlgebra::PluckerTransform X_link = link.X.multiply(X_joint);
+        SpatialAlgebra::PluckerTransform X_link = X_joint.multiply(link.X0);
 
         if (link.parent < 0) {
             // Base link: world transform is just the link transform
             impl_->worldX_.push_back(X_link);
         } else {
-            // Compose: worldX[i] = worldX[parent] * X_link
-            const auto& worldParent = impl_->worldX_[
-                static_cast<size_t>(link.parent)];
-            impl_->worldX_.push_back(worldParent.multiply(X_link));
+            const auto& worldParent = impl_->worldX_[static_cast<size_t>(link.parent)];
+            impl_->worldX_.push_back(X_link.multiply(worldParent));
         }
     }
 }
@@ -362,15 +395,13 @@ Eigen::Matrix4d SpatialAlgebraAdapter::getJointTransform(int idx) const {
 
     const_cast<SpatialAlgebraAdapter*>(this)->autoFK();
 
-    const auto& worldX = impl_->worldX_[static_cast<size_t>(idx)];
+    size_t linkIndex = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(idx)]);
+    const auto& worldX = impl_->worldX_[linkIndex];
     const Eigen::Matrix3d& R = worldX.getRotation();
     const Vector3d& t = worldX.getTranslation();
     Eigen::Matrix4d T = Eigen::Matrix4d::Identity();
-    T.topLeftCorner<3, 3>() = R;
-    // Convert Plücker translation to standard homogeneous translation:
-    // t_homog = R * t_pluck (t_pluck is vector from this→reference in this frame;
-    // t_homog is vector from reference→this in reference frame)
-    T.topRightCorner<3, 1>() = R * t;
+    T.topLeftCorner<3, 3>() = R.transpose();
+    T.topRightCorner<3, 1>() = t;
     return T;
 }
 
@@ -387,25 +418,26 @@ Eigen::MatrixXd SpatialAlgebraAdapter::computeMassMatrix() {
     std::vector<double> savedQddot(static_cast<size_t>(dof_));
     std::vector<double> savedQdot(static_cast<size_t>(dof_));
     for (int i = 0; i < dof_; ++i) {
+        size_t link = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)]);
         savedQddot[static_cast<size_t>(i)] =
-            impl_->id_.links[static_cast<size_t>(i)].qddot;
+            impl_->id_.links[link].qddot;
         savedQdot[static_cast<size_t>(i)] =
-            impl_->id_.links[static_cast<size_t>(i)].qdot;
+            impl_->id_.links[link].qdot;
     }
 
     // Zero velocity — mass matrix is a function of position only
     for (int k = 0; k < dof_; ++k) {
-        impl_->id_.links[static_cast<size_t>(k)].qdot = 0.0;
+        impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(k)])].qdot = 0.0;
     }
 
     // For each DOF, set unit acceleration and compute torque column
     for (int j = 0; j < dof_; ++j) {
         // Zero all qddot
         for (int k = 0; k < dof_; ++k) {
-            impl_->id_.links[static_cast<size_t>(k)].qddot = 0.0;
+            impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(k)])].qddot = 0.0;
         }
         // Set unit acceleration for column j
-        impl_->id_.links[static_cast<size_t>(j)].qddot = 1.0;
+        impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(j)])].qddot = 1.0;
 
         Eigen::VectorXd e_j = Eigen::VectorXd::Zero(dof_);
         e_j[j] = 1.0;
@@ -417,9 +449,9 @@ Eigen::MatrixXd SpatialAlgebraAdapter::computeMassMatrix() {
 
     // Restore original qddot and qdot values
     for (int i = 0; i < dof_; ++i) {
-        impl_->id_.links[static_cast<size_t>(i)].qddot =
+            impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)])].qddot =
             savedQddot[static_cast<size_t>(i)];
-        impl_->id_.links[static_cast<size_t>(i)].qdot =
+            impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)])].qdot =
             savedQdot[static_cast<size_t>(i)];
     }
 
@@ -437,12 +469,21 @@ Eigen::VectorXd SpatialAlgebraAdapter::computeGravityTorques(
 
     Eigen::VectorXd qddotZero = Eigen::VectorXd::Zero(dof_);
 
-    // Zero all qddot in ID links
+    std::vector<double> qdot(static_cast<size_t>(dof_));
     for (int i = 0; i < dof_; ++i) {
-        impl_->id_.links[static_cast<size_t>(i)].qddot = 0.0;
+        auto& link = impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)])];
+        qdot[static_cast<size_t>(i)] = link.qdot;
+        link.qdot = 0.0;
+        link.qddot = 0.0;
     }
 
-    return impl_->id_.computeTorques(qddotZero, gravity);
+    Eigen::VectorXd tau = impl_->id_.computeTorques(qddotZero, gravity);
+
+    for (int i = 0; i < dof_; ++i) {
+        impl_->id_.links[static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(i)])].qdot =
+            qdot[static_cast<size_t>(i)];
+    }
+    return tau;
 }
 
 // =========================================================================
@@ -460,34 +501,36 @@ Eigen::MatrixXd SpatialAlgebraAdapter::computeJointSpaceJacobian(int idx) {
 
     Eigen::MatrixXd J = Eigen::MatrixXd::Zero(6, dof_);
 
-    for (int j = 0; j < dof_; ++j) {
-        // Check if link j is an ancestor of (or equal to) link idx
+    size_t targetLink = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(idx)]);
+    for (size_t j = 0; j < impl_->fd_.links.size(); ++j) {
+        // Check if link j is an ancestor of (or equal to) the selected DOF link
         bool isAncestor = false;
-        int current = idx;
+        int current = static_cast<int>(targetLink);
         while (current >= 0) {
             if (current == j) {
                 isAncestor = true;
                 break;
             }
-            current = impl_->fd_.links[
-                static_cast<size_t>(current)].parent;
+            current = impl_->fd_.links[static_cast<size_t>(current)].parent;
         }
         if (!isAncestor) {
             continue; // Column stays zero
         }
 
+        int column = impl_->linkToDof_[j];
+        if (column < 0) continue;
+
         // Get joint screw axis in world frame
         const auto& S_local = impl_->fd_.links[
-            static_cast<size_t>(j)].S;
-        const auto& worldX_j = impl_->worldX_[
-            static_cast<size_t>(j)];
+            j].S;
+        const auto& worldX_j = impl_->worldX_[j];
 
         SpatialAlgebra::MotionVector S_world =
-            worldX_j.transformMotion(S_local);
+            worldX_j.inverseTransformMotion(S_local);
 
         // Column j = [angular; linear] of the world-frame screw axis
-        J.col(j).head<3>() = S_world.getAngular();
-        J.col(j).tail<3>() = S_world.getLinear();
+        J.col(column).head<3>() = S_world.getAngular();
+        J.col(column).tail<3>() = S_world.getLinear();
     }
 
     return J;
@@ -506,16 +549,13 @@ Eigen::Vector3d SpatialAlgebraAdapter::getLinkCOM(int idx) const {
 
     const_cast<SpatialAlgebraAdapter*>(this)->autoFK();
 
-    const auto& rbi = impl_->fd_.links[static_cast<size_t>(idx)].I;
-    const auto& worldX = impl_->worldX_[static_cast<size_t>(idx)];
+    size_t link = static_cast<size_t>(impl_->dofToLink_[static_cast<size_t>(idx)]);
+    const auto& rbi = impl_->fd_.links[link].I;
+    const auto& worldX = impl_->worldX_[link];
     const Eigen::Matrix3d& R = worldX.getRotation();
     const Vector3d& t = worldX.getTranslation();
 
-    // Transform local COM to world: worldCOM = R * (localCOM + t_pluck)
-    // where t_pluck is the Plücker translation (vector from this→reference in this frame).
-    // The standard homogeneous offset is t_homog = R * t_pluck, so:
-    // worldCOM = R * localCOM + t_homog = R * localCOM + R * t_pluck = R * (localCOM + t_pluck)
-    return R * (rbi.getCom() + t);
+    return R.transpose() * rbi.getCom() + t;
 }
 
 // =========================================================================

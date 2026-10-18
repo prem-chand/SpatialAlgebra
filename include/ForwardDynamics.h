@@ -96,7 +96,7 @@ namespace SpatialAlgebra
         
         MotionVector v;                 ///< Spatial velocity (computed in outward pass)
         MotionVector c;                 ///< Bias acceleration (Coriolis/centrifugal)
-        ForceVector f;                  ///< Spatial force (external forces)
+        ForceVector f;                  ///< Applied external wrench in this link frame
         
         ArticulatedBodyInertia Ia;      ///< Articulated body inertia (computed in inward pass)
         ForceVector pa;                 ///< Bias force (computed in inward pass)
@@ -156,7 +156,7 @@ namespace SpatialAlgebra
      *          3. Call computeAccelerations(tau) to solve for qddot
      * 
      * @note Links must be ordered such that parents appear before children
-     * @note For branching trees, all children of a link must have consecutive indices
+         * @note Parent indices must precede child indices; sibling indices need not be consecutive
      */
     class ForwardDynamics
     {
@@ -165,7 +165,8 @@ namespace SpatialAlgebra
 
         /**
          * @brief Compute joint accelerations from applied torques
-         * @param tau Vector of joint torques (must match links.size())
+         * @param tau Joint torques, one value per movable joint. For legacy callers,
+         *            a vector matching links.size() is also accepted.
          * @details Main entry point for forward dynamics computation.
          *          Executes the ABA:
          *          1. Outward pass: propagate velocities, compute bias accelerations
@@ -178,7 +179,7 @@ namespace SpatialAlgebra
          *          where Iₐ is articulated inertia and pₐ is bias force
          * 
          * @param gravity Gravity vector (default zero) for gravity-aware dynamics
-         * @throws std::invalid_argument if tau.size() != links.size()
+         * @throws std::invalid_argument if tau has neither movable-joint nor legacy link count
          * @throws std::runtime_error if denominator is near zero (singular configuration)
          */
         void computeAccelerations(const Eigen::VectorXd& tau, const Vector3d& gravity = Vector3d::Zero());
@@ -199,6 +200,7 @@ namespace SpatialAlgebra
 
     private:
         Vector3d gravity;  ///< Gravity vector (default zero, set by computeAccelerations)
+        bool fixedLinksHaveDof = false; ///< Legacy per-link input compatibility
 
         /**
          * @brief Outward pass: propagate velocities and compute bias accelerations

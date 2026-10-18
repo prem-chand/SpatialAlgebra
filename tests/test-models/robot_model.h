@@ -41,7 +41,7 @@ enum class JointType { REVOLUTE, PRISMATIC, FIXED };
  *          to its parent. All fields use only Eigen3 types — no
  *          SA library dependency. Designed to be directly convertible
  *          to solver-specific types (FD/ID link structs,
- *          pinocchio::Model, etc.).
+ *          mujoco::mjModel, etc.).
  *
  *          The parentToJoint transform uses a 4×4 homogeneous matrix
  *          [R | t; 0 | 1] convention in the parent frame, where R is the
@@ -82,12 +82,10 @@ struct JointSpec {
  * @details An ordered collection of JointSpec entries describing a robot
  *          model as a kinematic tree. Links must be in topological order:
  *          parent links MUST appear before their children in the joints
- *          vector. For branching trees, multiple children of the same
- *          parent must have consecutive indices.
+ *          vector. Branching trees may place siblings at nonconsecutive indices.
  *
- *          The degrees of freedom are derived from the number of joints
- *          (1 DOF per joint). This matches all existing SA library
- *          test models which use exclusively 1-DOF joints.
+ *          Fixed joints contribute no degrees of freedom. Revolute and
+ *          prismatic joints each contribute one degree of freedom.
  *
  *          Usage:
  *          @code{.cpp}
@@ -112,10 +110,25 @@ struct RobotModel {
                                    ///< order
 
     /**
-     * @brief Number of degrees of freedom
-     * @return Total number of joints (1 DOF per joint)
+     * @brief Whether this model has a floating base
+     * @details When true, the first 6 joints are virtual (3 prismatic + 3 revolute)
+     *          representing the floating base DOF. The actual base body mass/inertia
+     *          is on joint 5 (the last virtual joint). Fixed entries do not
+     *          contribute to the DOF count.
      */
-    int getDOF() const { return static_cast<int>(joints.size()); }
+    bool floatingBase = false;
+
+    /**
+     * @brief Number of degrees of freedom
+     * @return Number of revolute and prismatic joints
+     */
+    int getDOF() const {
+        int dof = 0;
+        for (const auto& joint : joints) {
+            if (joint.type != JointType::FIXED) ++dof;
+        }
+        return dof;
+    }
 };
 
 } // namespace test_models

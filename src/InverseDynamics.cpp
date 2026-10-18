@@ -55,8 +55,9 @@ namespace SpatialAlgebra
                 links[i].v = links[i].S * links[i].qdot;
                 
                 // a₀ = S₀·q̈₀ − g (Featherstone D-08: gravity subtracts from base acceleration)
-                links[i].a = links[i].S * links[i].qddot
-                           - MotionVector(Vector3d::Zero(), gravity);
+                links[i].a = links[i].X.transformMotion(
+                    MotionVector(Vector3d::Zero(), -gravity))
+                           + links[i].S * links[i].qddot;
             }
             else
             {
@@ -79,7 +80,17 @@ namespace SpatialAlgebra
 
     Eigen::VectorXd InverseDynamics::inwardPass()
     {
-        Eigen::VectorXd tau = Eigen::VectorXd::Zero(links.size());
+        int dof = 0;
+        for (const auto& link : links) {
+            if (fixedLinksHaveDof || link.type != JointType::FIXED) ++dof;
+        }
+        Eigen::VectorXd tau = Eigen::VectorXd::Zero(dof);
+        std::vector<int> tauIndex(links.size(), -1);
+        int nextTau = 0;
+        for (size_t i = 0; i < links.size(); ++i) {
+            if (fixedLinksHaveDof || links[i].type != JointType::FIXED)
+                tauIndex[i] = nextTau++;
+        }
 
         // Accumulate forces tip-to-base in O(n): each link's force is computed
         // from its own inertia/acceleration, then immediately propagated to its
@@ -100,8 +111,10 @@ namespace SpatialAlgebra
             );
 
             // τᵢ = Sᵢ · fᵢ
-            tau[i] = f[i].getAngular().dot(links[i].S.getAngular()) +
-                     f[i].getLinear().dot(links[i].S.getLinear());
+            if (tauIndex[i] >= 0) {
+                tau[tauIndex[i]] = f[i].getAngular().dot(links[i].S.getAngular()) +
+                                   f[i].getLinear().dot(links[i].S.getLinear());
+            }
 
             // Propagate to parent: fᵢ_parent += Xᵢ⁻ᵀ · fᵢ
             int parent = links[i].parent;
@@ -121,12 +134,16 @@ namespace SpatialAlgebra
     Eigen::VectorXd InverseDynamics::computeTorques(const Eigen::VectorXd& qddot, const Vector3d& gravity)
     {
         // Validate input dimensions
-        if (qddot.size() != static_cast<int>(links.size()))
+        int movableDof = 0;
+        for (const auto& link : links) {
+            if (link.type != JointType::FIXED) ++movableDof;
+        }
+        if (qddot.size() != movableDof && qddot.size() != static_cast<int>(links.size()))
         {
             throw std::invalid_argument(
-                "InverseDynamics::computeTorques: qddot size (" + 
-                std::to_string(qddot.size()) + ") does not match link count (" + 
-                std::to_string(links.size()) + ")"
+                "InverseDynamics::computeTorques: qddot size (" +
+                std::to_string(qddot.size()) + ") does not match DOF count (" +
+                std::to_string(movableDof) + ")"
             );
         }
         
@@ -143,9 +160,12 @@ namespace SpatialAlgebra
         }
         
         // Set joint accelerations from input
+        fixedLinksHaveDof = qddot.size() == static_cast<int>(links.size());
+        int dofIndex = 0;
         for (int i = 0; i < static_cast<int>(links.size()); i++)
         {
-            links[i].qddot = qddot[i];
+            links[i].qddot = !fixedLinksHaveDof && links[i].type == JointType::FIXED
+                ? 0.0 : qddot[dofIndex++];
         }
         
         // Store gravity for use in outward pass

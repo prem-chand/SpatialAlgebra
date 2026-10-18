@@ -68,4 +68,9 @@ Eigen::Matrix3d Rotation::operator*(const Eigen::Matrix3d &matrix) const
     return static_cast<Eigen::Matrix3d>(*this) * matrix;
 }
 
+Eigen::Matrix3d operator*(const Eigen::Matrix3d &matrix, const Rotation &rotation)
+{
+    return matrix.operator*(static_cast<const Eigen::Matrix3d&>(rotation));
+}
+
 } // namespace SpatialAlgebra
